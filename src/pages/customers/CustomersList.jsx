@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useCustomerOverview } from "../../lib/useCustomerOverview";
 import { primarySegment } from "../../lib/segmentation";
 import { supabase } from "../../lib/supabaseClient";
+import { formatMoney } from "../../lib/currencies";
 import ImportCustomers from "./ImportCustomers";
 
 const SEGMENT_FILTERS = [
@@ -129,7 +130,7 @@ export default function CustomersList() {
                     <td className="px-4 py-3">{seg && <Pill color={seg.color} bg={`${seg.color}1a`}>{seg.label}</Pill>}</td>
                     <td className="px-4 py-3" style={{ color: C.slate }}>{r.days_since_last_visit != null ? `${r.days_since_last_visit} days ago` : "—"}</td>
                     <td className="px-4 py-3" style={{ color: C.slate }}>{r.total_visits}</td>
-                    <td className="px-4 py-3" style={{ color: C.slate }}>{business?.currency} {Number(r.total_spending || 0).toLocaleString()}</td>
+                    <td className="px-4 py-3" style={{ color: C.slate }}>{formatMoney(r.total_spending, business?.currency)}</td>
                   </tr>
                 );
               })}

@@ -7,6 +7,7 @@ import { useCustomerOverview } from "../../lib/useCustomerOverview";
 import { nextBestAction, churnRiskScore } from "../../lib/segmentation";
 import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
+import { formatMoney } from "../../lib/currencies";
 
 function CustomerRow({ row, visitLabel, business, badge }) {
   const nba = nextBestAction(row, { visitLabel });
@@ -25,7 +26,7 @@ function CustomerRow({ row, visitLabel, business, badge }) {
             {dueInDays !== null && dueInDays >= 0
               ? `Likely due for another ${visitLabel.toLowerCase()} within ${dueInDays} days`
               : `${row.days_since_last_visit} days since last ${visitLabel.toLowerCase()}`}
-            {" · "}Lifetime value: {business?.currency} {Number(row.total_spending || 0).toLocaleString()}
+            {" · "}Lifetime value: {formatMoney(row.total_spending, business?.currency)}
           </div>
         </div>
         <Btn

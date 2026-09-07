@@ -3,6 +3,7 @@ import { C } from "../components/theme";
 import Logo from "../components/Logo";
 import { Btn, TextInput, Select, Field } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
+import { CURRENCIES } from "../lib/currencies";
 
 const BUSINESS_TYPES = [
   { value: "clinic", label: "Clinic" },
@@ -20,7 +21,7 @@ const BUSINESS_TYPES = [
 
 const VISIT_LABELS = ["Visit", "Appointment", "Session", "Service", "Purchase"];
 const LANGUAGES = [{ value: "en", label: "English" }, { value: "ar", label: "Arabic" }];
-const CURRENCIES = ["SAR", "AED", "USD", "EGP", "QAR", "KWD", "BHD", "OMR", "JOD", "LBP", "MAD"];
+const CURRENCY_OPTIONS = CURRENCIES.map((c) => ({ value: c.code, label: `${c.code} — ${c.name}` }));
 
 export default function Onboarding() {
   const { createBusiness } = useAuth();
@@ -68,7 +69,7 @@ export default function Onboarding() {
             <Select options={LANGUAGES} value={language} onChange={(e) => setLanguage(e.target.value)} />
           </Field>
           <Field label="Currency">
-            <Select options={CURRENCIES} value={currency} onChange={(e) => setCurrency(e.target.value)} />
+            <Select options={CURRENCY_OPTIONS} value={currency} onChange={(e) => setCurrency(e.target.value)} />
           </Field>
         </div>
 

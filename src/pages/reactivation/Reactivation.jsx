@@ -9,6 +9,7 @@ import { suggestOffer } from "../../lib/offerEngine";
 import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 import { supabase } from "../../lib/supabaseClient";
+import { formatMoney } from "../../lib/currencies";
 
 const BUCKETS = [
   { key: "30", label: "30+ days inactive", min: 30, max: 60 },
@@ -87,7 +88,7 @@ export default function Reactivation() {
                         <div className="text-sm font-bold" style={{ color: C.ink }}>{row.name}</div>
                         <div className="mt-1 text-xs" style={{ color: C.slateLight }}>
                           Last {visitLabel.toLowerCase()}: {row.days_since_last_visit} days ago · Normal cycle: {row.avg_return_cycle_days ? Math.round(row.avg_return_cycle_days) : "—"} days ·{" "}
-                          {row.total_visits} past visits · Lifetime value: {business?.currency} {Number(row.total_spending || 0).toLocaleString()}
+                          {row.total_visits} past visits · Lifetime value: {formatMoney(row.total_spending, business?.currency)}
                         </div>
                       </div>
                       <div className="flex gap-2">

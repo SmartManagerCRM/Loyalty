@@ -7,6 +7,7 @@ import { useBusinessTable } from "../../lib/useBusinessTable";
 import { generateRecoveryMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 import { supabase } from "../../lib/supabaseClient";
+import { formatMoney } from "../../lib/currencies";
 
 const STATUSES = ["New", "Contacted", "Interested", "Follow-up Required", "Converted", "Lost"];
 const STATUS_COLOR = {
@@ -125,7 +126,7 @@ export default function RecoveryPipeline() {
                     {row.interested_service && `Interested in: ${row.interested_service} · `}
                     {row.source && `Source: ${row.source} · `}
                     Last contact: {row.last_contact_date ? `${daysAgo(row.last_contact_date)} days ago` : "never"}
-                    {row.estimated_value > 0 && ` · Est. value: ${business?.currency} ${Number(row.estimated_value).toLocaleString()}`}
+                    {row.estimated_value > 0 && ` · Est. value: ${formatMoney(row.estimated_value, business?.currency)}`}
                   </div>
                 </div>
                 <div className="flex items-center gap-1">

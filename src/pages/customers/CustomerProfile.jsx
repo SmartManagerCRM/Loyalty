@@ -8,6 +8,7 @@ import { supabase } from "../../lib/supabaseClient";
 import { primarySegment, nextBestAction, churnRiskScore } from "../../lib/segmentation";
 import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
+import { formatMoney } from "../../lib/currencies";
 
 function LogVisitModal({ businessId, customerId, onClose, onSaved }) {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
@@ -107,7 +108,7 @@ export default function CustomerProfile() {
                 <div className="text-[10px]" style={{ color: C.slateLight }}>Total Visits</div>
               </div>
               <div className="rounded-xl p-2.5" style={{ backgroundColor: C.bg }}>
-                <div className="text-lg font-bold" style={{ color: C.ink }}>{business?.currency} {Number(flags?.total_spending || 0).toLocaleString()}</div>
+                <div className="text-lg font-bold" style={{ color: C.ink }}>{formatMoney(flags?.total_spending, business?.currency)}</div>
                 <div className="text-[10px]" style={{ color: C.slateLight }}>Total Spending</div>
               </div>
               <div className="rounded-xl p-2.5" style={{ backgroundColor: C.bg }}>
@@ -134,7 +135,7 @@ export default function CustomerProfile() {
                 {visits.map((v) => (
                   <li key={v.id} className="flex items-center justify-between text-xs" style={{ color: C.slate }}>
                     <span>{v.visit_date} {v.service && `· ${v.service}`}</span>
-                    <span className="font-semibold" style={{ color: C.ink }}>{business?.currency} {Number(v.amount).toLocaleString()}</span>
+                    <span className="font-semibold" style={{ color: C.ink }}>{formatMoney(v.amount, business?.currency)}</span>
                   </li>
                 ))}
               </ul>

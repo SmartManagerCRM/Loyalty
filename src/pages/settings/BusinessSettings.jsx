@@ -4,6 +4,7 @@ import { C } from "../../components/theme";
 import { Btn, TextInput, Select, Field, Modal } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabaseClient";
+import { CURRENCIES } from "../../lib/currencies";
 
 const BUSINESS_TYPES = [
   { value: "clinic", label: "Clinic" }, { value: "dental", label: "Dental" }, { value: "physiotherapy", label: "Physiotherapy" },
@@ -13,7 +14,7 @@ const BUSINESS_TYPES = [
 ];
 const VISIT_LABELS = ["Visit", "Appointment", "Session", "Service", "Purchase"];
 const LANGUAGES = [{ value: "en", label: "English" }, { value: "ar", label: "Arabic" }];
-const CURRENCIES = ["SAR", "AED", "USD", "EGP", "QAR", "KWD", "BHD", "OMR", "JOD", "LBP", "MAD"];
+const CURRENCY_OPTIONS = CURRENCIES.map((c) => ({ value: c.code, label: `${c.code} — ${c.name}` }));
 
 function NewBusinessModal({ onClose }) {
   const { createBusiness } = useAuth();
@@ -42,7 +43,7 @@ function NewBusinessModal({ onClose }) {
         <Field label="Business type"><Select options={BUSINESS_TYPES} value={form.businessType} onChange={(e) => setForm((f) => ({ ...f, businessType: e.target.value }))} /></Field>
         <Field label="What do you call a visit?"><Select options={VISIT_LABELS} value={form.visitLabel} onChange={(e) => setForm((f) => ({ ...f, visitLabel: e.target.value }))} /></Field>
         <Field label="Default language"><Select options={LANGUAGES} value={form.language} onChange={(e) => setForm((f) => ({ ...f, language: e.target.value }))} /></Field>
-        <Field label="Currency"><Select options={CURRENCIES} value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} /></Field>
+        <Field label="Currency"><Select options={CURRENCY_OPTIONS} value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} /></Field>
         {error && <p className="col-span-2 text-xs" style={{ color: C.red }}>{error}</p>}
         <div className="col-span-2 mt-2 flex justify-end gap-2">
           <Btn variant="secondary" type="button" onClick={onClose}>Cancel</Btn>
@@ -89,7 +90,7 @@ export default function BusinessSettings() {
         <Field label="Business type"><Select options={BUSINESS_TYPES} disabled={!canEdit} value={form.business_type} onChange={set("business_type")} /></Field>
         <Field label="What do you call a visit?"><Select options={VISIT_LABELS} disabled={!canEdit} value={form.visit_label} onChange={set("visit_label")} /></Field>
         <Field label="Default language"><Select options={LANGUAGES} disabled={!canEdit} value={form.default_language} onChange={set("default_language")} /></Field>
-        <Field label="Currency"><Select options={CURRENCIES} disabled={!canEdit} value={form.currency} onChange={set("currency")} /></Field>
+        <Field label="Currency"><Select options={CURRENCY_OPTIONS} disabled={!canEdit} value={form.currency} onChange={set("currency")} /></Field>
 
         {error && <p className="text-xs" style={{ color: C.red }}>{error}</p>}
         {!canEdit && <p className="text-xs" style={{ color: C.slateLight }}>Only Owners and Admins can change business settings.</p>}

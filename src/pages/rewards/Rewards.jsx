@@ -7,6 +7,7 @@ import { useBusinessTable } from "../../lib/useBusinessTable";
 import { useCustomerOverview } from "../../lib/useCustomerOverview";
 import { earnedPoints, pointsBalance, canRedeem, milestoneProgress } from "../../lib/rewards";
 import { supabase } from "../../lib/supabaseClient";
+import { formatMoney } from "../../lib/currencies";
 
 const TYPES = [{ value: "points", label: "Points" }, { value: "visits", label: "Visits" }, { value: "spending", label: "Spending" }];
 
@@ -129,9 +130,9 @@ export default function Rewards() {
                 <div>
                   <div className="text-sm font-bold" style={{ color: C.ink }}>{p.name}</div>
                   <div className="mt-1 text-xs" style={{ color: C.slateLight }}>
-                    {p.type === "points" && `Every ${business?.currency} ${p.config.earn_amount} = ${p.config.earn_points} pt · ${p.config.redeem_points} pts = ${business?.currency} ${p.config.redeem_value}`}
+                    {p.type === "points" && `Every ${formatMoney(p.config.earn_amount, business?.currency)} = ${p.config.earn_points} pt · ${p.config.redeem_points} pts = ${formatMoney(p.config.redeem_value, business?.currency)}`}
                     {p.type === "visits" && `${p.config.visits_required} visits = ${p.config.reward_text}`}
-                    {p.type === "spending" && `${business?.currency} ${p.config.spend_threshold} spent = ${p.config.reward_text}`}
+                    {p.type === "spending" && `${formatMoney(p.config.spend_threshold, business?.currency)} spent = ${p.config.reward_text}`}
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
@@ -176,7 +177,7 @@ export default function Rewards() {
                       <div className="flex flex-wrap gap-2">
                         {canRedeemPts && (
                           <Btn variant="secondary" icon={Gift} onClick={() => handleRedeemPoints(c)}>
-                            Redeem {activePointsProgram.config.redeem_value} {business?.currency}
+                            Redeem {formatMoney(activePointsProgram.config.redeem_value, business?.currency)}
                           </Btn>
                         )}
                         {metMilestones.map((p) => (

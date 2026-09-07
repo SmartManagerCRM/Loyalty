@@ -9,6 +9,7 @@ import { qualifyingTier, vipAction } from "../../lib/vip";
 import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 import { supabase } from "../../lib/supabaseClient";
+import { formatMoney } from "../../lib/currencies";
 
 function emptyTier() {
   return { tier_name: "", criteria: { min_spending: 1000 }, sort_order: 1 };
@@ -78,7 +79,7 @@ export default function VIP() {
           {tiers.map((t) => (
             <div key={t.id} className="flex items-center gap-2 rounded-xl px-3 py-2" style={{ backgroundColor: C.white, border: `1px solid ${C.border}` }}>
               <span className="text-sm font-bold" style={{ color: C.gold }}>{t.tier_name}</span>
-              <span className="text-xs" style={{ color: C.slateLight }}>{business?.currency} {Number(t.criteria?.min_spending || 0).toLocaleString()}+</span>
+              <span className="text-xs" style={{ color: C.slateLight }}>{formatMoney(t.criteria?.min_spending, business?.currency)}+</span>
               <IconButton title="Edit" onClick={() => setEditing(t)}><Pencil size={13} /></IconButton>
               <IconButton title="Delete" danger onClick={() => setDeleting(t)}><Trash2 size={13} /></IconButton>
             </div>
@@ -106,7 +107,7 @@ export default function VIP() {
                       <Pill color={C.gold} bg="#B8923A1a">{c.tier.tier_name}</Pill>
                     </div>
                     <div className="mt-1 text-xs" style={{ color: C.slateLight }}>
-                      {business?.currency} {Number(c.total_spending || 0).toLocaleString()} lifetime · {c.total_visits} visits · last visit {c.days_since_last_visit != null ? `${c.days_since_last_visit}d ago` : "—"}
+                      {formatMoney(c.total_spending, business?.currency)} lifetime · {c.total_visits} visits · last visit {c.days_since_last_visit != null ? `${c.days_since_last_visit}d ago` : "—"}
                     </div>
                   </div>
                   <div className="flex gap-2">

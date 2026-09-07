@@ -10,6 +10,7 @@ import { nextBestAction, segmentMeta } from "../lib/segmentation";
 import { generateMessage } from "../lib/messageTemplates";
 import { openWhatsApp } from "../lib/whatsapp";
 import { supabase } from "../lib/supabaseClient";
+import { formatMoney } from "../lib/currencies";
 
 function useRevenueRecovered(businessId) {
   const [total, setTotal] = useState(0);
@@ -98,7 +99,7 @@ export default function Dashboard() {
         <StatCard label="Recovery Opportunities" value={openRecovery} icon={Target} accent={C.amber} />
         <StatCard label="VIP Customers" value={stats.vip} icon={Crown} accent={C.gold} />
         <StatCard label="Rewards Redeemed" value={redemptions} icon={Gift} accent={C.teal} />
-        <StatCard label="Revenue Recovered" value={`${business?.currency || ""} ${revenueRecovered.toLocaleString()}`} icon={DollarSign} accent={C.green} sub={`${recoveredCount} events`} />
+        <StatCard label="Revenue Recovered" value={formatMoney(revenueRecovered, business?.currency)} icon={DollarSign} accent={C.green} sub={`${recoveredCount} events`} />
         <StatCard label="Repeat Customer Rate" value={`${repeatRate}%`} icon={Repeat} />
       </div>
 
@@ -118,7 +119,7 @@ export default function Dashboard() {
                     <div>
                       <div className="text-sm font-bold" style={{ color: C.ink }}>{row.name}</div>
                       <div className="text-xs" style={{ color: C.slateLight }}>
-                        Last {business?.visit_label?.toLowerCase() || "visit"}: {row.days_since_last_visit != null ? `${row.days_since_last_visit} days ago` : "never"} · {business?.currency} {Number(row.total_spending || 0).toLocaleString()}
+                        Last {business?.visit_label?.toLowerCase() || "visit"}: {row.days_since_last_visit != null ? `${row.days_since_last_visit} days ago` : "never"} · {formatMoney(row.total_spending, business?.currency)}
                       </div>
                     </div>
                     {seg && <Pill color={seg.color} bg={`${seg.color}1a`}>{seg.label}</Pill>}

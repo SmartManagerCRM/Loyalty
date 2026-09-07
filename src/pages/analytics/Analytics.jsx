@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useCustomerOverview } from "../../lib/useCustomerOverview";
 import { useBusinessTable } from "../../lib/useBusinessTable";
 import { supabase } from "../../lib/supabaseClient";
+import { formatMoney } from "../../lib/currencies";
 
 const RECOVERY_STATUSES = ["New", "Contacted", "Interested", "Follow-up Required", "Converted", "Lost"];
 
@@ -93,9 +94,9 @@ export default function Analytics() {
   return (
     <div className="p-8">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        <StatCard label="Revenue Recovered" value={`${business?.currency} ${stats.recoveredRevenue.toLocaleString()}`} icon={DollarSign} accent={C.green} />
-        <StatCard label="Revenue from Offers" value={`${business?.currency} ${stats.revenueFromOffers.toLocaleString()}`} icon={Gift} accent={C.teal} />
-        <StatCard label="VIP Revenue" value={`${business?.currency} ${Math.round(stats.vipRevenue).toLocaleString()}`} icon={Crown} accent={C.gold} />
+        <StatCard label="Revenue Recovered" value={formatMoney(stats.recoveredRevenue, business?.currency)} icon={DollarSign} accent={C.green} />
+        <StatCard label="Revenue from Offers" value={formatMoney(stats.revenueFromOffers, business?.currency)} icon={Gift} accent={C.teal} />
+        <StatCard label="VIP Revenue" value={formatMoney(stats.vipRevenue, business?.currency)} icon={Crown} accent={C.gold} />
         <StatCard label="Rewards Redeemed" value={stats.redemptionsCount} icon={Wallet} />
         <StatCard label="Recovery Opportunities (open)" value={stats.openLeads} icon={Target} accent={C.amber} />
         <StatCard label="Leads Contacted" value={stats.contactedLeads} icon={Users} />
@@ -103,7 +104,7 @@ export default function Analytics() {
         <StatCard label="Reactivation Rate" value={`${stats.reactivationRate.toFixed(1)}%`} icon={RotateCcw} accent={C.teal} sub="Reactivated ÷ (inactive+lost + reactivated)" />
         <StatCard label="Repeat Customer Rate" value={`${stats.repeatRate.toFixed(1)}%`} icon={Repeat} />
         <StatCard label="Retention Rate" value={`${stats.retentionRate.toFixed(1)}%`} icon={ShieldCheck} sub="(total − lost) ÷ total" />
-        <StatCard label="Avg Customer Lifetime Value" value={`${business?.currency} ${Math.round(stats.avgLTV).toLocaleString()}`} icon={DollarSign} />
+        <StatCard label="Avg Customer Lifetime Value" value={formatMoney(stats.avgLTV, business?.currency)} icon={DollarSign} />
         <StatCard label="Total Customers" value={stats.total} icon={Users} />
       </div>
 
@@ -119,7 +120,7 @@ export default function Analytics() {
                   <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
                   <XAxis dataKey="month" tick={{ fontSize: 12, fill: C.slateLight }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 12, fill: C.slateLight }} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={(v) => [`${business?.currency} ${v.toLocaleString()}`, "Revenue"]} />
+                  <Tooltip formatter={(v) => [formatMoney(v, business?.currency), "Revenue"]} />
                   <Bar dataKey="revenue" fill={C.green} radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
