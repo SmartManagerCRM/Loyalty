@@ -1,6 +1,7 @@
 import React from "react";
 import { Loader2 } from "lucide-react";
 import { C } from "./theme";
+import Logo from "./Logo";
 
 export function Btn({ children, onClick, variant = "primary", icon: Icon, className = "", type = "button", disabled }) {
   const styles = {
@@ -139,6 +140,7 @@ export function StatCard({ label, value, icon: Icon, accent = C.green, sub }) {
 export function EmptyState({ title, subtitle, action }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed py-16 text-center" style={{ borderColor: C.border }}>
+      <Logo variant="mark" size={32} color={C.border} className="mb-3" />
       <p className="text-sm font-semibold" style={{ color: C.ink }}>{title}</p>
       {subtitle && <p className="mt-1 max-w-sm text-xs" style={{ color: C.slateLight }}>{subtitle}</p>}
       {action && <div className="mt-4">{action}</div>}

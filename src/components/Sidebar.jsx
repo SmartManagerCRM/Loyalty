@@ -2,10 +2,11 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3,
-  Sliders, UsersRound, Building2, CreditCard, Stethoscope, LogOut,
+  Sliders, UsersRound, Building2, CreditCard, LogOut,
 } from "lucide-react";
 import { C } from "./theme";
 import { useAuth } from "../context/AuthContext";
+import Logo from "./Logo";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -38,14 +39,8 @@ export default function Sidebar() {
 
   return (
     <aside className="flex h-screen w-60 shrink-0 flex-col overflow-y-auto border-r" style={{ borderColor: C.border, backgroundColor: C.white }}>
-      <div className="flex items-center gap-2 px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: C.green }}>
-          <Stethoscope size={18} color="#fff" />
-        </div>
-        <div>
-          <div className="text-sm font-bold" style={{ color: C.ink }}>SmartManager</div>
-          <div className="text-xs" style={{ color: C.slateLight }}>Loyalty</div>
-        </div>
+      <div className="px-5 py-5">
+        <Logo variant="wordmark" size={36} />
       </div>
 
       {business && (

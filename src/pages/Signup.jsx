@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart } from "lucide-react";
 import { C } from "../components/theme";
+import Logo from "../components/Logo";
 import { Btn, TextInput, Field } from "../components/ui";
 import { supabase } from "../lib/supabaseClient";
 
@@ -42,9 +42,7 @@ export default function Signup() {
     <div className="flex h-screen w-full items-center justify-center px-4" style={{ backgroundColor: C.bg }}>
       <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
         <div className="mb-6 flex flex-col items-center text-center">
-          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl" style={{ backgroundColor: C.green }}>
-            <Heart size={26} color="#fff" />
-          </div>
+          <Logo size={56} className="mb-3" />
           <h1 className="text-lg font-bold" style={{ color: C.ink }}>Create your account</h1>
           <p className="mt-1 text-xs" style={{ color: C.slateLight }}>You'll set up your business on the next step.</p>
         </div>
