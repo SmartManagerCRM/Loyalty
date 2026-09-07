@@ -118,8 +118,97 @@
       "defaultLanguageLabel": "Default language",
       "currencyLabel": "Currency",
       "settingUp": "Setting up…",
-      "createBusiness": "Create business"
+      "createBusiness": "Create business",
+      "stepOf": "Step {{current}} of {{total}}",
+      "next": "Continue",
+      "back": "Back",
+      "skipForNow": "Skip for now",
+      "steps": {
+        "businessInfo": "Business",
+        "country": "Country",
+        "currency": "Currency",
+        "type": "Type",
+        "import": "Import",
+        "rules": "Rules",
+        "finish": "Finish"
+      },
+      "businessInfo": {
+        "title": "Let's set up your business",
+        "subtitle": "Start with the name your customers and staff will see."
+      },
+      "country": {
+        "title": "Where are you based?",
+        "subtitle": "This sets a sensible default currency and language — both stay fully editable.",
+        "countryLabel": "Country",
+        "searchPlaceholder": "Search country…",
+        "other": "Other / not listed"
+      },
+      "currency": {
+        "title": "Confirm your currency",
+        "subtitle": "Every amount across the app — revenue, rewards, offers — is shown in this currency.",
+        "searchPlaceholder": "Search currency…"
+      },
+      "type": {
+        "title": "What kind of business is this?",
+        "subtitle": "This tunes the language used across the app to match your industry."
+      },
+      "import": {
+        "title": "Import your customers",
+        "subtitle": "Optional — you can always do this later from Customers → Import.",
+        "chooseFile": "Click to choose a .csv, .xlsx, or .xls file",
+        "reading": "Reading file…",
+        "previewSummary_one": "{{count}} customer ready to import.",
+        "previewSummary_other": "{{count}} customers ready to import.",
+        "previewSkipped": "{{count}} rows were skipped (missing a name).",
+        "chooseAnother": "Choose a different file",
+        "clear": "Remove file"
+      },
+      "rules": {
+        "title": "Review your segmentation rules",
+        "subtitle": "These transparent, editable thresholds decide who counts as New, Active, Due, Inactive, Lost, VIP, High Value, Frequent, or At Risk — the defaults work well for most businesses, and you can always change them later in Settings.",
+        "resetDefaults": "Reset to defaults"
+      },
+      "finish": {
+        "title": "Ready to go",
+        "subtitle": "Review your choices, then create your business.",
+        "summaryBusiness": "Business",
+        "summaryType": "Type",
+        "summaryCountry": "Country",
+        "summaryCurrency": "Currency",
+        "summaryVisitLabel": "Calls a visit",
+        "summaryCustomers": "Customers to import",
+        "summaryCustomersNone": "None — you can import later",
+        "creating": "Creating your business…",
+        "createMyBusiness": "Create my business"
+      }
     }
+  },
+  "countries": {
+    "SA": "Saudi Arabia",
+    "AE": "United Arab Emirates",
+    "QA": "Qatar",
+    "KW": "Kuwait",
+    "BH": "Bahrain",
+    "OM": "Oman",
+    "JO": "Jordan",
+    "EG": "Egypt",
+    "IQ": "Iraq",
+    "LB": "Lebanon",
+    "SY": "Syria",
+    "YE": "Yemen",
+    "LY": "Libya",
+    "TN": "Tunisia",
+    "DZ": "Algeria",
+    "MA": "Morocco",
+    "MR": "Mauritania",
+    "DJ": "Djibouti",
+    "SO": "Somalia",
+    "SD": "Sudan",
+    "IL": "Israel",
+    "US": "United States",
+    "EU": "Eurozone",
+    "GB": "United Kingdom",
+    "TR": "Turkey"
   },
   "businessTypes": {
     "clinic": "Clinic",
