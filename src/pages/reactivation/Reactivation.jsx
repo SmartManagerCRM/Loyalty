@@ -70,9 +70,6 @@ export default function Reactivation() {
 
   return (
     <div className="p-8">
-      <h1 className="text-xl font-bold" style={{ color: C.ink }}>Reactivation</h1>
-      <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Customers who stopped returning, grouped by how overdue they are.</p>
-
       {total === 0 ? (
         <div className="mt-8"><EmptyState title="No inactive customers" subtitle="Everyone is within their normal return window." /></div>
       ) : (

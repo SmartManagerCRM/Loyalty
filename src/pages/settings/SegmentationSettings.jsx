@@ -60,14 +60,11 @@ export default function SegmentationSettings() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>Segmentation Rules</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>
-            These transparent, editable thresholds decide who counts as New, Active, Due, Inactive, Lost, VIP, High Value, Frequent, or At Risk.
-          </p>
-        </div>
-        <Btn icon={Save} onClick={handleSave} disabled={saving}>{saving ? "Saving…" : saved ? "Saved" : "Save changes"}</Btn>
+      <div className="flex items-center justify-between gap-4">
+        <p className="max-w-xl text-sm" style={{ color: C.slateLight }}>
+          These transparent, editable thresholds decide who counts as New, Active, Due, Inactive, Lost, VIP, High Value, Frequent, or At Risk.
+        </p>
+        <Btn icon={Save} onClick={handleSave} disabled={saving} className="shrink-0">{saving ? "Saving…" : saved ? "Saved" : "Save changes"}</Btn>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">

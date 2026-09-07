@@ -84,10 +84,7 @@ export default function Team() {
   return (
     <div className="p-8">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>Team</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Who has access to {business?.name}.</p>
-        </div>
+        <p className="text-sm" style={{ color: C.slateLight }}>Who has access to {business?.name}.</p>
         {canManage && <Btn icon={Plus} onClick={() => setShowInvite(true)}>Invite teammate</Btn>}
       </div>
 

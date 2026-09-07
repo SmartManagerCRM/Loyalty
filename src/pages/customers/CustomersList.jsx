@@ -78,10 +78,7 @@ export default function CustomersList() {
   return (
     <div className="p-8">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>Customers</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>{rows.length} total</p>
-        </div>
+        <p className="text-sm" style={{ color: C.slateLight }}>{rows.length} total</p>
         <div className="flex gap-2">
           <Btn variant="secondary" icon={Upload} onClick={() => setShowImport(true)}>Import</Btn>
           <Btn icon={Plus} onClick={() => setShowAdd(true)}>Add customer</Btn>

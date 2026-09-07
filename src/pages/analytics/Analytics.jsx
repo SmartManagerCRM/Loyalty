@@ -92,10 +92,7 @@ export default function Analytics() {
 
   return (
     <div className="p-8">
-      <h1 className="text-xl font-bold" style={{ color: C.ink }}>Revenue Analytics</h1>
-      <p className="mt-1 text-sm" style={{ color: C.slateLight }}>The business value this platform is generating — not just activity.</p>
-
-      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         <StatCard label="Revenue Recovered" value={`${business?.currency} ${stats.recoveredRevenue.toLocaleString()}`} icon={DollarSign} accent={C.green} />
         <StatCard label="Revenue from Offers" value={`${business?.currency} ${stats.revenueFromOffers.toLocaleString()}`} icon={Gift} accent={C.teal} />
         <StatCard label="VIP Revenue" value={`${business?.currency} ${Math.round(stats.vipRevenue).toLocaleString()}`} icon={Crown} accent={C.gold} />

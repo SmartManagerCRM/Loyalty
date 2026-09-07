@@ -69,11 +69,7 @@ export default function VIP() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>VIP</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Recognize top customers — with priority and perks, not discounts.</p>
-        </div>
+      <div className="flex justify-end">
         <Btn icon={Plus} onClick={() => setEditing(emptyTier())}>Add tier</Btn>
       </div>
 

@@ -80,11 +80,7 @@ export default function BusinessSettings() {
 
   return (
     <div className="p-8 max-w-xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>Business Settings</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>What your customers and staff see across the app.</p>
-        </div>
+      <div className="flex justify-end">
         <Btn variant="secondary" icon={Plus} onClick={() => setShowNewBusiness(true)}>New business</Btn>
       </div>
 

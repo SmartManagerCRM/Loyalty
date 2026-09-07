@@ -135,11 +135,7 @@ export default function Offers() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>Smart Offers</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Offers matched to customer behavior — never a generic mass discount.</p>
-        </div>
+      <div className="flex justify-end">
         <Btn icon={Plus} onClick={() => setEditing(emptyOffer())}>Add offer</Btn>
       </div>
 

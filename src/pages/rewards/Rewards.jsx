@@ -115,11 +115,7 @@ export default function Rewards() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>Rewards</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Points, visit, and spending reward programs.</p>
-        </div>
+      <div className="flex justify-end">
         <Btn icon={Plus} onClick={() => setEditing(emptyProgram())}>Add program</Btn>
       </div>
 

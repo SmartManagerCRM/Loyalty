@@ -19,10 +19,7 @@ export default function Billing() {
 
   return (
     <div className="p-8 max-w-xl">
-      <h1 className="text-xl font-bold" style={{ color: C.ink }}>Billing</h1>
-      <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Your plan and subscription status.</p>
-
-      <div className="mt-6 rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
+      <div className="rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold" style={{ color: C.slateLight }}>Current plan</div>

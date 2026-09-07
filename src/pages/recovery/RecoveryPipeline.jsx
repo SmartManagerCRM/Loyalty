@@ -98,11 +98,7 @@ export default function RecoveryPipeline() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: C.ink }}>Recovery</h1>
-          <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Leads who inquired but never converted.</p>
-        </div>
+      <div className="flex justify-end">
         <Btn icon={Plus} onClick={() => setEditing(emptyLead())}>Add lead</Btn>
       </div>
 

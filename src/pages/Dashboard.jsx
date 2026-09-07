@@ -89,10 +89,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-8">
-      <h1 className="text-xl font-bold" style={{ color: C.ink }}>Dashboard</h1>
-      <p className="mt-1 text-sm" style={{ color: C.slateLight }}>Where are we losing customers, and what should we do today?</p>
-
-      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Total Customers" value={stats.total} icon={Users} />
         <StatCard label="Active" value={stats.active} icon={TrendingUp} accent={C.green} />
         <StatCard label="New" value={stats.new} icon={UserPlus} accent={C.teal} />

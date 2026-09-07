@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { LoadingScreen } from "./components/ui";
 import { C } from "./components/theme";
 import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Onboarding from "./pages/Onboarding";
@@ -36,10 +37,15 @@ function SetupNotice() {
 }
 
 function AppShell({ children }) {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   return (
     <div className="flex h-screen w-full" style={{ backgroundColor: C.bg }}>
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <Sidebar open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Header onOpenMobileMenu={() => setMobileNavOpen(true)} />
+        <main className="flex-1 overflow-y-auto">{children}</main>
+      </div>
     </div>
   );
 }
