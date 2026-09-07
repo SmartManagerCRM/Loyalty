@@ -1,0 +1,19 @@
+# Vite copies this file into dist/ as-is on build.
+#
+# This is a single-page app using client-side routing (React Router) — the
+# server only ever has one real file, index.html. Without this, refreshing
+# a deep link like /customers/123 or /settings/team on Hostinger's Apache/
+# LiteSpeed server returns a 404, since no such file/folder exists on disk.
+# This rewrites every request that isn't an existing file to index.html and
+# lets the app's router take over from there.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
