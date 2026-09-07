@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { DollarSign, Users, RotateCcw, Repeat, Gift, Crown, Target, ShieldCheck, Wallet } from "lucide-react";
 import { C } from "../../components/theme";
@@ -6,7 +6,7 @@ import { StatCard } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { useCustomerOverview } from "../../lib/useCustomerOverview";
 import { useBusinessTable } from "../../lib/useBusinessTable";
-import { supabase } from "../../lib/supabaseClient";
+import { useRevenueEvents } from "../../lib/useRevenueEvents";
 import { formatMoney } from "../../lib/currencies";
 
 const RECOVERY_STATUSES = ["New", "Contacted", "Interested", "Follow-up Required", "Converted", "Lost"];
@@ -18,19 +18,6 @@ function monthKey(dateStr) {
 function monthLabel(key) {
   const [y, m] = key.split("-");
   return new Date(Number(y), Number(m) - 1).toLocaleDateString(undefined, { month: "short" });
-}
-
-function useRevenueEvents(businessId) {
-  const [rows, setRows] = useState([]);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    if (!businessId) return;
-    supabase.from("revenue_events").select("*").eq("business_id", businessId).then(({ data }) => {
-      setRows(data || []);
-      setReady(true);
-    });
-  }, [businessId]);
-  return { rows, ready };
 }
 
 export default function Analytics() {
