@@ -487,3 +487,244 @@ alter publication supabase_realtime add table customer_visits;
 alter publication supabase_realtime add table recovery_opportunities;
 alter publication supabase_realtime add table reward_redemptions;
 alter publication supabase_realtime add table offers;
+
+-- ── Platform Admin ──────────────────────────────────────────────────────
+-- Separate from business_users entirely: a platform admin is a person who
+-- runs SmartManager Loyalty itself, not a member of any tenant business.
+-- Every admin capability below is gated through is_platform_admin() inside
+-- a security-definer function — no tenant table's RLS is touched by this
+-- section, so existing tenant isolation is unaffected.
+
+create table if not exists platform_admins (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+create or replace function is_platform_admin()
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from platform_admins where user_id = auth.uid());
+$$;
+
+alter table platform_admins enable row level security;
+-- No insert/update/delete policy on purpose: platform admins are managed
+-- directly via SQL (or a future admin_add_admin() function), never through
+-- a client-writable policy — this is the one table where even an existing
+-- admin shouldn't be able to self-service through RLS alone.
+create policy "platform admins can view the admin list" on platform_admins
+  for select using (is_platform_admin());
+
+-- ── Plans ────────────────────────────────────────────────────────────────
+-- Real plan definitions the tenant-facing Billing page reads from, and
+-- platform admins manage here. Pricing is platform-level (one currency),
+-- distinct from a business's own operating currency.
+
+create table if not exists plans (
+  id uuid primary key default gen_random_uuid(),
+  key text not null unique check (key in ('trial','starter','growth','professional','enterprise')),
+  name text not null,
+  price_monthly numeric,
+  price_yearly numeric,
+  currency text not null default 'USD',
+  max_customers int,
+  features jsonb not null default '[]'::jsonb,
+  is_active boolean not null default true,
+  sort_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table plans enable row level security;
+-- Any signed-in user can read active plans (the tenant Billing page needs
+-- this); platform admins can read/write everything, active or not.
+create policy "authenticated users can read active plans" on plans
+  for select using (is_active or is_platform_admin());
+create policy "platform admins manage plans" on plans
+  for insert with check (is_platform_admin());
+create policy "platform admins update plans" on plans
+  for update using (is_platform_admin());
+create policy "platform admins delete plans" on plans
+  for delete using (is_platform_admin());
+
+insert into plans (key, name, price_monthly, price_yearly, currency, max_customers, features, sort_order) values
+  ('trial', 'Trial', 0, 0, 'USD', 200, '["All core modules", "Up to 200 customers", "14-day trial"]', 0),
+  ('starter', 'Starter', 29, 290, 'USD', 500, '["All core modules", "Up to 500 customers", "Email support"]', 1),
+  ('growth', 'Growth', 79, 790, 'USD', 2000, '["Everything in Starter", "Up to 2,000 customers", "Smart Offers + VIP tiers", "Priority email support"]', 2),
+  ('professional', 'Professional', 199, 1990, 'USD', 10000, '["Everything in Growth", "Up to 10,000 customers", "Multiple businesses", "Priority support"]', 3),
+  ('enterprise', 'Enterprise', null, null, 'USD', null, '["Everything in Professional", "Unlimited customers", "Dedicated support", "Custom onboarding"]', 4)
+on conflict (key) do nothing;
+
+-- ── Payments ─────────────────────────────────────────────────────────────
+-- A manual ledger, not a live payment integration (see README "Billing" —
+-- deliberately no processor is wired up). Platform admins record payments
+-- by hand; nothing here charges a card. RLS has zero policies for regular
+-- users on purpose, so this table is reachable only through the
+-- security-definer admin_* functions below (or the service role).
+
+create table if not exists payments (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  plan_id uuid references plans(id) on delete set null,
+  amount numeric not null,
+  currency text not null default 'USD',
+  status text not null default 'recorded' check (status in ('recorded','refunded','failed')),
+  period_start date,
+  period_end date,
+  notes text,
+  recorded_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+create index if not exists payments_business_idx on payments(business_id);
+
+alter table payments enable row level security;
+-- intentionally no policies — access only via admin_* security-definer
+-- functions, which each check is_platform_admin() themselves.
+
+-- ── Admin RPC surface ────────────────────────────────────────────────────
+-- Every function below is filtered/gated by is_platform_admin(), so even
+-- if a client called these directly there's nothing to gain: a non-admin
+-- gets an empty result set (table-returning functions) or a raised
+-- exception (mutating functions).
+
+create or replace function admin_list_businesses()
+returns table (
+  id uuid, name text, business_type text, subscription_plan text, subscription_status text,
+  trial_ends_at timestamptz, currency text, created_at timestamptz,
+  owner_email text, member_count bigint, total_customers bigint
+)
+language sql stable security definer set search_path = public as $$
+  select
+    b.id, b.name, b.business_type, b.subscription_plan, b.subscription_status,
+    b.trial_ends_at, b.currency, b.created_at,
+    (select u.email from business_users bu join auth.users u on u.id = bu.user_id
+     where bu.business_id = b.id and bu.role = 'owner' order by bu.created_at asc limit 1) as owner_email,
+    (select count(*) from business_users bu where bu.business_id = b.id) as member_count,
+    (select count(*) from customers c where c.business_id = b.id) as total_customers
+  from businesses b
+  where is_platform_admin()
+  order by b.created_at desc;
+$$;
+
+create or replace function admin_get_business(p_business_id uuid)
+returns table (
+  id uuid, name text, business_type text, visit_label text, default_language text,
+  subscription_plan text, subscription_status text, trial_ends_at timestamptz,
+  currency text, timezone text, created_at timestamptz,
+  owner_email text, member_count bigint, total_customers bigint, total_revenue_events numeric
+)
+language sql stable security definer set search_path = public as $$
+  select
+    b.id, b.name, b.business_type, b.visit_label, b.default_language,
+    b.subscription_plan, b.subscription_status, b.trial_ends_at,
+    b.currency, b.timezone, b.created_at,
+    (select u.email from business_users bu join auth.users u on u.id = bu.user_id
+     where bu.business_id = b.id and bu.role = 'owner' order by bu.created_at asc limit 1) as owner_email,
+    (select count(*) from business_users bu where bu.business_id = b.id) as member_count,
+    (select count(*) from customers c where c.business_id = b.id) as total_customers,
+    (select coalesce(sum(amount), 0) from revenue_events re where re.business_id = b.id) as total_revenue_events
+  from businesses b
+  where b.id = p_business_id and is_platform_admin();
+$$;
+
+create or replace function admin_list_business_members(p_business_id uuid)
+returns table(user_id uuid, email text, role business_role, joined_at timestamptz)
+language sql stable security definer set search_path = public as $$
+  select bu.user_id, u.email, bu.role, bu.created_at
+  from business_users bu
+  join auth.users u on u.id = bu.user_id
+  where bu.business_id = p_business_id and is_platform_admin();
+$$;
+
+-- Platform-admin business mutation — deliberately separate from the
+-- tenant-facing "owner/admin can update their business" RLS policy, which
+-- only lets a business's own owner/admin touch their row.
+create or replace function admin_update_business(
+  p_business_id uuid,
+  p_subscription_plan text default null,
+  p_subscription_status text default null,
+  p_trial_ends_at timestamptz default null
+)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  update businesses set
+    subscription_plan = coalesce(p_subscription_plan, subscription_plan),
+    subscription_status = coalesce(p_subscription_status, subscription_status),
+    trial_ends_at = coalesce(p_trial_ends_at, trial_ends_at)
+  where id = p_business_id;
+end;
+$$;
+
+create or replace function admin_overview_stats()
+returns table (
+  total_businesses bigint,
+  trialing_count bigint,
+  active_count bigint,
+  past_due_count bigint,
+  canceled_count bigint,
+  signups_last_30d bigint,
+  mrr numeric
+)
+language sql stable security definer set search_path = public as $$
+  select
+    (select count(*) from businesses) as total_businesses,
+    (select count(*) from businesses where subscription_status = 'trialing') as trialing_count,
+    (select count(*) from businesses where subscription_status = 'active') as active_count,
+    (select count(*) from businesses where subscription_status = 'past_due') as past_due_count,
+    (select count(*) from businesses where subscription_status = 'canceled') as canceled_count,
+    (select count(*) from businesses where created_at >= now() - interval '30 days') as signups_last_30d,
+    (select coalesce(sum(p.price_monthly), 0)
+       from businesses b join plans p on p.key = b.subscription_plan
+       where b.subscription_status = 'active') as mrr
+  where is_platform_admin();
+$$;
+
+create or replace function admin_list_payments(p_business_id uuid default null)
+returns table (
+  id uuid, business_id uuid, business_name text, plan_id uuid, plan_name text,
+  amount numeric, currency text, status text, period_start date, period_end date,
+  notes text, recorded_by_email text, created_at timestamptz
+)
+language sql stable security definer set search_path = public as $$
+  select
+    pay.id, pay.business_id, b.name as business_name, pay.plan_id, p.name as plan_name,
+    pay.amount, pay.currency, pay.status, pay.period_start, pay.period_end,
+    pay.notes, u.email as recorded_by_email, pay.created_at
+  from payments pay
+  join businesses b on b.id = pay.business_id
+  left join plans p on p.id = pay.plan_id
+  left join auth.users u on u.id = pay.recorded_by
+  where is_platform_admin() and (p_business_id is null or pay.business_id = p_business_id)
+  order by pay.created_at desc;
+$$;
+
+create or replace function admin_record_payment(
+  p_business_id uuid,
+  p_amount numeric,
+  p_currency text default 'USD',
+  p_plan_id uuid default null,
+  p_period_start date default null,
+  p_period_end date default null,
+  p_notes text default null
+)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  new_id uuid;
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  insert into payments (business_id, plan_id, amount, currency, period_start, period_end, notes, recorded_by)
+  values (p_business_id, p_plan_id, p_amount, p_currency, p_period_start, p_period_end, p_notes, auth.uid())
+  returning id into new_id;
+
+  return new_id;
+end;
+$$;
+
+-- To grant someone platform admin access, run directly in the SQL editor:
+--   insert into platform_admins (user_id)
+--   select id from auth.users where lower(email) = lower('their@email.com');

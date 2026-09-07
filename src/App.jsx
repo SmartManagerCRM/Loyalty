@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import AdminGate from "./admin/AdminGate";
 import { LoadingScreen } from "./components/ui";
 import { C } from "./components/theme";
 import Sidebar from "./components/Sidebar";
@@ -96,7 +97,10 @@ function Gate() {
 export default function App() {
   return (
     <AuthProvider>
-      <Gate />
+      <Routes>
+        <Route path="/admin/*" element={<AdminGate />} />
+        <Route path="/*" element={<Gate />} />
+      </Routes>
     </AuthProvider>
   );
 }

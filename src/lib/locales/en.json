@@ -484,6 +484,149 @@
       "amountLabel": "Revenue amount"
     }
   },
+  "admin": {
+    "common": {
+      "platformAdmin": "Platform Admin",
+      "exitToApp": "Exit to app",
+      "accessDeniedTitle": "Access denied",
+      "accessDeniedBody": "Your account doesn't have platform admin access.",
+      "backToApp": "Back to the app",
+      "loading": "Loading…",
+      "statuses": {
+        "trialing": "Trialing",
+        "active": "Active",
+        "past_due": "Past Due",
+        "canceled": "Canceled"
+      }
+    },
+    "nav": {
+      "overview": "Overview",
+      "businesses": "Businesses",
+      "subscriptions": "Subscriptions",
+      "plans": "Plans",
+      "payments": "Payments",
+      "trials": "Trials"
+    },
+    "login": {
+      "title": "Platform Admin",
+      "subtitle": "Sign in with your admin account.",
+      "backToApp": "Back to SmartManager Loyalty"
+    },
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Platform-wide health across every business on SmartManager Loyalty.",
+      "kpi": {
+        "totalBusinesses": "Total Businesses",
+        "trialing": "Trialing",
+        "active": "Active Subscriptions",
+        "pastDue": "Past Due",
+        "canceled": "Canceled",
+        "signups30d": "New Businesses (30d)",
+        "mrr": "Monthly Recurring Revenue"
+      },
+      "trialsEndingSoon": "Trials Ending Soon",
+      "noTrialsEndingSoon": "No trials ending in the next 7 days.",
+      "viewAll": "View all"
+    },
+    "businesses": {
+      "title": "Businesses",
+      "subtitle": "Every business using the platform.",
+      "searchPlaceholder": "Search by business or owner email…",
+      "columnName": "Business",
+      "columnOwner": "Owner",
+      "columnPlan": "Plan",
+      "columnStatus": "Status",
+      "columnMembers": "Team",
+      "columnCustomers": "Customers",
+      "columnCreated": "Created",
+      "empty": "No businesses match your search.",
+      "detail": {
+        "back": "Back to Businesses",
+        "ownerLabel": "Owner",
+        "membersLabel": "Team members",
+        "customersLabel": "Customers",
+        "totalRevenueLabel": "Total revenue logged",
+        "planLabel": "Plan",
+        "statusLabel": "Subscription status",
+        "trialEndsLabel": "Trial ends",
+        "extendTrial": "Extend 14 days",
+        "saveChanges": "Save changes",
+        "saved": "Saved"
+      }
+    },
+    "subscriptions": {
+      "title": "Subscriptions",
+      "subtitle": "Plan and billing status for every business.",
+      "filterAllStatuses": "All statuses",
+      "filterAllPlans": "All plans",
+      "columnBusiness": "Business",
+      "columnPlan": "Plan",
+      "columnStatus": "Status",
+      "columnMrr": "Monthly value",
+      "empty": "No businesses match your filters."
+    },
+    "plans": {
+      "title": "Plans",
+      "subtitle": "What businesses see and choose from on the Billing page.",
+      "addPlan": "Add plan",
+      "editPlan": "Edit plan",
+      "columnPlan": "Plan",
+      "columnMonthly": "Monthly",
+      "columnYearly": "Yearly",
+      "columnMaxCustomers": "Customer limit",
+      "columnActive": "Active",
+      "custom": "Custom",
+      "unlimited": "Unlimited",
+      "perMonth": "/mo",
+      "form": {
+        "nameLabel": "Plan name",
+        "priceMonthlyLabel": "Monthly price (leave blank for custom pricing)",
+        "priceYearlyLabel": "Yearly price",
+        "currencyLabel": "Currency",
+        "maxCustomersLabel": "Customer limit (leave blank for unlimited)",
+        "featuresLabel": "Features (one per line)",
+        "activeLabel": "Active — visible to businesses"
+      }
+    },
+    "payments": {
+      "title": "Payments",
+      "subtitle": "A manual ledger — no payment processor is connected yet.",
+      "recordPayment": "Record payment",
+      "columnBusiness": "Business",
+      "columnAmount": "Amount",
+      "columnPlan": "Plan",
+      "columnPeriod": "Period",
+      "columnStatus": "Status",
+      "columnRecordedBy": "Recorded by",
+      "columnDate": "Date",
+      "empty": "No payments recorded yet.",
+      "statuses": { "recorded": "Recorded", "refunded": "Refunded", "failed": "Failed" },
+      "form": {
+        "title": "Record a payment",
+        "businessLabel": "Business",
+        "amountLabel": "Amount",
+        "currencyLabel": "Currency",
+        "planLabel": "Plan (optional)",
+        "periodStartLabel": "Period start",
+        "periodEndLabel": "Period end",
+        "notesLabel": "Notes",
+        "save": "Record payment"
+      }
+    },
+    "trials": {
+      "title": "Trials",
+      "subtitle": "Businesses currently on a trial, soonest-expiring first.",
+      "columnBusiness": "Business",
+      "columnOwner": "Owner",
+      "columnDaysLeft": "Days left",
+      "extendTrial": "Extend 14 days",
+      "convertToPaid": "Convert to Starter",
+      "empty": "No businesses are currently trialing.",
+      "expired": "Expired",
+      "daysLeft_one": "{{count}} day left",
+      "daysLeft_other": "{{count}} days left"
+    }
+  },
   "settings": {
     "segmentation": {
       "intro": "These transparent, editable thresholds decide who counts as New, Active, Due, Inactive, Lost, VIP, High Value, Frequent, or At Risk.",

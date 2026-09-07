@@ -493,6 +493,152 @@
       "amountLabel": "مبلغ الإيراد"
     }
   },
+  "admin": {
+    "common": {
+      "platformAdmin": "إدارة المنصة",
+      "exitToApp": "الخروج إلى التطبيق",
+      "accessDeniedTitle": "الوصول مرفوض",
+      "accessDeniedBody": "حسابك لا يملك صلاحية إدارة المنصة.",
+      "backToApp": "العودة إلى التطبيق",
+      "loading": "جارٍ التحميل…",
+      "statuses": {
+        "trialing": "تجريبي",
+        "active": "نشط",
+        "past_due": "متأخر السداد",
+        "canceled": "ملغى"
+      }
+    },
+    "nav": {
+      "overview": "نظرة عامة",
+      "businesses": "الأنشطة التجارية",
+      "subscriptions": "الاشتراكات",
+      "plans": "الخطط",
+      "payments": "المدفوعات",
+      "trials": "التجارب المجانية"
+    },
+    "login": {
+      "title": "إدارة المنصة",
+      "subtitle": "سجّل الدخول بحساب المسؤول الخاص بك.",
+      "backToApp": "العودة إلى سمارت مانجر لويالتي"
+    },
+    "overview": {
+      "title": "نظرة عامة",
+      "subtitle": "صحة المنصة بالكامل عبر كل نشاط تجاري على سمارت مانجر لويالتي.",
+      "kpi": {
+        "totalBusinesses": "إجمالي الأنشطة التجارية",
+        "trialing": "تجريبي",
+        "active": "الاشتراكات النشطة",
+        "pastDue": "متأخر السداد",
+        "canceled": "ملغى",
+        "signups30d": "أنشطة تجارية جديدة (30 يوماً)",
+        "mrr": "الإيراد الشهري المتكرر"
+      },
+      "trialsEndingSoon": "تجارب مجانية تنتهي قريباً",
+      "noTrialsEndingSoon": "لا توجد تجارب مجانية تنتهي خلال 7 أيام القادمة.",
+      "viewAll": "عرض الكل"
+    },
+    "businesses": {
+      "title": "الأنشطة التجارية",
+      "subtitle": "كل نشاط تجاري يستخدم المنصة.",
+      "searchPlaceholder": "ابحث بالنشاط التجاري أو بريد المالك…",
+      "columnName": "النشاط التجاري",
+      "columnOwner": "المالك",
+      "columnPlan": "الخطة",
+      "columnStatus": "الحالة",
+      "columnMembers": "الفريق",
+      "columnCustomers": "العملاء",
+      "columnCreated": "تاريخ الإنشاء",
+      "empty": "لا يوجد نشاط تجاري مطابق لبحثك.",
+      "detail": {
+        "back": "الرجوع إلى الأنشطة التجارية",
+        "ownerLabel": "المالك",
+        "membersLabel": "أعضاء الفريق",
+        "customersLabel": "العملاء",
+        "totalRevenueLabel": "إجمالي الإيرادات المسجّلة",
+        "planLabel": "الخطة",
+        "statusLabel": "حالة الاشتراك",
+        "trialEndsLabel": "انتهاء التجربة",
+        "extendTrial": "تمديد 14 يوماً",
+        "saveChanges": "حفظ التغييرات",
+        "saved": "تم الحفظ"
+      }
+    },
+    "subscriptions": {
+      "title": "الاشتراكات",
+      "subtitle": "خطة وحالة الفوترة لكل نشاط تجاري.",
+      "filterAllStatuses": "كل الحالات",
+      "filterAllPlans": "كل الخطط",
+      "columnBusiness": "النشاط التجاري",
+      "columnPlan": "الخطة",
+      "columnStatus": "الحالة",
+      "columnMrr": "القيمة الشهرية",
+      "empty": "لا يوجد نشاط تجاري مطابق لعوامل التصفية."
+    },
+    "plans": {
+      "title": "الخطط",
+      "subtitle": "ما يراه النشاط التجاري ويختار من بينه في صفحة الفوترة.",
+      "addPlan": "إضافة خطة",
+      "editPlan": "تعديل الخطة",
+      "columnPlan": "الخطة",
+      "columnMonthly": "شهرياً",
+      "columnYearly": "سنوياً",
+      "columnMaxCustomers": "حد العملاء",
+      "columnActive": "نشطة",
+      "custom": "مخصص",
+      "unlimited": "غير محدود",
+      "perMonth": "/شهرياً",
+      "form": {
+        "nameLabel": "اسم الخطة",
+        "priceMonthlyLabel": "السعر الشهري (اتركه فارغاً للتسعير المخصص)",
+        "priceYearlyLabel": "السعر السنوي",
+        "currencyLabel": "العملة",
+        "maxCustomersLabel": "حد العملاء (اتركه فارغاً لعدد غير محدود)",
+        "featuresLabel": "الميزات (كل ميزة في سطر)",
+        "activeLabel": "نشطة — مرئية للأنشطة التجارية"
+      }
+    },
+    "payments": {
+      "title": "المدفوعات",
+      "subtitle": "سجل يدوي — لا يوجد معالج دفع متصل بعد.",
+      "recordPayment": "تسجيل دفعة",
+      "columnBusiness": "النشاط التجاري",
+      "columnAmount": "المبلغ",
+      "columnPlan": "الخطة",
+      "columnPeriod": "الفترة",
+      "columnStatus": "الحالة",
+      "columnRecordedBy": "سجّلها",
+      "columnDate": "التاريخ",
+      "empty": "لم تُسجَّل أي دفعات بعد.",
+      "statuses": { "recorded": "مسجّلة", "refunded": "مستردة", "failed": "فاشلة" },
+      "form": {
+        "title": "تسجيل دفعة",
+        "businessLabel": "النشاط التجاري",
+        "amountLabel": "المبلغ",
+        "currencyLabel": "العملة",
+        "planLabel": "الخطة (اختياري)",
+        "periodStartLabel": "بداية الفترة",
+        "periodEndLabel": "نهاية الفترة",
+        "notesLabel": "ملاحظات",
+        "save": "تسجيل الدفعة"
+      }
+    },
+    "trials": {
+      "title": "التجارب المجانية",
+      "subtitle": "الأنشطة التجارية في فترة تجريبية حالياً، الأقرب لانتهاء الفترة أولاً.",
+      "columnBusiness": "النشاط التجاري",
+      "columnOwner": "المالك",
+      "columnDaysLeft": "الأيام المتبقية",
+      "extendTrial": "تمديد 14 يوماً",
+      "convertToPaid": "التحويل إلى Starter",
+      "empty": "لا يوجد نشاط تجاري في فترة تجريبية حالياً.",
+      "expired": "منتهية",
+      "daysLeft_one": "يوم واحد متبقٍ",
+      "daysLeft_two": "يومان متبقيان",
+      "daysLeft_few": "{{count}} أيام متبقية",
+      "daysLeft_many": "{{count}} يوماً متبقياً",
+      "daysLeft_other": "{{count}} يوم متبقٍ"
+    }
+  },
   "settings": {
     "segmentation": {
       "intro": "هذه الحدود الشفافة والقابلة للتعديل تحدد من يُصنَّف كجديد، نشط، مستحق، غير نشط، مفقود، كبار العملاء، عالي القيمة، متكرر، أو معرّض للخطر.",
