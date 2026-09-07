@@ -215,10 +215,18 @@ create table if not exists customer_visits (
 create index if not exists customer_visits_business_idx on customer_visits(business_id);
 create index if not exists customer_visits_customer_idx on customer_visits(customer_id);
 
+-- Every view below sets security_invoker = true on purpose: without it, a
+-- view runs with its OWNER's privileges (a superuser, who bypasses RLS),
+-- which would leak every business's data to every querying user regardless
+-- of business_users membership. This is the one easy way to silently
+-- defeat the multi-tenant isolation this whole schema is built on — don't
+-- drop it when editing these views.
+
 -- Per-customer aggregates, blending real visit rows with import rollups
 -- (GREATEST so a business that later logs granular visits doesn't lose the
 -- history it imported on day one).
-create or replace view customer_stats as
+create or replace view customer_stats
+with (security_invoker = true) as
 select
   c.id as customer_id,
   c.business_id,
@@ -263,7 +271,8 @@ create table if not exists segmentation_rules (
 -- (e.g. VIP + Active) — the app picks a single "primary" badge from these
 -- by priority (see src/lib/segmentation.js), the raw flags stay available
 -- for filtering/counts.
-create or replace view customer_segment_flags as
+create or replace view customer_segment_flags
+with (security_invoker = true) as
 with rules as (
   select business_id, jsonb_object_agg(segment_key, rule_config) as cfg
   from segmentation_rules
@@ -315,7 +324,8 @@ left join rules r on r.business_id = cs.business_id;
 
 -- Convenience view: customer identity fields + every stat/flag in one row,
 -- so the app rarely needs more than one query to render a list or profile.
-create or replace view customer_overview as
+create or replace view customer_overview
+with (security_invoker = true) as
 select c.name, c.phone, c.email, c.notes, f.*
 from customer_segment_flags f
 join customers c on c.id = f.customer_id;
