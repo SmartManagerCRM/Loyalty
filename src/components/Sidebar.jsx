@@ -1,13 +1,18 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Users, Stethoscope, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Sliders, Stethoscope, LogOut } from "lucide-react";
 import { C } from "./theme";
 import { useAuth } from "../context/AuthContext";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/customers", label: "Customers", icon: Users },
+  { to: "/recovery", label: "Recovery", icon: Target },
+  { to: "/reactivation", label: "Reactivation", icon: RotateCcw },
+  { to: "/retention", label: "Retention", icon: ShieldCheck },
 ];
+
+const SETTINGS_NAV = { to: "/settings/segmentation", label: "Segmentation Rules", icon: Sliders };
 
 export default function Sidebar() {
   const { business, signOut } = useAuth();
@@ -49,6 +54,22 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      <div className="px-3 pb-1">
+        <NavLink
+          to={SETTINGS_NAV.to}
+          className={({ isActive }) =>
+            `flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${isActive ? "" : "hover:bg-black/5"}`
+          }
+          style={({ isActive }) => ({
+            backgroundColor: isActive ? C.greenTint : "transparent",
+            color: isActive ? C.greenDeep : C.slate,
+          })}
+        >
+          <SETTINGS_NAV.icon size={17} />
+          {SETTINGS_NAV.label}
+        </NavLink>
+      </div>
 
       <button
         onClick={signOut}

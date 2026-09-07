@@ -29,3 +29,15 @@ export function generateMessage({ action, customerName, businessName, days, offe
   const builder = TEMPLATES[lang][action] || TEMPLATES[lang]["CONTACT CUSTOMER"];
   return builder({ customerName, businessName, days, offer });
 }
+
+const RECOVERY_TEMPLATES = {
+  en: ({ leadName, businessName, interestedService }) =>
+    `Hi ${leadName}, this is ${businessName}. Just following up on your interest in ${interestedService || "our services"} — happy to answer any questions or help you book. Would you like to go ahead?`,
+  ar: ({ leadName, businessName, interestedService }) =>
+    `مرحباً ${leadName}، معك ${businessName}. أتابع معك بخصوص اهتمامك بـ${interestedService || "خدماتنا"} — يسعدني أجاوب على أي استفسار أو أساعدك تحجز. تحب نكمل؟`,
+};
+
+export function generateRecoveryMessage({ leadName, businessName, interestedService, language = "en" }) {
+  const lang = RECOVERY_TEMPLATES[language] ? language : "en";
+  return RECOVERY_TEMPLATES[lang]({ leadName, businessName, interestedService });
+}

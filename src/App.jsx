@@ -10,6 +10,10 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import CustomersList from "./pages/customers/CustomersList";
 import CustomerProfile from "./pages/customers/CustomerProfile";
+import RecoveryPipeline from "./pages/recovery/RecoveryPipeline";
+import Reactivation from "./pages/reactivation/Reactivation";
+import Retention from "./pages/retention/Retention";
+import SegmentationSettings from "./pages/settings/SegmentationSettings";
 
 function SetupNotice() {
   return (
@@ -56,6 +60,10 @@ function Gate() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/customers" element={<CustomersList />} />
         <Route path="/customers/:id" element={<CustomerProfile />} />
+        <Route path="/recovery" element={<RecoveryPipeline />} />
+        <Route path="/reactivation" element={<Reactivation />} />
+        <Route path="/retention" element={<Retention />} />
+        <Route path="/settings/segmentation" element={<SegmentationSettings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppShell>
