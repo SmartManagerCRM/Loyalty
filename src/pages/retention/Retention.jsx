@@ -4,21 +4,13 @@ import { C } from "../../components/theme";
 import { Btn, EmptyState, Pill } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { useCustomerOverview } from "../../lib/useCustomerOverview";
-import { nextBestAction } from "../../lib/segmentation";
+import { nextBestAction, churnRiskScore } from "../../lib/segmentation";
 import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 
-function priorityScore(row) {
-  // Higher = contact sooner: weighs customer value, how overdue they are,
-  // and how frequently they normally return. Transparent, not a black box.
-  const value = Number(row.total_spending || 0);
-  const overdueRatio = row.avg_return_cycle_days ? (row.days_since_last_visit || 0) / row.avg_return_cycle_days : 1;
-  const frequency = row.avg_return_cycle_days ? 1 / row.avg_return_cycle_days : 0;
-  return value * 0.4 + overdueRatio * 1000 + frequency * 10000;
-}
-
 function CustomerRow({ row, visitLabel, business, badge }) {
   const nba = nextBestAction(row, { visitLabel });
+  const risk = churnRiskScore(row);
   const dueInDays = row.avg_return_cycle_days ? Math.round(row.avg_return_cycle_days - (row.days_since_last_visit || 0)) : null;
   return (
     <div className="rounded-2xl bg-white p-4 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
@@ -27,6 +19,7 @@ function CustomerRow({ row, visitLabel, business, badge }) {
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold" style={{ color: C.ink }}>{row.name}</span>
             {badge}
+            {risk && <Pill color={risk.score >= 50 ? C.red : C.slate} bg={risk.score >= 50 ? "#C63B3B1a" : C.bg}>Risk {risk.score}</Pill>}
           </div>
           <div className="mt-1 text-xs" style={{ color: C.slateLight }}>
             {dueInDays !== null && dueInDays >= 0
@@ -59,8 +52,10 @@ export default function Retention() {
   const [tab, setTab] = useState("due");
   const visitLabel = business?.visit_label || "Visit";
 
-  const due = useMemo(() => rows.filter((r) => r.is_due).sort((a, b) => priorityScore(b) - priorityScore(a)), [rows]);
-  const atRisk = useMemo(() => rows.filter((r) => r.is_at_risk).sort((a, b) => priorityScore(b) - priorityScore(a)), [rows]);
+  const byRiskThenValue = (a, b) =>
+    (churnRiskScore(b)?.score || 0) - (churnRiskScore(a)?.score || 0) || Number(b.total_spending || 0) - Number(a.total_spending || 0);
+  const due = useMemo(() => rows.filter((r) => r.is_due).sort(byRiskThenValue), [rows]);
+  const atRisk = useMemo(() => rows.filter((r) => r.is_at_risk).sort(byRiskThenValue), [rows]);
 
   if (!ready) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>Loading…</div>;
 

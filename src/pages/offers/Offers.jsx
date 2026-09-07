@@ -18,6 +18,51 @@ function emptyOffer() {
   return { name: "", trigger_segment: "inactive", offer_type: "reactivation", description: "", active: true };
 }
 
+// Which revenue_events bucket an offer conversion counts as, based on the
+// segment it targeted — related_offer_id (set below) is what actually
+// makes it count toward "Revenue generated from offers" on Analytics;
+// event_type just keeps it consistent with Recovery/Reactivation/VIP.
+function eventTypeFor(segment) {
+  if (segment === "inactive" || segment === "lost") return "reactivated";
+  if (segment === "vip" || segment === "high_value") return "vip_revenue";
+  return "repeat_purchase";
+}
+
+function ConvertOfferModal({ customer, offer, businessId, onClose, onDone }) {
+  const [amount, setAmount] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function handleConfirm() {
+    setBusy(true);
+    if (Number(amount) > 0) {
+      await supabase.from("revenue_events").insert({
+        business_id: businessId, customer_id: customer.customer_id,
+        event_type: eventTypeFor(offer.trigger_segment), amount: Number(amount),
+        related_offer_id: offer.id, notes: `${offer.name} converted by ${customer.name}`,
+      });
+    }
+    await supabase.from("offer_recommendations").insert({
+      business_id: businessId, customer_id: customer.customer_id, offer_id: offer.id, action_taken: "converted",
+    });
+    setBusy(false);
+    onDone();
+    onClose();
+  }
+
+  return (
+    <Modal title="Mark offer as converted" onClose={onClose}>
+      <p className="text-sm" style={{ color: C.slate }}>Record the revenue from this offer — it counts toward Revenue Generated from Offers on Analytics.</p>
+      <Field label="Revenue amount">
+        <TextInput type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-2" />
+      </Field>
+      <div className="mt-4 flex justify-end gap-2">
+        <Btn variant="secondary" onClick={onClose}>Cancel</Btn>
+        <Btn onClick={handleConfirm} disabled={busy}>{busy ? "Saving…" : "Confirm"}</Btn>
+      </div>
+    </Modal>
+  );
+}
+
 function OfferForm({ initial, onSave, onCancel }) {
   const [form, setForm] = useState(initial);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -39,23 +84,26 @@ function OfferForm({ initial, onSave, onCancel }) {
 
 function useRecommendationLog(businessId) {
   const [sentPairs, setSentPairs] = useState(new Set());
+  const [convertedPairs, setConvertedPairs] = useState(new Set());
   async function refetch() {
     if (!businessId) return;
-    const { data } = await supabase.from("offer_recommendations").select("customer_id, offer_id").eq("business_id", businessId).eq("action_taken", "sent");
-    setSentPairs(new Set((data || []).map((r) => `${r.customer_id}:${r.offer_id}`)));
+    const { data } = await supabase.from("offer_recommendations").select("customer_id, offer_id, action_taken").eq("business_id", businessId).in("action_taken", ["sent", "converted"]);
+    setSentPairs(new Set((data || []).filter((r) => r.action_taken === "sent").map((r) => `${r.customer_id}:${r.offer_id}`)));
+    setConvertedPairs(new Set((data || []).filter((r) => r.action_taken === "converted").map((r) => `${r.customer_id}:${r.offer_id}`)));
   }
   useEffect(() => { refetch(); }, [businessId]);
-  return { sentPairs, refetch };
+  return { sentPairs, convertedPairs, refetch };
 }
 
 export default function Offers() {
   const { business } = useAuth();
   const { rows: offers, ready: offersReady, insertRow, updateRow, deleteRow } = useBusinessTable("offers", business?.id);
   const { rows: customers, ready: customersReady } = useCustomerOverview(business?.id);
-  const { sentPairs, refetch: refetchLog } = useRecommendationLog(business?.id);
+  const { sentPairs, convertedPairs, refetch: refetchLog } = useRecommendationLog(business?.id);
 
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  const [converting, setConverting] = useState(null);
 
   const recommendations = useMemo(() => {
     const active = offers.filter((o) => o.active);
@@ -123,22 +171,33 @@ export default function Offers() {
       ) : (
         <div className="mt-3 space-y-3">
           {recommendations.map(({ customer, offer, nba }) => {
-            const alreadySent = sentPairs.has(`${customer.customer_id}:${offer.id}`);
+            const pairKey = `${customer.customer_id}:${offer.id}`;
+            const alreadySent = sentPairs.has(pairKey);
+            const alreadyConverted = convertedPairs.has(pairKey);
             return (
-              <div key={`${customer.customer_id}-${offer.id}`} className="rounded-2xl bg-white p-4 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
+              <div key={pairKey} className="rounded-2xl bg-white p-4 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="text-sm font-bold" style={{ color: C.ink }}>{customer.name} <span style={{ color: C.slateLight, fontWeight: 400 }}>→ {offer.name}</span></div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold" style={{ color: C.ink }}>{customer.name}</span>
+                      <span className="text-xs" style={{ color: C.slateLight }}>→ {offer.name}</span>
+                      {alreadyConverted && <Pill color={C.green} bg={C.greenTint}>Converted</Pill>}
+                    </div>
                     <div className="mt-1 text-xs" style={{ color: C.slate }}>Recommended because: {nba?.reason}</div>
                   </div>
-                  <Btn
-                    variant={alreadySent ? "secondary" : "primary"}
-                    icon={alreadySent ? Check : MessageCircle}
-                    disabled={!customer.phone}
-                    onClick={() => handleSend(customer, offer)}
-                  >
-                    {alreadySent ? "Sent — send again" : "Open WhatsApp"}
-                  </Btn>
+                  <div className="flex gap-2">
+                    <Btn
+                      variant={alreadySent ? "secondary" : "primary"}
+                      icon={alreadySent ? Check : MessageCircle}
+                      disabled={!customer.phone}
+                      onClick={() => handleSend(customer, offer)}
+                    >
+                      {alreadySent ? "Sent — send again" : "Open WhatsApp"}
+                    </Btn>
+                    {alreadySent && !alreadyConverted && (
+                      <Btn variant="secondary" onClick={() => setConverting({ customer, offer })}>Mark Converted</Btn>
+                    )}
+                  </div>
                 </div>
               </div>
             );
@@ -161,6 +220,12 @@ export default function Offers() {
       )}
       {deleting && (
         <ConfirmDelete label={deleting.name} onCancel={() => setDeleting(null)} onConfirm={async () => { await deleteRow(deleting.id); setDeleting(null); }} />
+      )}
+      {converting && (
+        <ConvertOfferModal
+          customer={converting.customer} offer={converting.offer} businessId={business.id}
+          onClose={() => setConverting(null)} onDone={refetchLog}
+        />
       )}
     </div>
   );

@@ -5,7 +5,7 @@ import { C } from "../../components/theme";
 import { Btn, Pill, TextInput, TextArea, Field, Modal } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabaseClient";
-import { primarySegment, nextBestAction } from "../../lib/segmentation";
+import { primarySegment, nextBestAction, churnRiskScore } from "../../lib/segmentation";
 import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 
@@ -80,6 +80,7 @@ export default function CustomerProfile() {
 
   const seg = flags ? primarySegment(flags) : null;
   const nba = flags ? nextBestAction(flags, { visitLabel: business?.visit_label }) : null;
+  const risk = flags ? churnRiskScore(flags) : null;
 
   return (
     <div className="p-8">
@@ -143,9 +144,29 @@ export default function CustomerProfile() {
 
         <div className="lg:col-span-2">
           <div className="rounded-2xl p-5 shadow-sm" style={{ border: `1px solid ${C.border}`, backgroundColor: C.navy }}>
-            <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: C.greenTint }}>Next Best Action</div>
-            <div className="mt-1 text-xl font-bold text-white">{nba?.action || "—"}</div>
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: C.greenTint }}>Next Best Action</div>
+                <div className="mt-1 text-xl font-bold text-white">{nba?.action || "—"}</div>
+              </div>
+              {risk && (
+                <div className="text-right">
+                  <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: C.greenTint }}>Churn Risk</div>
+                  <div className="text-xl font-bold text-white">{risk.score}<span className="text-xs font-normal">/100</span></div>
+                </div>
+              )}
+            </div>
             <p className="mt-2 text-sm" style={{ color: "#B9C6D6" }}>{nba?.reason}</p>
+            {risk && (
+              <div className="mt-3 space-y-1 border-t pt-3 text-xs" style={{ borderColor: "rgba(255,255,255,0.15)" }}>
+                {risk.breakdown.map((b, i) => (
+                  <div key={i} className="flex justify-between" style={{ color: "#B9C6D6" }}>
+                    <span>{b.label}</span>
+                    <span className="font-semibold text-white">+{b.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mt-5 rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>

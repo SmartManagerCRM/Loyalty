@@ -16,6 +16,7 @@ import Retention from "./pages/retention/Retention";
 import Rewards from "./pages/rewards/Rewards";
 import VIP from "./pages/vip/VIP";
 import Offers from "./pages/offers/Offers";
+import Analytics from "./pages/analytics/Analytics";
 import SegmentationSettings from "./pages/settings/SegmentationSettings";
 
 function SetupNotice() {
@@ -69,6 +70,7 @@ function Gate() {
         <Route path="/rewards" element={<Rewards />} />
         <Route path="/vip" element={<VIP />} />
         <Route path="/offers" element={<Offers />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings/segmentation" element={<SegmentationSettings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

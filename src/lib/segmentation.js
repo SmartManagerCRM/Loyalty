@@ -92,3 +92,33 @@ export function nextBestAction(flags, { visitLabel = "visit" } = {}) {
     priority: "none",
   };
 }
+
+// "Advanced scoring" (Phase 4) — still fully transparent and rule-based, on
+// purpose (see README "AI / Intelligence"): a 0-100 churn risk score built
+// from two named, visible components so staff can see exactly why a
+// customer scored the way they did. This is the seam a real model would
+// slot into later without changing anything that reads `.score`.
+export function churnRiskScore(flags) {
+  if (!flags) return null;
+  const { days_since_last_visit: days, avg_return_cycle_days: cycle } = flags;
+  const overdueRatio = cycle && days != null ? days / cycle : null;
+
+  // 0-60: how far past their own normal cycle they are (0 if on time/early).
+  const overdueComponent = overdueRatio != null
+    ? Math.round(Math.min(60, Math.max(0, (overdueRatio - 1) * 60)))
+    : 0;
+  // 0-40: how severe their current segment already is.
+  const segmentComponent = flags.is_lost ? 40 : flags.is_inactive ? 25 : flags.is_at_risk ? 15 : flags.is_due ? 5 : 0;
+
+  const score = Math.min(100, overdueComponent + segmentComponent);
+  const breakdown = [
+    {
+      label: overdueRatio != null
+        ? `${Math.round((overdueRatio - 1) * 100)}% past their usual ${Math.round(cycle)}-day cycle`
+        : "Not enough visit history to judge overdue-ness",
+      value: overdueComponent,
+    },
+    { label: `Segment severity (${primarySegment(flags)?.label || "Active"})`, value: segmentComponent },
+  ];
+  return { score, breakdown };
+}

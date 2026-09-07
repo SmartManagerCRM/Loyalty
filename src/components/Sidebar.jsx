@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, Sliders, Stethoscope, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3, Sliders, Stethoscope, LogOut } from "lucide-react";
 import { C } from "./theme";
 import { useAuth } from "../context/AuthContext";
 
@@ -13,6 +13,7 @@ const NAV = [
   { to: "/rewards", label: "Rewards", icon: Gift },
   { to: "/vip", label: "VIP", icon: Crown },
   { to: "/offers", label: "Smart Offers", icon: Sparkles },
+  { to: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 const SETTINGS_NAV = { to: "/settings/segmentation", label: "Segmentation Rules", icon: Sliders };
