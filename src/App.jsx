@@ -13,6 +13,9 @@ import CustomerProfile from "./pages/customers/CustomerProfile";
 import RecoveryPipeline from "./pages/recovery/RecoveryPipeline";
 import Reactivation from "./pages/reactivation/Reactivation";
 import Retention from "./pages/retention/Retention";
+import Rewards from "./pages/rewards/Rewards";
+import VIP from "./pages/vip/VIP";
+import Offers from "./pages/offers/Offers";
 import SegmentationSettings from "./pages/settings/SegmentationSettings";
 
 function SetupNotice() {
@@ -63,6 +66,9 @@ function Gate() {
         <Route path="/recovery" element={<RecoveryPipeline />} />
         <Route path="/reactivation" element={<Reactivation />} />
         <Route path="/retention" element={<Retention />} />
+        <Route path="/rewards" element={<Rewards />} />
+        <Route path="/vip" element={<VIP />} />
+        <Route path="/offers" element={<Offers />} />
         <Route path="/settings/segmentation" element={<SegmentationSettings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
