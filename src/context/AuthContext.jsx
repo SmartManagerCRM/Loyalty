@@ -2,25 +2,34 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 
 const AuthContext = createContext(null);
+const LAST_BUSINESS_KEY = "smartmanager-loyalty:last-business-id";
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
-  const [business, setBusiness] = useState(null);
-  const [role, setRole] = useState(null);
+  const [memberships, setMemberships] = useState([]); // [{ role, businesses: {...} }]
+  const [businessId, setBusinessId] = useState(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
 
-  const loadBusiness = useCallback(async (userId) => {
-    if (!userId) { setBusiness(null); setRole(null); return; }
+  const loadMemberships = useCallback(async (userId) => {
+    if (!userId) { setMemberships([]); setBusinessId(null); return; }
+
+    // Join anything this email was invited to before their account existed.
+    await supabase.rpc("claim_invites");
+
     const { data, error } = await supabase
       .from("business_users")
       .select("role, businesses(*)")
-      .eq("user_id", userId)
-      .limit(1)
-      .maybeSingle();
+      .eq("user_id", userId);
     if (error) { setError(error.message); return; }
-    setBusiness(data?.businesses || null);
-    setRole(data?.role || null);
+
+    const list = data || [];
+    setMemberships(list);
+
+    let saved = null;
+    try { saved = window.localStorage.getItem(LAST_BUSINESS_KEY); } catch (e) { /* ignore */ }
+    const stillMember = saved && list.some((m) => m.businesses?.id === saved);
+    setBusinessId(stillMember ? saved : list[0]?.businesses?.id || null);
   }, []);
 
   useEffect(() => {
@@ -28,18 +37,23 @@ export function AuthProvider({ children }) {
 
     supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
-      if (data.session?.user?.id) await loadBusiness(data.session.user.id);
+      if (data.session?.user?.id) await loadMemberships(data.session.user.id);
       setReady(true);
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
       setSession(newSession);
-      if (newSession?.user?.id) await loadBusiness(newSession.user.id);
-      else setBusiness(null);
+      if (newSession?.user?.id) await loadMemberships(newSession.user.id);
+      else { setMemberships([]); setBusinessId(null); }
     });
 
     return () => listener?.subscription?.unsubscribe();
-  }, [loadBusiness]);
+  }, [loadMemberships]);
+
+  const switchBusiness = useCallback((id) => {
+    setBusinessId(id);
+    try { window.localStorage.setItem(LAST_BUSINESS_KEY, id); } catch (e) { /* ignore */ }
+  }, []);
 
   const createBusiness = useCallback(async (params) => {
     const { data, error } = await supabase.rpc("create_business", {
@@ -50,27 +64,32 @@ export function AuthProvider({ children }) {
       p_currency: params.currency || "SAR",
     });
     if (error) throw error;
-    await loadBusiness(session?.user?.id);
+    await loadMemberships(session?.user?.id);
+    switchBusiness(data);
     return data;
-  }, [loadBusiness, session]);
+  }, [loadMemberships, session, switchBusiness]);
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-    setBusiness(null);
-    setRole(null);
+    setMemberships([]);
+    setBusinessId(null);
   }, []);
+
+  const current = memberships.find((m) => m.businesses?.id === businessId) || memberships[0] || null;
 
   const value = {
     supabaseConfigured,
     session,
     user: session?.user || null,
-    business,
-    role,
+    memberships,
+    business: current?.businesses || null,
+    role: current?.role || null,
+    switchBusiness,
     ready,
     error,
     createBusiness,
     signOut,
-    refreshBusiness: () => loadBusiness(session?.user?.id),
+    refreshBusiness: () => loadMemberships(session?.user?.id),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

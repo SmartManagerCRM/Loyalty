@@ -20,6 +20,14 @@ create table if not exists businesses (
   default_language text not null default 'en' check (default_language in ('en','ar')),
   currency text not null default 'SAR',
   timezone text not null default 'Asia/Riyadh',
+  -- Billing data model only — no payment processor is wired up yet (see
+  -- README "Billing"). Every business starts on a 14-day trial; nothing
+  -- here ever charges a card.
+  subscription_plan text not null default 'trial'
+    check (subscription_plan in ('trial','starter','growth','professional','enterprise')),
+  subscription_status text not null default 'trialing'
+    check (subscription_status in ('trialing','active','past_due','canceled')),
+  trial_ends_at timestamptz not null default (now() + interval '14 days'),
   created_at timestamptz not null default now()
 );
 
@@ -94,6 +102,84 @@ begin
 
   return new_id;
 end;
+$$;
+
+-- ── Team management ──────────────────────────────────────────────────────
+-- Inviting a teammate by email needs a security-definer path: the anon-key
+-- client can't query auth.users directly (by design), so these functions
+-- do the lookup with elevated privileges on the app's behalf.
+
+create table if not exists business_invites (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  email text not null,
+  role business_role not null default 'staff',
+  created_at timestamptz not null default now(),
+  unique (business_id, email)
+);
+
+alter table business_invites enable row level security;
+create policy "owner/admin can manage invites" on business_invites
+  for all using (business_role_of(business_id) in ('owner','admin'))
+  with check (business_role_of(business_id) in ('owner','admin'));
+
+-- Owner/Admin calls this to add a teammate. If that email already has an
+-- account, they're added to business_users immediately; otherwise the
+-- invite waits in business_invites until they sign up and claim it.
+create or replace function invite_member(p_business_id uuid, p_email text, p_role business_role default 'staff')
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  target_user_id uuid;
+begin
+  if business_role_of(p_business_id) not in ('owner','admin') then
+    raise exception 'not authorized';
+  end if;
+
+  select id into target_user_id from auth.users where lower(email) = lower(p_email) limit 1;
+
+  if target_user_id is not null then
+    insert into business_users (business_id, user_id, role)
+    values (p_business_id, target_user_id, p_role)
+    on conflict (business_id, user_id) do update set role = excluded.role;
+    delete from business_invites where business_id = p_business_id and lower(email) = lower(p_email);
+  else
+    insert into business_invites (business_id, email, role)
+    values (p_business_id, lower(p_email), p_role)
+    on conflict (business_id, email) do update set role = excluded.role;
+  end if;
+end;
+$$;
+
+-- Called once after sign-in: joins the caller to every business that
+-- invited their email address, then clears those invites.
+create or replace function claim_invites()
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  my_email text;
+  inv record;
+begin
+  if auth.uid() is null then return; end if;
+  select email into my_email from auth.users where id = auth.uid();
+  if my_email is null then return; end if;
+
+  for inv in select * from business_invites where lower(email) = lower(my_email) loop
+    insert into business_users (business_id, user_id, role)
+    values (inv.business_id, auth.uid(), inv.role)
+    on conflict (business_id, user_id) do nothing;
+    delete from business_invites where id = inv.id;
+  end loop;
+end;
+$$;
+
+-- Team page needs member emails, which live in auth.users — this exposes
+-- just email+role+join date, and only to fellow members of that business.
+create or replace function list_business_members(p_business_id uuid)
+returns table(user_id uuid, email text, role business_role, joined_at timestamptz)
+language sql stable security definer set search_path = public as $$
+  select bu.user_id, u.email, bu.role, bu.created_at
+  from business_users bu
+  join auth.users u on u.id = bu.user_id
+  where bu.business_id = p_business_id and is_business_member(p_business_id);
 $$;
 
 -- ── Customers ────────────────────────────────────────────────────────────

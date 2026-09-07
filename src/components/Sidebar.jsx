@@ -1,6 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3, Sliders, Stethoscope, LogOut } from "lucide-react";
+import {
+  LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3,
+  Sliders, UsersRound, Building2, CreditCard, Stethoscope, LogOut,
+} from "lucide-react";
 import { C } from "./theme";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,13 +19,25 @@ const NAV = [
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
-const SETTINGS_NAV = { to: "/settings/segmentation", label: "Segmentation Rules", icon: Sliders };
+const SETTINGS_NAV = [
+  { to: "/settings/segmentation", label: "Segmentation Rules", icon: Sliders },
+  { to: "/settings/team", label: "Team", icon: UsersRound },
+  { to: "/settings/business", label: "Business", icon: Building2 },
+  { to: "/settings/billing", label: "Billing", icon: CreditCard },
+];
+
+function settingsLinkStyle({ isActive }) {
+  return {
+    backgroundColor: isActive ? C.greenTint : "transparent",
+    color: isActive ? C.greenDeep : C.slate,
+  };
+}
 
 export default function Sidebar() {
-  const { business, signOut } = useAuth();
+  const { business, memberships, switchBusiness, signOut } = useAuth();
 
   return (
-    <aside className="flex h-screen w-60 shrink-0 flex-col border-r" style={{ borderColor: C.border, backgroundColor: C.white }}>
+    <aside className="flex h-screen w-60 shrink-0 flex-col overflow-y-auto border-r" style={{ borderColor: C.border, backgroundColor: C.white }}>
       <div className="flex items-center gap-2 px-5 py-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: C.green }}>
           <Stethoscope size={18} color="#fff" />
@@ -34,9 +49,22 @@ export default function Sidebar() {
       </div>
 
       {business && (
-        <div className="mx-3 mb-2 rounded-xl px-3 py-2 text-xs font-semibold" style={{ backgroundColor: C.greenTint, color: C.greenDeep }}>
-          {business.name}
-        </div>
+        memberships.length > 1 ? (
+          <select
+            value={business.id}
+            onChange={(e) => switchBusiness(e.target.value)}
+            className="mx-3 mb-2 rounded-xl px-3 py-2 text-xs font-semibold outline-none"
+            style={{ backgroundColor: C.greenTint, color: C.greenDeep, border: "none" }}
+          >
+            {memberships.map((m) => (
+              <option key={m.businesses.id} value={m.businesses.id}>{m.businesses.name}</option>
+            ))}
+          </select>
+        ) : (
+          <div className="mx-3 mb-2 rounded-xl px-3 py-2 text-xs font-semibold" style={{ backgroundColor: C.greenTint, color: C.greenDeep }}>
+            {business.name}
+          </div>
+        )
       )}
 
       <nav className="flex-1 space-y-1 px-3">
@@ -59,25 +87,23 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="px-3 pb-1">
-        <NavLink
-          to={SETTINGS_NAV.to}
-          className={({ isActive }) =>
-            `flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${isActive ? "" : "hover:bg-black/5"}`
-          }
-          style={({ isActive }) => ({
-            backgroundColor: isActive ? C.greenTint : "transparent",
-            color: isActive ? C.greenDeep : C.slate,
-          })}
-        >
-          <SETTINGS_NAV.icon size={17} />
-          {SETTINGS_NAV.label}
-        </NavLink>
+      <div className="space-y-0.5 px-3 pb-1">
+        {SETTINGS_NAV.map((n) => (
+          <NavLink
+            key={n.to}
+            to={n.to}
+            className={({ isActive }) => `flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${isActive ? "" : "hover:bg-black/5"}`}
+            style={settingsLinkStyle}
+          >
+            <n.icon size={15} />
+            {n.label}
+          </NavLink>
+        ))}
       </div>
 
       <button
         onClick={signOut}
-        className="mx-3 mb-4 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-black/5"
+        className="mx-3 mb-4 mt-1 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-black/5"
         style={{ color: C.slate }}
       >
         <LogOut size={17} />

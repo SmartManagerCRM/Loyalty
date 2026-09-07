@@ -49,8 +49,9 @@ npm install
 npm run dev
 ```
 
-## What's here (Phase 1)
+## What's here
 
+**Phase 1 — Foundation**
 - Self-service signup → business onboarding (`create_business` RPC creates
   the business, makes you Owner, and seeds default segmentation/VIP rules)
 - Multi-tenant auth via Supabase, RLS-enforced business isolation
@@ -62,14 +63,47 @@ npm run dev
 - Dashboard: customer counts by segment, recovery/rewards/revenue tallies,
   and a ranked "Today's Recommended Actions" list
 
-## What's next (see the schema — the tables already exist)
+**Phase 2 — Segmentation, Recovery, Reactivation, Retention**
+- Segmentation Rules settings — every threshold is business-editable
+- Recovery pipeline (New → Contacted → Interested → Follow-up Required →
+  Converted → Lost) with a "FOLLOW UP NOW" flag on stale leads
+- Reactivation: customers bucketed by 30+/60+/90+/long-term-lost inactivity
+- Retention: Due-soon and At-Risk lists, prioritized
 
-- **Phase 2**: Recovery pipeline, Reactivation, Retention, an "At Risk" list,
-  and a settings UI for the segmentation thresholds already stored in
-  `segmentation_rules`
-- **Phase 3**: Rewards engine UI, VIP tiers UI, Smart Offers
-- **Phase 4**: Deeper revenue analytics, refined scoring
-- **Phase 5**: Billing/subscriptions, SaaS admin
+**Phase 3 — Rewards, VIP, Smart Offers**
+- Configurable points/visits/spending reward programs
+- VIP tiers with non-discount recommended actions (thank-you, priority
+  booking, exclusive access — never a default discount)
+- Smart Offers matched live to customer segments, with a reason for each
+
+**Phase 4 — Analytics & advanced scoring**
+- Revenue Analytics page: revenue recovered (with a monthly trend chart),
+  revenue from offers, VIP revenue, the recovery funnel, reactivation rate,
+  retention rate, repeat rate, average customer lifetime value
+- Transparent 0-100 churn risk score (`churnRiskScore` in
+  `src/lib/segmentation.js`) with a visible breakdown — the seam a real
+  model could replace later, not a black box
+
+**Phase 5 — Team, multi-business, billing groundwork**
+- Team page: invite teammates by email with a role (Owner/Admin/Manager/
+  Staff); if they don't have an account yet, they join automatically the
+  moment they sign up with that email (`invite_member` / `claim_invites`
+  in `supabase/schema.sql`)
+- A user can belong to more than one business — a switcher appears in the
+  sidebar once they do, and Business Settings has a "New business" action
+- Business Settings page (name, type, visit label, language, currency —
+  Owner/Admin only)
+- Billing page: tracks plan + 14-day trial status. **No payment processor
+  is wired up** — this is deliberately honest rather than a fake checkout;
+  wiring a real processor (e.g. Stripe) is the next step when you're ready
+  to charge
+
+## What's next
+
+Nothing from the original build brief remains unbuilt at the data-model
+level — every table Phase 1-5 needs already exists in `supabase/schema.sql`.
+The one genuinely external dependency left is connecting a real payment
+processor for Billing.
 
 ## Tech stack
 

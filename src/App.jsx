@@ -18,6 +18,9 @@ import VIP from "./pages/vip/VIP";
 import Offers from "./pages/offers/Offers";
 import Analytics from "./pages/analytics/Analytics";
 import SegmentationSettings from "./pages/settings/SegmentationSettings";
+import Team from "./pages/settings/Team";
+import BusinessSettings from "./pages/settings/BusinessSettings";
+import Billing from "./pages/settings/Billing";
 
 function SetupNotice() {
   return (
@@ -72,6 +75,9 @@ function Gate() {
         <Route path="/offers" element={<Offers />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings/segmentation" element={<SegmentationSettings />} />
+        <Route path="/settings/team" element={<Team />} />
+        <Route path="/settings/business" element={<BusinessSettings />} />
+        <Route path="/settings/billing" element={<Billing />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppShell>
