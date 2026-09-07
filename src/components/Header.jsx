@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Menu, Search, LogOut, ChevronDown } from "lucide-react";
 import { C } from "./theme";
 import Logo from "./Logo";
@@ -8,25 +9,25 @@ import CurrencySelector from "./CurrencySelector";
 import GlobalSearch from "./GlobalSearch";
 import { useAuth } from "../context/AuthContext";
 import { useUILanguage } from "../lib/uiPrefs";
-import { getPageMeta } from "../lib/routeMeta";
+import { getPageMetaKey } from "../lib/routeMeta";
 import { supabase } from "../lib/supabaseClient";
 
-const ROLE_LABEL = { owner: "Owner", admin: "Admin", manager: "Manager", staff: "Staff" };
-
 function UserMenu() {
+  const { t } = useTranslation();
   const { user, role, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const initials = (user?.email || "?").slice(0, 2).toUpperCase();
+  const roleLabel = role ? t(`roles.${role}`) : "—";
 
   return (
     <div className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-black/5">
+      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-lg py-1 ps-1 pe-2 hover:bg-black/5">
         <div className="flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold text-white" style={{ backgroundColor: C.navy }}>
           {initials}
         </div>
-        <div className="hidden text-left md:block">
+        <div className="hidden text-start md:block">
           <div className="max-w-[140px] truncate text-xs font-semibold" style={{ color: C.ink }}>{user?.email}</div>
-          <div className="text-[10px]" style={{ color: C.slateLight }}>{ROLE_LABEL[role] || "—"}</div>
+          <div className="text-[10px]" style={{ color: C.slateLight }}>{roleLabel}</div>
         </div>
         <ChevronDown size={14} className="hidden md:block" style={{ color: C.slateLight }} />
       </button>
@@ -34,18 +35,18 @@ function UserMenu() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-1 w-52 overflow-hidden rounded-xl bg-white py-1 shadow-lg" style={{ border: `1px solid ${C.border}` }}>
+          <div className="absolute end-0 z-50 mt-1 w-52 overflow-hidden rounded-xl bg-white py-1 shadow-lg" style={{ border: `1px solid ${C.border}` }}>
             <div className="border-b px-3 py-2" style={{ borderColor: C.border }}>
               <div className="truncate text-xs font-semibold" style={{ color: C.ink }}>{user?.email}</div>
-              <div className="text-[10px]" style={{ color: C.slateLight }}>{ROLE_LABEL[role] || "—"}</div>
+              <div className="text-[10px]" style={{ color: C.slateLight }}>{roleLabel}</div>
             </div>
             <button
               onClick={signOut}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-black/5"
+              className="flex w-full items-center gap-2 px-3 py-2 text-start text-sm hover:bg-black/5"
               style={{ color: C.red }}
             >
               <LogOut size={14} />
-              Sign out
+              {t("common.signOut")}
             </button>
           </div>
         </>
@@ -55,11 +56,14 @@ function UserMenu() {
 }
 
 export default function Header({ onOpenMobileMenu }) {
+  const { t } = useTranslation();
   const { business, role, refreshBusiness } = useAuth();
   const { language, setLanguage } = useUILanguage();
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
-  const meta = getPageMeta(location.pathname);
+  const metaKey = getPageMetaKey(location.pathname);
+  const metaTitle = t(`pageMeta.${metaKey}.title`);
+  const metaSubtitle = t(`pageMeta.${metaKey}.subtitle`);
   const canEditCurrency = role === "owner" || role === "admin";
 
   useEffect(() => {
@@ -92,8 +96,8 @@ export default function Header({ onOpenMobileMenu }) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-sm font-bold md:text-base" style={{ color: C.ink }}>{meta.title}</h1>
-        {meta.subtitle && <p className="hidden truncate text-xs md:block" style={{ color: C.slateLight }}>{meta.subtitle}</p>}
+        <h1 className="truncate text-sm font-bold md:text-base" style={{ color: C.ink }}>{metaTitle}</h1>
+        {metaSubtitle && <p className="hidden truncate text-xs md:block" style={{ color: C.slateLight }}>{metaSubtitle}</p>}
       </div>
 
       <button
@@ -102,7 +106,7 @@ export default function Header({ onOpenMobileMenu }) {
         style={{ backgroundColor: C.bg, color: C.slateLight }}
       >
         <Search size={14} />
-        Search customers…
+        {t("header.searchPlaceholder")}
         <kbd className="rounded border px-1 text-[10px]" style={{ borderColor: C.border, color: C.slateLight }}>⌘K</kbd>
       </button>
       <button onClick={() => setSearchOpen(true)} className="rounded-lg p-1.5 hover:bg-black/5 sm:hidden">

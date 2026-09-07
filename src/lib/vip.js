@@ -1,3 +1,5 @@
+import i18n from "./i18n";
+
 // Which VIP tier a customer qualifies for, by spending, from that
 // business's own configurable tiers (vip_tiers, seeded by create_business()
 // with VIP/Gold/Platinum defaults). Highest-qualifying tier wins.
@@ -8,13 +10,14 @@ export function qualifyingTier(totalSpending, tiers) {
 }
 
 // Per the brief: never default VIPs to a discount. Suggest recognition
-// instead, deterministic by tier name so it's not arbitrary.
-const TIER_ACTIONS = {
-  VIP: { action: "Personal thank-you", detail: "A short personal message acknowledging their loyalty." },
-  Gold: { action: "Priority booking", detail: "Skip the queue — offer them first pick of times/slots." },
-  Platinum: { action: "Exclusive service / early access", detail: "Give them early access to new services or a free upgrade." },
-};
-
+// instead, deterministic by tier name so it's not arbitrary. Translated
+// text is keyed by the seeded default tier names (VIP/Gold/Platinum) — a
+// business that renames its tiers falls back to a generic recognition
+// action, same as before.
 export function vipAction(tierName) {
-  return TIER_ACTIONS[tierName] || { action: "Special reward", detail: "Recognize this customer with something beyond a discount." };
+  const t = i18n.t;
+  if (tierName && ["VIP", "Gold", "Platinum"].includes(tierName)) {
+    return { action: t(`vipTierActions.${tierName}.action`), detail: t(`vipTierActions.${tierName}.detail`) };
+  }
+  return { action: t("vipTierActions.default.action"), detail: t("vipTierActions.default.detail") };
 }

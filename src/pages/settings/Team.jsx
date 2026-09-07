@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Trash2, Mail } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, TextInput, Select, Modal, Field, Pill, ConfirmDelete, IconButton } from "../../components/ui";
@@ -6,9 +7,10 @@ import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabaseClient";
 
 const ROLES = ["owner", "admin", "manager", "staff"];
-const ROLE_LABEL = { owner: "Owner", admin: "Admin", manager: "Manager", staff: "Staff" };
 
 function InviteModal({ businessId, onClose, onInvited }) {
+  const { t } = useTranslation();
+  const ROLE_OPTIONS = ROLES.map((r) => ({ value: r, label: t(`roles.${r}`) }));
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("staff");
   const [busy, setBusy] = useState(false);
@@ -26,15 +28,15 @@ function InviteModal({ businessId, onClose, onInvited }) {
   }
 
   return (
-    <Modal title="Invite teammate" onClose={onClose}>
+    <Modal title={t("settings.team.inviteModal.title")} onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <Field label="Email"><TextInput type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
-        <Field label="Role"><Select options={ROLES.map((r) => ({ value: r, label: ROLE_LABEL[r] }))} value={role} onChange={(e) => setRole(e.target.value)} /></Field>
-        <p className="text-xs" style={{ color: C.slateLight }}>If they don't have an account yet, they'll join automatically as soon as they sign up with this email.</p>
+        <Field label={t("settings.team.inviteModal.emailLabel")}><TextInput type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+        <Field label={t("settings.team.inviteModal.roleLabel")}><Select options={ROLE_OPTIONS} value={role} onChange={(e) => setRole(e.target.value)} /></Field>
+        <p className="text-xs" style={{ color: C.slateLight }}>{t("settings.team.inviteModal.hint")}</p>
         {error && <p className="text-xs" style={{ color: C.red }}>{error}</p>}
         <div className="mt-2 flex justify-end gap-2">
-          <Btn variant="secondary" type="button" onClick={onClose}>Cancel</Btn>
-          <Btn type="submit" disabled={busy}>{busy ? "Inviting…" : "Send invite"}</Btn>
+          <Btn variant="secondary" type="button" onClick={onClose}>{t("common.cancel")}</Btn>
+          <Btn type="submit" disabled={busy}>{busy ? t("settings.team.inviteModal.inviting") : t("settings.team.inviteModal.sendInvite")}</Btn>
         </div>
       </form>
     </Modal>
@@ -42,6 +44,8 @@ function InviteModal({ businessId, onClose, onInvited }) {
 }
 
 export default function Team() {
+  const { t } = useTranslation();
+  const ROLE_OPTIONS = ROLES.map((r) => ({ value: r, label: t(`roles.${r}`) }));
   const { business, role: myRole, user } = useAuth();
   const [members, setMembers] = useState([]);
   const [invites, setInvites] = useState([]);
@@ -79,38 +83,38 @@ export default function Team() {
     refetch();
   }
 
-  if (!ready) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>Loading…</div>;
+  if (!ready) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>{t("settings.team.loading")}</div>;
 
   return (
     <div className="p-8">
       <div className="flex items-center justify-between">
-        <p className="text-sm" style={{ color: C.slateLight }}>Who has access to {business?.name}.</p>
-        {canManage && <Btn icon={Plus} onClick={() => setShowInvite(true)}>Invite teammate</Btn>}
+        <p className="text-sm" style={{ color: C.slateLight }}>{t("settings.team.whoHasAccess", { business: business?.name })}</p>
+        {canManage && <Btn icon={Plus} onClick={() => setShowInvite(true)}>{t("settings.team.inviteTeammate")}</Btn>}
       </div>
 
       <div className="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm" style={{ border: `1px solid ${C.border}` }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold" style={{ color: C.slateLight, borderBottom: `1px solid ${C.border}` }}>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Role</th>
+            <tr className="text-start text-xs font-semibold" style={{ color: C.slateLight, borderBottom: `1px solid ${C.border}` }}>
+              <th className="px-4 py-3">{t("settings.team.columnEmail")}</th>
+              <th className="px-4 py-3">{t("settings.team.columnRole")}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody>
             {members.map((m) => (
               <tr key={m.user_id} style={{ borderBottom: `1px solid ${C.border}` }}>
-                <td className="px-4 py-3 font-semibold" style={{ color: C.ink }}>{m.email} {m.user_id === user?.id && <span style={{ color: C.slateLight, fontWeight: 400 }}>(you)</span>}</td>
+                <td className="px-4 py-3 font-semibold" style={{ color: C.ink }}>{m.email} {m.user_id === user?.id && <span style={{ color: C.slateLight, fontWeight: 400 }}>({t("common.you")})</span>}</td>
                 <td className="px-4 py-3">
                   {canManage ? (
-                    <Select options={ROLES.map((r) => ({ value: r, label: ROLE_LABEL[r] }))} value={m.role} onChange={(e) => changeRole(m.user_id, e.target.value)} className="w-32" />
+                    <Select options={ROLE_OPTIONS} value={m.role} onChange={(e) => changeRole(m.user_id, e.target.value)} className="w-32" />
                   ) : (
-                    <Pill>{ROLE_LABEL[m.role]}</Pill>
+                    <Pill>{t(`roles.${m.role}`)}</Pill>
                   )}
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-4 py-3 text-end">
                   {canManage && m.user_id !== user?.id && (
-                    <IconButton title="Remove" danger onClick={() => setRemoving(m)}><Trash2 size={15} /></IconButton>
+                    <IconButton title={t("common.remove")} danger onClick={() => setRemoving(m)}><Trash2 size={15} /></IconButton>
                   )}
                 </td>
               </tr>
@@ -121,15 +125,15 @@ export default function Team() {
 
       {invites.length > 0 && (
         <>
-          <h2 className="mt-6 text-sm font-bold" style={{ color: C.ink }}>Pending invites</h2>
+          <h2 className="mt-6 text-sm font-bold" style={{ color: C.ink }}>{t("settings.team.pendingInvites")}</h2>
           <div className="mt-3 space-y-2">
             {invites.map((inv) => (
               <div key={inv.id} className="flex items-center justify-between rounded-xl bg-white px-4 py-3 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
                 <div className="flex items-center gap-2 text-sm" style={{ color: C.ink }}>
                   <Mail size={14} style={{ color: C.slateLight }} /> {inv.email}
-                  <Pill>{ROLE_LABEL[inv.role]}</Pill>
+                  <Pill>{t(`roles.${inv.role}`)}</Pill>
                 </div>
-                {canManage && <IconButton title="Cancel invite" danger onClick={() => cancelInvite(inv.id)}><Trash2 size={15} /></IconButton>}
+                {canManage && <IconButton title={t("common.cancel")} danger onClick={() => cancelInvite(inv.id)}><Trash2 size={15} /></IconButton>}
               </div>
             ))}
           </div>
@@ -138,7 +142,7 @@ export default function Team() {
 
       {showInvite && <InviteModal businessId={business.id} onClose={() => setShowInvite(false)} onInvited={refetch} />}
       {removing && (
-        <ConfirmDelete label={`${removing.email} from the team`} onCancel={() => setRemoving(null)} onConfirm={() => { removeMember(removing.user_id); setRemoving(null); }} />
+        <ConfirmDelete label={t("settings.team.removeConfirmLabel", { email: removing.email })} onCancel={() => setRemoving(null)} onConfirm={() => { removeMember(removing.user_id); setRemoving(null); }} />
       )}
     </div>
   );

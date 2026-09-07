@@ -1,3 +1,5 @@
+import i18n from "./i18n";
+
 // Transparent, rule-based segmentation and Next Best Action.
 //
 // The heavy lifting (evaluating each business's own configurable
@@ -6,35 +8,41 @@
 // and explains WHY a customer got that badge. Nothing here is AI; it's
 // meant to be the seam a real scoring model can be swapped in behind later
 // (see README "AI / Intelligence").
+//
+// This is a plain JS module (not a React component), so it reads the
+// i18next singleton directly rather than the useTranslation() hook.
+// Callers that memoize results derived from these functions should include
+// i18n.language in their dependency array so switching language recomputes
+// the displayed text.
 
 // Priority order when a customer matches more than one segment.
 const PRIORITY = ["lost", "inactive", "at_risk", "due", "vip", "high_value", "frequent", "new", "active"];
 
-const SEGMENT_META = {
-  new:        { label: "New",        color: "#4E86B0" },
-  active:     { label: "Active",     color: "#1E8A6E" },
-  due:        { label: "Due",        color: "#C77D14" },
-  inactive:   { label: "Inactive",   color: "#C63B3B" },
-  lost:       { label: "Lost",       color: "#7A1F1F" },
-  vip:        { label: "VIP",        color: "#B8923A" },
-  high_value: { label: "High Value", color: "#146B54" },
-  frequent:   { label: "Frequent",   color: "#0E4F5C" },
-  at_risk:    { label: "At Risk",    color: "#C77D14" },
+const SEGMENT_COLOR = {
+  new: "#4E86B0",
+  active: "#1E8A6E",
+  due: "#C77D14",
+  inactive: "#C63B3B",
+  lost: "#7A1F1F",
+  vip: "#B8923A",
+  high_value: "#146B54",
+  frequent: "#0E4F5C",
+  at_risk: "#C77D14",
 };
 
 export function primarySegment(flags) {
   if (!flags) return null;
   const key = PRIORITY.find((k) => flags[`is_${k}`]);
-  return key ? { key, ...SEGMENT_META[key] } : null;
+  return key ? { key, label: i18n.t(`segments.${key}`), color: SEGMENT_COLOR[key] } : null;
 }
 
 export function allSegments(flags) {
   if (!flags) return [];
-  return PRIORITY.filter((k) => flags[`is_${k}`]).map((key) => ({ key, ...SEGMENT_META[key] }));
+  return PRIORITY.filter((k) => flags[`is_${k}`]).map((key) => ({ key, label: i18n.t(`segments.${key}`), color: SEGMENT_COLOR[key] }));
 }
 
 export function segmentMeta(key) {
-  return key ? { key, ...SEGMENT_META[key] } : null;
+  return key ? { key, label: i18n.t(`segments.${key}`), color: SEGMENT_COLOR[key] } : null;
 }
 
 // Rule-based Next Best Action. `flags` is a row from customer_segment_flags,
@@ -43,52 +51,58 @@ export function nextBestAction(flags, { visitLabel = "visit" } = {}) {
   if (!flags) return null;
   const days = flags.days_since_last_visit;
   const cycle = flags.avg_return_cycle_days;
+  const t = i18n.t;
+  const lowerVisitLabel = visitLabel.toLowerCase();
 
   if (flags.is_lost) {
     return {
-      action: "REACTIVATE",
-      reason: `Customer has not returned in ${days} days${cycle ? `; their normal return cycle is ${Math.round(cycle)} days.` : "."}`,
+      action: t("nextBestAction.actions.reactivate"),
+      reason: cycle
+        ? t("nextBestAction.reasons.lostWithCycle", { days, cycle: Math.round(cycle) })
+        : t("nextBestAction.reasons.lostNoCycle", { days }),
       priority: "high",
     };
   }
   if (flags.is_inactive) {
     return {
-      action: "REACTIVATE",
-      reason: `Customer is ${days} days since their last ${visitLabel.toLowerCase()}${cycle ? `, ${Math.round(days - cycle)} days past their usual ${Math.round(cycle)}-day cycle.` : "."}`,
+      action: t("nextBestAction.actions.reactivate"),
+      reason: cycle
+        ? t("nextBestAction.reasons.inactiveWithCycle", { days, visitLabel: lowerVisitLabel, overdue: Math.round(days - cycle), cycle: Math.round(cycle) })
+        : t("nextBestAction.reasons.inactiveNoCycle", { days, visitLabel: lowerVisitLabel }),
       priority: "medium",
     };
   }
   if (flags.is_at_risk) {
     return {
-      action: "CONTACT CUSTOMER",
-      reason: `Return frequency is slipping — ${days} days since last ${visitLabel.toLowerCase()}, longer than their usual ${cycle ? Math.round(cycle) : "?"}-day pattern.`,
+      action: t("nextBestAction.actions.contactCustomer"),
+      reason: t("nextBestAction.reasons.atRisk", { days, visitLabel: lowerVisitLabel, cycle: cycle ? Math.round(cycle) : t("nextBestAction.reasons.atRiskUnknownCycle") }),
       priority: "medium",
     };
   }
   if (flags.is_due) {
     return {
-      action: "CONTACT CUSTOMER",
-      reason: `Likely due for another ${visitLabel.toLowerCase()} soon — normal cycle is ${cycle ? Math.round(cycle) : "?"} days, currently at ${days} days.`,
+      action: t("nextBestAction.actions.contactCustomer"),
+      reason: t("nextBestAction.reasons.due", { visitLabel: lowerVisitLabel, cycle: cycle ? Math.round(cycle) : t("nextBestAction.reasons.atRiskUnknownCycle"), days }),
       priority: "low",
     };
   }
   if (flags.is_vip) {
     return {
-      action: "VIP CARE",
-      reason: "Top-tier customer by spending/visits — prioritize service, not discounts.",
+      action: t("nextBestAction.actions.vipCare"),
+      reason: t("nextBestAction.reasons.vip"),
       priority: "low",
     };
   }
   if (flags.is_new) {
     return {
-      action: "ENCOURAGE SECOND VISIT",
-      reason: "Recently joined — a second-visit incentive converts new customers into repeat ones.",
+      action: t("nextBestAction.actions.encourageSecondVisit"),
+      reason: t("nextBestAction.reasons.new"),
       priority: "low",
     };
   }
   return {
-    action: "NO ACTION NEEDED",
-    reason: "Customer is active and on a healthy return cycle.",
+    action: t("nextBestAction.actions.noActionNeeded"),
+    reason: t("nextBestAction.reasons.default"),
     priority: "none",
   };
 }
@@ -102,6 +116,7 @@ export function churnRiskScore(flags) {
   if (!flags) return null;
   const { days_since_last_visit: days, avg_return_cycle_days: cycle } = flags;
   const overdueRatio = cycle && days != null ? days / cycle : null;
+  const t = i18n.t;
 
   // 0-60: how far past their own normal cycle they are (0 if on time/early).
   const overdueComponent = overdueRatio != null
@@ -114,11 +129,11 @@ export function churnRiskScore(flags) {
   const breakdown = [
     {
       label: overdueRatio != null
-        ? `${Math.round((overdueRatio - 1) * 100)}% past their usual ${Math.round(cycle)}-day cycle`
-        : "Not enough visit history to judge overdue-ness",
+        ? t("churnRisk.overdueWithCycle", { pct: Math.round((overdueRatio - 1) * 100), cycle: Math.round(cycle) })
+        : t("churnRisk.overdueNoHistory"),
       value: overdueComponent,
     },
-    { label: `Segment severity (${primarySegment(flags)?.label || "Active"})`, value: segmentComponent },
+    { label: t("churnRisk.segmentSeverity", { segment: primarySegment(flags)?.label || t("segments.active") }), value: segmentComponent },
   ];
   return { score, breakdown };
 }

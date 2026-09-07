@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3,
   Sliders, UsersRound, Building2, CreditCard, LogOut, X,
@@ -9,22 +10,22 @@ import { useAuth } from "../context/AuthContext";
 import Logo from "./Logo";
 
 const NAV = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/customers", label: "Customers", icon: Users },
-  { to: "/recovery", label: "Recovery", icon: Target },
-  { to: "/reactivation", label: "Reactivation", icon: RotateCcw },
-  { to: "/retention", label: "Retention", icon: ShieldCheck },
-  { to: "/rewards", label: "Rewards", icon: Gift },
-  { to: "/vip", label: "VIP", icon: Crown },
-  { to: "/offers", label: "Smart Offers", icon: Sparkles },
-  { to: "/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/", labelKey: "nav.dashboard", icon: LayoutDashboard, end: true },
+  { to: "/customers", labelKey: "nav.customers", icon: Users },
+  { to: "/recovery", labelKey: "nav.recovery", icon: Target },
+  { to: "/reactivation", labelKey: "nav.reactivation", icon: RotateCcw },
+  { to: "/retention", labelKey: "nav.retention", icon: ShieldCheck },
+  { to: "/rewards", labelKey: "nav.rewards", icon: Gift },
+  { to: "/vip", labelKey: "nav.vip", icon: Crown },
+  { to: "/offers", labelKey: "nav.smartOffers", icon: Sparkles },
+  { to: "/analytics", labelKey: "nav.analytics", icon: BarChart3 },
 ];
 
 const SETTINGS_NAV = [
-  { to: "/settings/segmentation", label: "Segmentation Rules", icon: Sliders },
-  { to: "/settings/team", label: "Team", icon: UsersRound },
-  { to: "/settings/business", label: "Business", icon: Building2 },
-  { to: "/settings/billing", label: "Billing", icon: CreditCard },
+  { to: "/settings/segmentation", labelKey: "nav.segmentationRules", icon: Sliders },
+  { to: "/settings/team", labelKey: "nav.team", icon: UsersRound },
+  { to: "/settings/business", labelKey: "nav.business", icon: Building2 },
+  { to: "/settings/billing", labelKey: "nav.billing", icon: CreditCard },
 ];
 
 function settingsLinkStyle({ isActive }) {
@@ -38,6 +39,7 @@ function settingsLinkStyle({ isActive }) {
 // toggled by the header's menu button. `open`/`onClose` are ignored at
 // lg+ since the drawer transform is overridden back to visible there.
 export default function Sidebar({ open, onClose }) {
+  const { t } = useTranslation();
   const { business, memberships, switchBusiness, signOut } = useAuth();
 
   return (
@@ -45,8 +47,8 @@ export default function Sidebar({ open, onClose }) {
       {open && <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={onClose} />}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 shrink-0 flex-col overflow-y-auto border-r transition-transform duration-200 lg:static lg:z-auto lg:translate-x-0 ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 start-0 z-50 flex h-screen w-64 shrink-0 flex-col overflow-y-auto border-e transition-transform duration-200 lg:static lg:z-auto lg:translate-x-0 lg:rtl:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
         }`}
         style={{ borderColor: C.border, backgroundColor: C.white }}
       >
@@ -92,7 +94,7 @@ export default function Sidebar({ open, onClose }) {
               })}
             >
               <n.icon size={17} />
-              {n.label}
+              {t(n.labelKey)}
             </NavLink>
           ))}
         </nav>
@@ -107,7 +109,7 @@ export default function Sidebar({ open, onClose }) {
               style={settingsLinkStyle}
             >
               <n.icon size={15} />
-              {n.label}
+              {t(n.labelKey)}
             </NavLink>
           ))}
         </div>
@@ -118,7 +120,7 @@ export default function Sidebar({ open, onClose }) {
           style={{ color: C.slate }}
         >
           <LogOut size={17} />
-          Sign out
+          {t("common.signOut")}
         </button>
       </aside>
     </>

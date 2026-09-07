@@ -23,6 +23,9 @@ import Team from "./pages/settings/Team";
 import BusinessSettings from "./pages/settings/BusinessSettings";
 import Billing from "./pages/settings/Billing";
 
+// Dev/ops configuration error, shown before any business or language
+// context exists — deliberately left untranslated (it's read by the
+// developer deploying the app, not an end-user customer).
 function SetupNotice() {
   return (
     <div className="flex h-screen w-full items-center justify-center px-4 text-center" style={{ backgroundColor: C.bg }}>

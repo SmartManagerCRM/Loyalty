@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, MessageCircle, Copy, Plus, Phone, Mail, Calendar } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, Pill, TextInput, TextArea, Field, Modal } from "../../components/ui";
@@ -11,6 +12,7 @@ import { openWhatsApp } from "../../lib/whatsapp";
 import { formatMoney } from "../../lib/currencies";
 
 function LogVisitModal({ businessId, customerId, onClose, onSaved }) {
+  const { t } = useTranslation();
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [amount, setAmount] = useState("");
   const [service, setService] = useState("");
@@ -28,14 +30,14 @@ function LogVisitModal({ businessId, customerId, onClose, onSaved }) {
   }
 
   return (
-    <Modal title="Log a visit" onClose={onClose}>
+    <Modal title={t("customers.profile.logVisitModal.title")} onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <Field label="Date"><TextInput type="date" required value={date} onChange={(e) => setDate(e.target.value)} /></Field>
-        <Field label="Amount"><TextInput type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} /></Field>
-        <Field label="Service"><TextInput value={service} onChange={(e) => setService(e.target.value)} /></Field>
+        <Field label={t("customers.profile.logVisitModal.dateLabel")}><TextInput type="date" required value={date} onChange={(e) => setDate(e.target.value)} /></Field>
+        <Field label={t("customers.profile.logVisitModal.amountLabel")}><TextInput type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} /></Field>
+        <Field label={t("customers.profile.logVisitModal.serviceLabel")}><TextInput value={service} onChange={(e) => setService(e.target.value)} /></Field>
         <div className="mt-2 flex justify-end gap-2">
-          <Btn variant="secondary" type="button" onClick={onClose}>Cancel</Btn>
-          <Btn type="submit" disabled={busy}>{busy ? "Saving…" : "Save"}</Btn>
+          <Btn variant="secondary" type="button" onClick={onClose}>{t("common.cancel")}</Btn>
+          <Btn type="submit" disabled={busy}>{busy ? t("common.saving") : t("common.save")}</Btn>
         </div>
       </form>
     </Modal>
@@ -43,6 +45,7 @@ function LogVisitModal({ businessId, customerId, onClose, onSaved }) {
 }
 
 export default function CustomerProfile() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { business } = useAuth();
@@ -76,8 +79,8 @@ export default function CustomerProfile() {
     }));
   }, [flags, customer, business]);
 
-  if (!ready) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>Loading…</div>;
-  if (!customer) return <div className="p-8 text-sm" style={{ color: C.red }}>Customer not found.</div>;
+  if (!ready) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>{t("common.loading")}</div>;
+  if (!customer) return <div className="p-8 text-sm" style={{ color: C.red }}>{t("customers.profile.notFound")}</div>;
 
   const seg = flags ? primarySegment(flags) : null;
   const nba = flags ? nextBestAction(flags, { visitLabel: business?.visit_label }) : null;
@@ -86,7 +89,7 @@ export default function CustomerProfile() {
   return (
     <div className="p-8">
       <button onClick={() => navigate("/customers")} className="mb-4 flex items-center gap-1 text-xs font-semibold" style={{ color: C.slate }}>
-        <ArrowLeft size={14} /> Back to Customers
+        <ArrowLeft size={14} className="rtl:rotate-180" /> {t("customers.profile.backToCustomers")}
       </button>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -99,37 +102,37 @@ export default function CustomerProfile() {
             <div className="mt-3 space-y-1.5 text-xs" style={{ color: C.slate }}>
               {customer.phone && <div className="flex items-center gap-1.5"><Phone size={13} />{customer.phone}</div>}
               {customer.email && <div className="flex items-center gap-1.5"><Mail size={13} />{customer.email}</div>}
-              <div className="flex items-center gap-1.5"><Calendar size={13} />Customer since {customer.customer_since}</div>
+              <div className="flex items-center gap-1.5"><Calendar size={13} />{t("customers.profile.customerSince", { date: customer.customer_since })}</div>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3 text-center">
               <div className="rounded-xl p-2.5" style={{ backgroundColor: C.bg }}>
                 <div className="text-lg font-bold" style={{ color: C.ink }}>{flags?.total_visits ?? 0}</div>
-                <div className="text-[10px]" style={{ color: C.slateLight }}>Total Visits</div>
+                <div className="text-[10px]" style={{ color: C.slateLight }}>{t("customers.profile.totalVisits")}</div>
               </div>
               <div className="rounded-xl p-2.5" style={{ backgroundColor: C.bg }}>
                 <div className="text-lg font-bold" style={{ color: C.ink }}>{formatMoney(flags?.total_spending, business?.currency)}</div>
-                <div className="text-[10px]" style={{ color: C.slateLight }}>Total Spending</div>
+                <div className="text-[10px]" style={{ color: C.slateLight }}>{t("customers.profile.totalSpending")}</div>
               </div>
               <div className="rounded-xl p-2.5" style={{ backgroundColor: C.bg }}>
                 <div className="text-lg font-bold" style={{ color: C.ink }}>{flags?.days_since_last_visit ?? "—"}</div>
-                <div className="text-[10px]" style={{ color: C.slateLight }}>Days Since Last Visit</div>
+                <div className="text-[10px]" style={{ color: C.slateLight }}>{t("customers.profile.daysSinceLastVisit")}</div>
               </div>
               <div className="rounded-xl p-2.5" style={{ backgroundColor: C.bg }}>
                 <div className="text-lg font-bold" style={{ color: C.ink }}>{flags?.avg_return_cycle_days ? Math.round(flags.avg_return_cycle_days) : "—"}</div>
-                <div className="text-[10px]" style={{ color: C.slateLight }}>Avg Return Cycle (days)</div>
+                <div className="text-[10px]" style={{ color: C.slateLight }}>{t("customers.profile.avgReturnCycle")}</div>
               </div>
             </div>
 
             <Btn className="mt-4 w-full justify-center" variant="secondary" icon={Plus} onClick={() => setShowLogVisit(true)}>
-              Log {business?.visit_label || "Visit"}
+              {t("customers.profile.logVisit", { visitLabel: business?.visit_label || "Visit" })}
             </Btn>
           </div>
 
           <div className="mt-5 rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
-            <h2 className="mb-3 text-xs font-bold uppercase tracking-wide" style={{ color: C.slateLight }}>Timeline</h2>
+            <h2 className="mb-3 text-xs font-bold uppercase tracking-wide" style={{ color: C.slateLight }}>{t("customers.profile.timeline")}</h2>
             {visits.length === 0 ? (
-              <p className="text-xs" style={{ color: C.slateLight }}>No visits logged yet.</p>
+              <p className="text-xs" style={{ color: C.slateLight }}>{t("customers.profile.noVisitsYet")}</p>
             ) : (
               <ul className="space-y-2">
                 {visits.map((v) => (
@@ -147,12 +150,12 @@ export default function CustomerProfile() {
           <div className="rounded-2xl p-5 shadow-sm" style={{ border: `1px solid ${C.border}`, backgroundColor: C.navy }}>
             <div className="flex items-start justify-between">
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: C.greenTint }}>Next Best Action</div>
+                <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: C.greenTint }}>{t("customers.profile.nextBestAction")}</div>
                 <div className="mt-1 text-xl font-bold text-white">{nba?.action || "—"}</div>
               </div>
               {risk && (
-                <div className="text-right">
-                  <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: C.greenTint }}>Churn Risk</div>
+                <div className="text-end">
+                  <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: C.greenTint }}>{t("customers.profile.churnRisk")}</div>
                   <div className="text-xl font-bold text-white">{risk.score}<span className="text-xs font-normal">/100</span></div>
                 </div>
               )}
@@ -171,13 +174,13 @@ export default function CustomerProfile() {
           </div>
 
           <div className="mt-5 rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
-            <h2 className="mb-3 text-sm font-bold" style={{ color: C.ink }}>Suggested Message</h2>
+            <h2 className="mb-3 text-sm font-bold" style={{ color: C.ink }}>{t("customers.profile.suggestedMessage")}</h2>
             <TextArea value={message} onChange={(e) => setMessage(e.target.value)} className="min-h-[120px]" />
             <div className="mt-3 flex flex-wrap justify-end gap-2">
-              <Btn variant="secondary" icon={Copy} onClick={() => navigator.clipboard.writeText(message)}>Copy Message</Btn>
-              <Btn icon={MessageCircle} disabled={!customer.phone} onClick={() => openWhatsApp(customer.phone, message)}>Open WhatsApp</Btn>
+              <Btn variant="secondary" icon={Copy} onClick={() => navigator.clipboard.writeText(message)}>{t("common.copyMessage")}</Btn>
+              <Btn icon={MessageCircle} disabled={!customer.phone} onClick={() => openWhatsApp(customer.phone, message)}>{t("common.openWhatsApp")}</Btn>
             </div>
-            {!customer.phone && <p className="mt-2 text-xs" style={{ color: C.slateLight }}>Add a phone number to this customer to enable WhatsApp.</p>}
+            {!customer.phone && <p className="mt-2 text-xs" style={{ color: C.slateLight }}>{t("customers.profile.addPhoneHint")}</p>}
           </div>
         </div>
       </div>

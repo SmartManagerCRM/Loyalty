@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Pencil, Trash2, MessageCircle, Check } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, TextInput, TextArea, Select, Modal, Field, Pill, ConfirmDelete, EmptyState, IconButton } from "../../components/ui";
@@ -11,7 +12,6 @@ import { openWhatsApp } from "../../lib/whatsapp";
 import { supabase } from "../../lib/supabaseClient";
 
 const SEGMENTS = ["new", "active", "due", "inactive", "lost", "vip", "high_value", "frequent", "at_risk"];
-const SEGMENT_LABEL = { new: "New", active: "Active", due: "Due", inactive: "Inactive", lost: "Lost", vip: "VIP", high_value: "High Value", frequent: "Frequent", at_risk: "At Risk" };
 const SEGMENT_ACTION = { inactive: "REACTIVATE", lost: "REACTIVATE", due: "CONTACT CUSTOMER", at_risk: "CONTACT CUSTOMER", vip: "VIP CARE", new: "ENCOURAGE SECOND VISIT", active: "CONTACT CUSTOMER", high_value: "VIP CARE", frequent: "ENCOURAGE SECOND VISIT" };
 
 function emptyOffer() {
@@ -29,6 +29,7 @@ function eventTypeFor(segment) {
 }
 
 function ConvertOfferModal({ customer, offer, businessId, onClose, onDone }) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -50,33 +51,34 @@ function ConvertOfferModal({ customer, offer, businessId, onClose, onDone }) {
   }
 
   return (
-    <Modal title="Mark offer as converted" onClose={onClose}>
-      <p className="text-sm" style={{ color: C.slate }}>Record the revenue from this offer — it counts toward Revenue Generated from Offers on Analytics.</p>
-      <Field label="Revenue amount">
+    <Modal title={t("offers.convertModal.title")} onClose={onClose}>
+      <p className="text-sm" style={{ color: C.slate }}>{t("offers.convertModal.body")}</p>
+      <Field label={t("offers.convertModal.amountLabel")}>
         <TextInput type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-2" />
       </Field>
       <div className="mt-4 flex justify-end gap-2">
-        <Btn variant="secondary" onClick={onClose}>Cancel</Btn>
-        <Btn onClick={handleConfirm} disabled={busy}>{busy ? "Saving…" : "Confirm"}</Btn>
+        <Btn variant="secondary" onClick={onClose}>{t("common.cancel")}</Btn>
+        <Btn onClick={handleConfirm} disabled={busy}>{busy ? t("common.saving") : t("common.confirm")}</Btn>
       </div>
     </Modal>
   );
 }
 
 function OfferForm({ initial, onSave, onCancel }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState(initial);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="flex flex-col gap-3">
-      <Field label="Offer name"><TextInput required value={form.name} onChange={set("name")} /></Field>
-      <Field label="Triggers for segment">
-        <Select options={SEGMENTS.map((s) => ({ value: s, label: SEGMENT_LABEL[s] }))} value={form.trigger_segment} onChange={set("trigger_segment")} />
+      <Field label={t("offers.form.offerNameLabel")}><TextInput required value={form.name} onChange={set("name")} /></Field>
+      <Field label={t("offers.form.triggersForSegmentLabel")}>
+        <Select options={SEGMENTS.map((s) => ({ value: s, label: t(`segments.${s}`) }))} value={form.trigger_segment} onChange={set("trigger_segment")} />
       </Field>
-      <Field label="Offer type"><TextInput value={form.offer_type} onChange={set("offer_type")} placeholder="e.g. discount, exclusive_benefit, free_upgrade" /></Field>
-      <Field label="Description (what the customer gets)"><TextArea required value={form.description} onChange={set("description")} /></Field>
+      <Field label={t("offers.form.offerTypeLabel")}><TextInput value={form.offer_type} onChange={set("offer_type")} placeholder={t("offers.form.offerTypePlaceholder")} /></Field>
+      <Field label={t("offers.form.descriptionLabel")}><TextArea required value={form.description} onChange={set("description")} /></Field>
       <div className="mt-2 flex justify-end gap-2">
-        <Btn variant="secondary" type="button" onClick={onCancel}>Cancel</Btn>
-        <Btn type="submit">Save</Btn>
+        <Btn variant="secondary" type="button" onClick={onCancel}>{t("common.cancel")}</Btn>
+        <Btn type="submit">{t("common.save")}</Btn>
       </div>
     </form>
   );
@@ -96,6 +98,7 @@ function useRecommendationLog(businessId) {
 }
 
 export default function Offers() {
+  const { t } = useTranslation();
   const { business } = useAuth();
   const { rows: offers, ready: offersReady, insertRow, updateRow, deleteRow } = useBusinessTable("offers", business?.id);
   const { rows: customers, ready: customersReady } = useCustomerOverview(business?.id);
@@ -131,16 +134,16 @@ export default function Offers() {
     refetchLog();
   }
 
-  if (!offersReady || !customersReady) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>Loading…</div>;
+  if (!offersReady || !customersReady) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>{t("offers.loading")}</div>;
 
   return (
     <div className="p-8">
       <div className="flex justify-end">
-        <Btn icon={Plus} onClick={() => setEditing(emptyOffer())}>Add offer</Btn>
+        <Btn icon={Plus} onClick={() => setEditing(emptyOffer())}>{t("offers.addOffer")}</Btn>
       </div>
 
       {offers.length === 0 ? (
-        <div className="mt-6"><EmptyState title="No offers yet" subtitle="Create an offer and pick which customer segment it targets — recommendations appear below automatically." /></div>
+        <div className="mt-6"><EmptyState title={t("offers.emptyTitle")} subtitle={t("offers.emptySubtitle")} /></div>
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
           {offers.map((o) => (
@@ -148,12 +151,12 @@ export default function Offers() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-sm font-bold" style={{ color: C.ink }}>{o.name}</div>
-                  <div className="mt-1 text-xs" style={{ color: C.slateLight }}>Triggers for: {SEGMENT_LABEL[o.trigger_segment]} · {o.description}</div>
+                  <div className="mt-1 text-xs" style={{ color: C.slateLight }}>{t("offers.triggersFor", { segment: t(`segments.${o.trigger_segment}`), description: o.description })}</div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Pill color={o.active ? C.green : C.slateLight} bg={o.active ? C.greenTint : C.bg}>{o.active ? "Active" : "Inactive"}</Pill>
-                  <IconButton title="Edit" onClick={() => setEditing(o)}><Pencil size={15} /></IconButton>
-                  <IconButton title="Delete" danger onClick={() => setDeleting(o)}><Trash2 size={15} /></IconButton>
+                  <Pill color={o.active ? C.green : C.slateLight} bg={o.active ? C.greenTint : C.bg}>{o.active ? t("common.active") : t("common.inactive")}</Pill>
+                  <IconButton title={t("common.edit")} onClick={() => setEditing(o)}><Pencil size={15} /></IconButton>
+                  <IconButton title={t("common.delete")} danger onClick={() => setDeleting(o)}><Trash2 size={15} /></IconButton>
                 </div>
               </div>
             </div>
@@ -161,9 +164,9 @@ export default function Offers() {
         </div>
       )}
 
-      <h2 className="mt-8 text-sm font-bold" style={{ color: C.ink }}>Recommended right now</h2>
+      <h2 className="mt-8 text-sm font-bold" style={{ color: C.ink }}>{t("offers.recommendedNow")}</h2>
       {recommendations.length === 0 ? (
-        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>No customers currently match an active offer's trigger segment.</p>
+        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>{t("offers.noRecommendations")}</p>
       ) : (
         <div className="mt-3 space-y-3">
           {recommendations.map(({ customer, offer, nba }) => {
@@ -177,9 +180,9 @@ export default function Offers() {
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold" style={{ color: C.ink }}>{customer.name}</span>
                       <span className="text-xs" style={{ color: C.slateLight }}>→ {offer.name}</span>
-                      {alreadyConverted && <Pill color={C.green} bg={C.greenTint}>Converted</Pill>}
+                      {alreadyConverted && <Pill color={C.green} bg={C.greenTint}>{t("offers.converted")}</Pill>}
                     </div>
-                    <div className="mt-1 text-xs" style={{ color: C.slate }}>Recommended because: {nba?.reason}</div>
+                    <div className="mt-1 text-xs" style={{ color: C.slate }}>{t("offers.recommendedBecause", { reason: nba?.reason })}</div>
                   </div>
                   <div className="flex gap-2">
                     <Btn
@@ -188,10 +191,10 @@ export default function Offers() {
                       disabled={!customer.phone}
                       onClick={() => handleSend(customer, offer)}
                     >
-                      {alreadySent ? "Sent — send again" : "Open WhatsApp"}
+                      {alreadySent ? t("offers.sentSendAgain") : t("common.openWhatsApp")}
                     </Btn>
                     {alreadySent && !alreadyConverted && (
-                      <Btn variant="secondary" onClick={() => setConverting({ customer, offer })}>Mark Converted</Btn>
+                      <Btn variant="secondary" onClick={() => setConverting({ customer, offer })}>{t("offers.markConverted")}</Btn>
                     )}
                   </div>
                 </div>
@@ -202,7 +205,7 @@ export default function Offers() {
       )}
 
       {editing && (
-        <Modal title={editing.id ? "Edit offer" : "Add offer"} onClose={() => setEditing(null)} wide>
+        <Modal title={editing.id ? t("offers.editOffer") : t("offers.addOffer")} onClose={() => setEditing(null)} wide>
           <OfferForm
             initial={editing}
             onCancel={() => setEditing(null)}

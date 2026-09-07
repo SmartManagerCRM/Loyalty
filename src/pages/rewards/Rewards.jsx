@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Pencil, Trash2, Gift } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, TextInput, Select, Modal, Field, Pill, ConfirmDelete, EmptyState, IconButton } from "../../components/ui";
@@ -9,13 +10,15 @@ import { earnedPoints, pointsBalance, canRedeem, milestoneProgress } from "../..
 import { supabase } from "../../lib/supabaseClient";
 import { formatMoney } from "../../lib/currencies";
 
-const TYPES = [{ value: "points", label: "Points" }, { value: "visits", label: "Visits" }, { value: "spending", label: "Spending" }];
+const TYPE_KEYS = ["points", "visits", "spending"];
 
 function emptyProgram() {
   return { name: "", type: "points", active: true, config: { earn_amount: 10, earn_points: 1, redeem_points: 100, redeem_value: 20 } };
 }
 
 function ProgramForm({ initial, onSave, onCancel }) {
+  const { t } = useTranslation();
+  const TYPES = TYPE_KEYS.map((value) => ({ value, label: t(`rewards.types.${value}`) }));
   const [form, setForm] = useState(initial);
   const setConfig = (k) => (e) => setForm((f) => ({ ...f, config: { ...f.config, [k]: e.target.value === "" ? "" : Number(e.target.value) } }));
 
@@ -30,33 +33,33 @@ function ProgramForm({ initial, onSave, onCancel }) {
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="flex flex-col gap-3">
-      <Field label="Program name"><TextInput required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} /></Field>
-      <Field label="Type"><Select options={TYPES} value={form.type} onChange={(e) => setType(e.target.value)} /></Field>
+      <Field label={t("rewards.form.programNameLabel")}><TextInput required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} /></Field>
+      <Field label={t("rewards.form.typeLabel")}><Select options={TYPES} value={form.type} onChange={(e) => setType(e.target.value)} /></Field>
 
       {form.type === "points" && (
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Spend to earn"><TextInput type="number" value={form.config.earn_amount ?? ""} onChange={setConfig("earn_amount")} /></Field>
-          <Field label="Points earned"><TextInput type="number" value={form.config.earn_points ?? ""} onChange={setConfig("earn_points")} /></Field>
-          <Field label="Points to redeem"><TextInput type="number" value={form.config.redeem_points ?? ""} onChange={setConfig("redeem_points")} /></Field>
-          <Field label="Reward value"><TextInput type="number" value={form.config.redeem_value ?? ""} onChange={setConfig("redeem_value")} /></Field>
+          <Field label={t("rewards.form.spendToEarnLabel")}><TextInput type="number" value={form.config.earn_amount ?? ""} onChange={setConfig("earn_amount")} /></Field>
+          <Field label={t("rewards.form.pointsEarnedLabel")}><TextInput type="number" value={form.config.earn_points ?? ""} onChange={setConfig("earn_points")} /></Field>
+          <Field label={t("rewards.form.pointsToRedeemLabel")}><TextInput type="number" value={form.config.redeem_points ?? ""} onChange={setConfig("redeem_points")} /></Field>
+          <Field label={t("rewards.form.rewardValueLabel")}><TextInput type="number" value={form.config.redeem_value ?? ""} onChange={setConfig("redeem_value")} /></Field>
         </div>
       )}
       {form.type === "visits" && (
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Visits required"><TextInput type="number" value={form.config.visits_required ?? ""} onChange={setConfig("visits_required")} /></Field>
-          <Field label="Reward"><TextInput value={form.config.reward_text ?? ""} onChange={(e) => setForm((f) => ({ ...f, config: { ...f.config, reward_text: e.target.value } }))} /></Field>
+          <Field label={t("rewards.form.visitsRequiredLabel")}><TextInput type="number" value={form.config.visits_required ?? ""} onChange={setConfig("visits_required")} /></Field>
+          <Field label={t("rewards.form.rewardLabel")}><TextInput value={form.config.reward_text ?? ""} onChange={(e) => setForm((f) => ({ ...f, config: { ...f.config, reward_text: e.target.value } }))} /></Field>
         </div>
       )}
       {form.type === "spending" && (
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Spending threshold"><TextInput type="number" value={form.config.spend_threshold ?? ""} onChange={setConfig("spend_threshold")} /></Field>
-          <Field label="Reward"><TextInput value={form.config.reward_text ?? ""} onChange={(e) => setForm((f) => ({ ...f, config: { ...f.config, reward_text: e.target.value } }))} /></Field>
+          <Field label={t("rewards.form.spendingThresholdLabel")}><TextInput type="number" value={form.config.spend_threshold ?? ""} onChange={setConfig("spend_threshold")} /></Field>
+          <Field label={t("rewards.form.rewardLabel")}><TextInput value={form.config.reward_text ?? ""} onChange={(e) => setForm((f) => ({ ...f, config: { ...f.config, reward_text: e.target.value } }))} /></Field>
         </div>
       )}
 
       <div className="mt-2 flex justify-end gap-2">
-        <Btn variant="secondary" type="button" onClick={onCancel}>Cancel</Btn>
-        <Btn type="submit">Save</Btn>
+        <Btn variant="secondary" type="button" onClick={onCancel}>{t("common.cancel")}</Btn>
+        <Btn type="submit">{t("common.save")}</Btn>
       </div>
     </form>
   );
@@ -80,6 +83,7 @@ function useCustomerRewards(businessId) {
 }
 
 export default function Rewards() {
+  const { t } = useTranslation();
   const { business } = useAuth();
   const { rows: programs, ready: programsReady, insertRow, updateRow, deleteRow } = useBusinessTable("reward_programs", business?.id);
   const { rows: customers, ready: customersReady } = useCustomerOverview(business?.id);
@@ -117,11 +121,11 @@ export default function Rewards() {
   return (
     <div className="p-8">
       <div className="flex justify-end">
-        <Btn icon={Plus} onClick={() => setEditing(emptyProgram())}>Add program</Btn>
+        <Btn icon={Plus} onClick={() => setEditing(emptyProgram())}>{t("rewards.addProgram")}</Btn>
       </div>
 
       {!programsReady ? null : programs.length === 0 ? (
-        <div className="mt-6"><EmptyState title="No reward programs yet" subtitle="Create a points, visits, or spending program to start rewarding loyal customers." /></div>
+        <div className="mt-6"><EmptyState title={t("rewards.emptyTitle")} subtitle={t("rewards.emptySubtitle")} /></div>
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
           {programs.map((p) => (
@@ -130,15 +134,15 @@ export default function Rewards() {
                 <div>
                   <div className="text-sm font-bold" style={{ color: C.ink }}>{p.name}</div>
                   <div className="mt-1 text-xs" style={{ color: C.slateLight }}>
-                    {p.type === "points" && `Every ${formatMoney(p.config.earn_amount, business?.currency)} = ${p.config.earn_points} pt · ${p.config.redeem_points} pts = ${formatMoney(p.config.redeem_value, business?.currency)}`}
-                    {p.type === "visits" && `${p.config.visits_required} visits = ${p.config.reward_text}`}
-                    {p.type === "spending" && `${formatMoney(p.config.spend_threshold, business?.currency)} spent = ${p.config.reward_text}`}
+                    {p.type === "points" && t("rewards.pointsSummary", { amount: formatMoney(p.config.earn_amount, business?.currency), points: p.config.earn_points, redeemPoints: p.config.redeem_points, redeemValue: formatMoney(p.config.redeem_value, business?.currency) })}
+                    {p.type === "visits" && t("rewards.visitsSummary", { count: p.config.visits_required, reward: p.config.reward_text })}
+                    {p.type === "spending" && t("rewards.spendingSummary", { amount: formatMoney(p.config.spend_threshold, business?.currency), reward: p.config.reward_text })}
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Pill color={p.active ? C.green : C.slateLight} bg={p.active ? C.greenTint : C.bg}>{p.active ? "Active" : "Inactive"}</Pill>
-                  <IconButton title="Edit" onClick={() => setEditing(p)}><Pencil size={15} /></IconButton>
-                  <IconButton title="Delete" danger onClick={() => setDeleting(p)}><Trash2 size={15} /></IconButton>
+                  <Pill color={p.active ? C.green : C.slateLight} bg={p.active ? C.greenTint : C.bg}>{p.active ? t("common.active") : t("common.inactive")}</Pill>
+                  <IconButton title={t("common.edit")} onClick={() => setEditing(p)}><Pencil size={15} /></IconButton>
+                  <IconButton title={t("common.delete")} danger onClick={() => setDeleting(p)}><Trash2 size={15} /></IconButton>
                 </div>
               </div>
             </div>
@@ -146,20 +150,20 @@ export default function Rewards() {
         </div>
       )}
 
-      <h2 className="mt-8 text-sm font-bold" style={{ color: C.ink }}>Customer Rewards</h2>
+      <h2 className="mt-8 text-sm font-bold" style={{ color: C.ink }}>{t("rewards.customerRewards")}</h2>
       {!customersReady ? (
-        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>Loading…</p>
+        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>{t("rewards.loading")}</p>
       ) : customers.length === 0 ? (
-        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>No customers yet.</p>
+        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>{t("rewards.noCustomersYet")}</p>
       ) : (
         <div className="mt-3 overflow-x-auto rounded-2xl bg-white shadow-sm" style={{ border: `1px solid ${C.border}` }}>
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs font-semibold" style={{ color: C.slateLight, borderBottom: `1px solid ${C.border}` }}>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Points Balance</th>
-                <th className="px-4 py-3">Redeemed</th>
-                <th className="px-4 py-3">Available Rewards</th>
+              <tr className="text-start text-xs font-semibold" style={{ color: C.slateLight, borderBottom: `1px solid ${C.border}` }}>
+                <th className="px-4 py-3">{t("rewards.columnCustomer")}</th>
+                <th className="px-4 py-3">{t("rewards.columnPointsBalance")}</th>
+                <th className="px-4 py-3">{t("rewards.columnRedeemed")}</th>
+                <th className="px-4 py-3">{t("rewards.columnAvailableRewards")}</th>
               </tr>
             </thead>
             <tbody>
@@ -177,12 +181,12 @@ export default function Rewards() {
                       <div className="flex flex-wrap gap-2">
                         {canRedeemPts && (
                           <Btn variant="secondary" icon={Gift} onClick={() => handleRedeemPoints(c)}>
-                            Redeem {formatMoney(activePointsProgram.config.redeem_value, business?.currency)}
+                            {t("rewards.redeem", { value: formatMoney(activePointsProgram.config.redeem_value, business?.currency) })}
                           </Btn>
                         )}
                         {metMilestones.map((p) => (
                           <Btn key={p.id} variant="secondary" icon={Gift} onClick={() => handleRedeemMilestone(c, p)}>
-                            Redeem: {p.config.reward_text || p.name}
+                            {t("rewards.redeemNamed", { name: p.config.reward_text || p.name })}
                           </Btn>
                         ))}
                         {!canRedeemPts && metMilestones.length === 0 && <span className="text-xs" style={{ color: C.slateLight }}>—</span>}
@@ -197,7 +201,7 @@ export default function Rewards() {
       )}
 
       {editing && (
-        <Modal title={editing.id ? "Edit program" : "Add program"} onClose={() => setEditing(null)} wide>
+        <Modal title={editing.id ? t("rewards.editProgram") : t("rewards.addProgram")} onClose={() => setEditing(null)} wide>
           <ProgramForm
             initial={editing}
             onCancel={() => setEditing(null)}

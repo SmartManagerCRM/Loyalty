@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Search, X, User } from "lucide-react";
 import { C } from "./theme";
 import { supabase } from "../lib/supabaseClient";
@@ -10,6 +11,7 @@ import { primarySegment } from "../lib/segmentation";
 // thousands of customers and shipping all of them to the browser just to
 // search is exactly what "performance" in the product brief warns against.
 export default function GlobalSearch({ businessId, open, onClose }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -61,7 +63,7 @@ export default function GlobalSearch({ businessId, open, onClose }) {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search customers by name, phone, or email…"
+            placeholder={t("globalSearch.placeholder")}
             className="flex-1 text-sm outline-none"
           />
           <button onClick={onClose} className="rounded-lg p-1 hover:bg-black/5">
@@ -70,9 +72,9 @@ export default function GlobalSearch({ businessId, open, onClose }) {
         </div>
 
         <div className="max-h-80 overflow-y-auto">
-          {loading && <p className="px-4 py-6 text-center text-xs" style={{ color: C.slateLight }}>Searching…</p>}
+          {loading && <p className="px-4 py-6 text-center text-xs" style={{ color: C.slateLight }}>{t("globalSearch.searching")}</p>}
           {!loading && query.trim() && results.length === 0 && (
-            <p className="px-4 py-6 text-center text-xs" style={{ color: C.slateLight }}>No customers match "{query}".</p>
+            <p className="px-4 py-6 text-center text-xs" style={{ color: C.slateLight }}>{t("globalSearch.noResults", { query })}</p>
           )}
           {!loading && results.map((r) => {
             const seg = primarySegment(r);
@@ -80,7 +82,7 @@ export default function GlobalSearch({ businessId, open, onClose }) {
               <button
                 key={r.customer_id}
                 onClick={() => { navigate(`/customers/${r.customer_id}`); onClose(); }}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-black/5"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-start hover:bg-black/5"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: C.bg }}>
                   <User size={14} style={{ color: C.slateLight }} />
@@ -98,7 +100,7 @@ export default function GlobalSearch({ businessId, open, onClose }) {
             );
           })}
           {!query.trim() && (
-            <p className="px-4 py-6 text-center text-xs" style={{ color: C.slateLight }}>Start typing to search your customers.</p>
+            <p className="px-4 py-6 text-center text-xs" style={{ color: C.slateLight }}>{t("globalSearch.startTyping")}</p>
           )}
         </div>
       </div>

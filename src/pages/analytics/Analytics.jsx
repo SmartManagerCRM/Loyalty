@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { DollarSign, Users, RotateCcw, Repeat, Gift, Crown, Target, ShieldCheck, Wallet } from "lucide-react";
 import { C } from "../../components/theme";
@@ -21,6 +22,7 @@ function monthLabel(key) {
 }
 
 export default function Analytics() {
+  const { t } = useTranslation();
   const { business } = useAuth();
   const { rows: customers, ready: customersReady } = useCustomerOverview(business?.id);
   const { rows: recoveryLeads, ready: recoveryReady } = useBusinessTable("recovery_opportunities", business?.id);
@@ -76,30 +78,30 @@ export default function Analytics() {
     };
   }, [ready, customers, recoveryLeads, redemptions, revenueEvents]);
 
-  if (!ready || !stats) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>Loading analytics…</div>;
+  if (!ready || !stats) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>{t("analytics.loading")}</div>;
 
   return (
     <div className="p-8">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        <StatCard label="Revenue Recovered" value={formatMoney(stats.recoveredRevenue, business?.currency)} icon={DollarSign} accent={C.green} />
-        <StatCard label="Revenue from Offers" value={formatMoney(stats.revenueFromOffers, business?.currency)} icon={Gift} accent={C.teal} />
-        <StatCard label="VIP Revenue" value={formatMoney(stats.vipRevenue, business?.currency)} icon={Crown} accent={C.gold} />
-        <StatCard label="Rewards Redeemed" value={stats.redemptionsCount} icon={Wallet} />
-        <StatCard label="Recovery Opportunities (open)" value={stats.openLeads} icon={Target} accent={C.amber} />
-        <StatCard label="Leads Contacted" value={stats.contactedLeads} icon={Users} />
-        <StatCard label="Leads Converted" value={stats.convertedLeads} icon={RotateCcw} accent={C.green} />
-        <StatCard label="Reactivation Rate" value={`${stats.reactivationRate.toFixed(1)}%`} icon={RotateCcw} accent={C.teal} sub="Reactivated ÷ (inactive+lost + reactivated)" />
-        <StatCard label="Repeat Customer Rate" value={`${stats.repeatRate.toFixed(1)}%`} icon={Repeat} />
-        <StatCard label="Retention Rate" value={`${stats.retentionRate.toFixed(1)}%`} icon={ShieldCheck} sub="(total − lost) ÷ total" />
-        <StatCard label="Avg Customer Lifetime Value" value={formatMoney(stats.avgLTV, business?.currency)} icon={DollarSign} />
-        <StatCard label="Total Customers" value={stats.total} icon={Users} />
+        <StatCard label={t("analytics.stat.revenueRecovered")} value={formatMoney(stats.recoveredRevenue, business?.currency)} icon={DollarSign} accent={C.green} />
+        <StatCard label={t("analytics.stat.revenueFromOffers")} value={formatMoney(stats.revenueFromOffers, business?.currency)} icon={Gift} accent={C.teal} />
+        <StatCard label={t("analytics.stat.vipRevenue")} value={formatMoney(stats.vipRevenue, business?.currency)} icon={Crown} accent={C.gold} />
+        <StatCard label={t("analytics.stat.rewardsRedeemed")} value={stats.redemptionsCount} icon={Wallet} />
+        <StatCard label={t("analytics.stat.openRecoveryOpportunities")} value={stats.openLeads} icon={Target} accent={C.amber} />
+        <StatCard label={t("analytics.stat.leadsContacted")} value={stats.contactedLeads} icon={Users} />
+        <StatCard label={t("analytics.stat.leadsConverted")} value={stats.convertedLeads} icon={RotateCcw} accent={C.green} />
+        <StatCard label={t("analytics.stat.reactivationRate")} value={`${stats.reactivationRate.toFixed(1)}%`} icon={RotateCcw} accent={C.teal} sub={t("analytics.stat.reactivationRateSub")} />
+        <StatCard label={t("analytics.stat.repeatCustomerRate")} value={`${stats.repeatRate.toFixed(1)}%`} icon={Repeat} />
+        <StatCard label={t("analytics.stat.retentionRate")} value={`${stats.retentionRate.toFixed(1)}%`} icon={ShieldCheck} sub={t("analytics.stat.retentionRateSub")} />
+        <StatCard label={t("analytics.stat.avgLifetimeValue")} value={formatMoney(stats.avgLTV, business?.currency)} icon={DollarSign} />
+        <StatCard label={t("analytics.stat.totalCustomers")} value={stats.total} icon={Users} />
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
-          <h2 className="text-sm font-bold" style={{ color: C.ink }}>Revenue Recovered by Month</h2>
+          <h2 className="text-sm font-bold" style={{ color: C.ink }}>{t("analytics.monthlyChart.title")}</h2>
           {stats.monthlyChart.length === 0 ? (
-            <p className="mt-4 text-xs" style={{ color: C.slateLight }}>No revenue events logged yet — recover a lead or reactivate a customer to see this fill in.</p>
+            <p className="mt-4 text-xs" style={{ color: C.slateLight }}>{t("analytics.monthlyChart.empty")}</p>
           ) : (
             <div className="mt-4 h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -116,17 +118,17 @@ export default function Analytics() {
         </div>
 
         <div className="rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
-          <h2 className="text-sm font-bold" style={{ color: C.ink }}>Recovery Funnel</h2>
+          <h2 className="text-sm font-bold" style={{ color: C.ink }}>{t("analytics.funnel.title")}</h2>
           <div className="mt-4 space-y-2">
             {stats.funnel.map((f) => {
               const max = Math.max(1, ...stats.funnel.map((x) => x.count));
               return (
                 <div key={f.status} className="flex items-center gap-3">
-                  <span className="w-32 shrink-0 text-xs" style={{ color: C.slate }}>{f.status}</span>
+                  <span className="w-32 shrink-0 text-xs" style={{ color: C.slate }}>{t(`analytics.funnel.statuses.${f.status}`)}</span>
                   <div className="h-4 flex-1 rounded-full" style={{ backgroundColor: C.bg }}>
                     <div className="h-4 rounded-full" style={{ width: `${(f.count / max) * 100}%`, backgroundColor: C.teal }} />
                   </div>
-                  <span className="w-6 text-right text-xs font-semibold" style={{ color: C.ink }}>{f.count}</span>
+                  <span className="w-6 text-end text-xs font-semibold" style={{ color: C.ink }}>{f.count}</span>
                 </div>
               );
             })}

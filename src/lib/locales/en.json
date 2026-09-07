@@ -1,0 +1,556 @@
+{
+  "common": {
+    "appName": "SmartManager Loyalty",
+    "loading": "Loading…",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "remove": "Remove",
+    "confirm": "Confirm",
+    "deleteConfirmTitle": "Delete {{label}}?",
+    "deleteConfirmBody": "This can't be undone.",
+    "signOut": "Sign out",
+    "you": "you",
+    "search": "Search",
+    "noMatches": "No matches.",
+    "back": "Back",
+    "openWhatsApp": "Open WhatsApp",
+    "copyMessage": "Copy Message",
+    "active": "Active",
+    "inactive": "Inactive",
+    "na": "—",
+    "never": "never",
+    "daysAgo_one": "{{count}} day ago",
+    "daysAgo_other": "{{count}} days ago",
+    "days": "days",
+    "customer_one": "{{count}} customer",
+    "customer_other": "{{count}} customers"
+  },
+  "pageMeta": {
+    "dashboard": { "title": "Dashboard", "subtitle": "Where are we losing customers, and what should we do today?" },
+    "customers": { "title": "Customers", "subtitle": "Your full customer database." },
+    "customerProfile": { "title": "Customer Profile", "subtitle": "History, segment, and next best action." },
+    "recovery": { "title": "Recovery", "subtitle": "Leads who inquired but never converted." },
+    "reactivation": { "title": "Reactivation", "subtitle": "Customers who stopped returning, by how overdue they are." },
+    "retention": { "title": "Retention", "subtitle": "Reach customers before they become inactive." },
+    "rewards": { "title": "Rewards", "subtitle": "Points, visit, and spending reward programs." },
+    "vip": { "title": "VIP", "subtitle": "Recognize top customers with priority, not discounts." },
+    "offers": { "title": "Smart Offers", "subtitle": "Offers matched to customer behavior." },
+    "analytics": { "title": "Analytics", "subtitle": "The business value this platform is generating." },
+    "settingsSegmentation": { "title": "Segmentation Rules", "subtitle": "The thresholds that decide who's Active, Due, At Risk, and more." },
+    "settingsTeam": { "title": "Team", "subtitle": "Who has access to this business." },
+    "settingsBusiness": { "title": "Business Settings", "subtitle": "What your customers and staff see across the app." },
+    "settingsBilling": { "title": "Billing", "subtitle": "Your plan and subscription status." },
+    "default": { "title": "SmartManager Loyalty", "subtitle": "" }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "customers": "Customers",
+    "recovery": "Recovery",
+    "reactivation": "Reactivation",
+    "retention": "Retention",
+    "rewards": "Rewards",
+    "vip": "VIP",
+    "smartOffers": "Smart Offers",
+    "analytics": "Analytics",
+    "segmentationRules": "Segmentation Rules",
+    "team": "Team",
+    "business": "Business",
+    "billing": "Billing"
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "manager": "Manager",
+    "staff": "Staff"
+  },
+  "header": {
+    "searchPlaceholder": "Search customers…",
+    "displayLanguage": "Display language",
+    "businessCurrency": "Business currency"
+  },
+  "languageSelector": {
+    "comingSoon": "(soon)"
+  },
+  "currencySelector": {
+    "searchPlaceholder": "Search currency…"
+  },
+  "globalSearch": {
+    "placeholder": "Search customers by name, phone, or email…",
+    "searching": "Searching…",
+    "noResults": "No customers match \"{{query}}\".",
+    "startTyping": "Start typing to search your customers."
+  },
+  "auth": {
+    "login": {
+      "tagline": "Turn one-time customers into returning customers.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "signingIn": "Signing in…",
+      "signIn": "Sign in",
+      "newHere": "New here?",
+      "createBusinessAccount": "Create your business account"
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "You'll set up your business on the next step.",
+      "creatingAccount": "Creating account…",
+      "createAccount": "Create account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "checkEmailTitle": "Check your email",
+      "checkEmailPrefix": "We sent a confirmation link to",
+      "checkEmailMiddle": ". Confirm it, then",
+      "checkEmailLink": "sign in",
+      "checkEmailSuffix": "to set up your business."
+    },
+    "onboarding": {
+      "title": "Set up your business",
+      "subtitle": "This is what your customers and staff will see.",
+      "businessNameLabel": "Business name",
+      "businessNamePlaceholder": "e.g. Al Noor Medical Center",
+      "businessTypeLabel": "Business type",
+      "visitLabelLabel": "What do you call a visit?",
+      "defaultLanguageLabel": "Default language",
+      "currencyLabel": "Currency",
+      "settingUp": "Setting up…",
+      "createBusiness": "Create business"
+    }
+  },
+  "businessTypes": {
+    "clinic": "Clinic",
+    "dental": "Dental",
+    "physiotherapy": "Physiotherapy",
+    "beauty_salon": "Beauty Salon",
+    "spa": "Spa",
+    "gym": "Gym",
+    "barber": "Barber",
+    "car_service": "Car Service",
+    "training_center": "Training Center",
+    "consultant": "Consultant",
+    "other": "Other"
+  },
+  "languages": {
+    "en": "English",
+    "ar": "Arabic"
+  },
+  "dashboard": {
+    "loading": "Loading dashboard…",
+    "heroTitle": "Turn More Customers Into Repeat Customers",
+    "heroSubtitle": "SmartManager identifies which customers need attention and recommends the next best action.",
+    "kpi": {
+      "revenueRecovered": "Revenue Recovered",
+      "customersReactivated": "Customers Reactivated",
+      "customersRecovered": "Customers Recovered",
+      "retentionRate": "Retention Rate",
+      "totalCustomers": "Total Customers",
+      "active": "Active",
+      "new": "New",
+      "dueForReturn": "Due for Return",
+      "inactive": "Inactive",
+      "vipCustomers": "VIP Customers",
+      "rewardsRedeemed": "Rewards Redeemed"
+    },
+    "priorityActions": {
+      "title": "Today's Priority Actions",
+      "reactivation": "customers ready for reactivation",
+      "recovery": "leads need recovery follow-up",
+      "due": "customers due for return",
+      "viewCustomers": "View Customers",
+      "viewLeads": "View Leads"
+    },
+    "opportunity": {
+      "title": "Revenue Opportunity",
+      "subtitle": "Based on these customers' historical spending — not a guarantee, but where the value is concentrated.",
+      "reactivation": "Reactivation",
+      "recovery": "Recovery",
+      "retention": "Retention"
+    },
+    "health": {
+      "title": "Customer Health"
+    },
+    "chart": {
+      "title": "Revenue Recovered",
+      "empty": "No revenue events logged yet — recover a lead or reactivate a customer to see this fill in.",
+      "reactivation": "Reactivation",
+      "recovery": "Recovery"
+    },
+    "periods": {
+      "7d": "7 Days",
+      "30d": "30 Days",
+      "3m": "3 Months",
+      "6m": "6 Months",
+      "12m": "12 Months"
+    },
+    "empty": {
+      "title": "No customers yet",
+      "subtitle": "Import your customer list to see segments, recovery opportunities, and recommended actions appear here.",
+      "cta": "Go to Customers"
+    }
+  },
+  "analytics": {
+    "loading": "Loading analytics…",
+    "stat": {
+      "revenueRecovered": "Revenue Recovered",
+      "revenueFromOffers": "Revenue from Offers",
+      "vipRevenue": "VIP Revenue",
+      "rewardsRedeemed": "Rewards Redeemed",
+      "openRecoveryOpportunities": "Recovery Opportunities (open)",
+      "leadsContacted": "Leads Contacted",
+      "leadsConverted": "Leads Converted",
+      "reactivationRate": "Reactivation Rate",
+      "reactivationRateSub": "Reactivated ÷ (inactive+lost + reactivated)",
+      "repeatCustomerRate": "Repeat Customer Rate",
+      "retentionRate": "Retention Rate",
+      "retentionRateSub": "(total − lost) ÷ total",
+      "avgLifetimeValue": "Avg Customer Lifetime Value",
+      "totalCustomers": "Total Customers"
+    },
+    "monthlyChart": {
+      "title": "Revenue Recovered by Month",
+      "empty": "No revenue events logged yet — recover a lead or reactivate a customer to see this fill in."
+    },
+    "funnel": {
+      "title": "Recovery Funnel",
+      "statuses": {
+        "New": "New",
+        "Contacted": "Contacted",
+        "Interested": "Interested",
+        "Follow-up Required": "Follow-up Required",
+        "Converted": "Converted",
+        "Lost": "Lost"
+      }
+    }
+  },
+  "segments": {
+    "new": "New",
+    "active": "Active",
+    "due": "Due",
+    "inactive": "Inactive",
+    "lost": "Lost",
+    "vip": "VIP",
+    "high_value": "High Value",
+    "frequent": "Frequent",
+    "at_risk": "At Risk"
+  },
+  "nextBestAction": {
+    "actions": {
+      "reactivate": "REACTIVATE",
+      "contactCustomer": "CONTACT CUSTOMER",
+      "vipCare": "VIP CARE",
+      "encourageSecondVisit": "ENCOURAGE SECOND VISIT",
+      "noActionNeeded": "NO ACTION NEEDED"
+    },
+    "reasons": {
+      "lostWithCycle": "Customer has not returned in {{days}} days; their normal return cycle is {{cycle}} days.",
+      "lostNoCycle": "Customer has not returned in {{days}} days.",
+      "inactiveWithCycle": "Customer is {{days}} days since their last {{visitLabel}}, {{overdue}} days past their usual {{cycle}}-day cycle.",
+      "inactiveNoCycle": "Customer is {{days}} days since their last {{visitLabel}}.",
+      "atRisk": "Return frequency is slipping — {{days}} days since last {{visitLabel}}, longer than their usual {{cycle}}-day pattern.",
+      "atRiskUnknownCycle": "?",
+      "due": "Likely due for another {{visitLabel}} soon — normal cycle is {{cycle}} days, currently at {{days}} days.",
+      "vip": "Top-tier customer by spending/visits — prioritize service, not discounts.",
+      "new": "Recently joined — a second-visit incentive converts new customers into repeat ones.",
+      "default": "Customer is active and on a healthy return cycle."
+    }
+  },
+  "churnRisk": {
+    "overdueWithCycle": "{{pct}}% past their usual {{cycle}}-day cycle",
+    "overdueNoHistory": "Not enough visit history to judge overdue-ness",
+    "segmentSeverity": "Segment severity ({{segment}})"
+  },
+  "offerEngine": {
+    "vip": { "text": "an exclusive VIP benefit (priority booking, not a discount)", "reason": "VIP customers respond better to recognition than discounts." },
+    "lost": { "text": "a 15% comeback offer", "reason": "Long-lapsed customers usually need a stronger incentive to return." },
+    "inactiveAtRisk": { "text": "a 10% return offer", "reason": "A modest nudge is usually enough for a recently-lapsed customer." },
+    "new": { "text": "a second-visit incentive", "reason": "Converting a first-time customer into a second visit is the highest-leverage moment." },
+    "frequent": { "text": "a loyalty reward", "reason": "Frequent customers are already engaged — reward the behavior, don't discount it." }
+  },
+  "vipTierActions": {
+    "VIP": { "action": "Personal thank-you", "detail": "A short personal message acknowledging their loyalty." },
+    "Gold": { "action": "Priority booking", "detail": "Skip the queue — offer them first pick of times/slots." },
+    "Platinum": { "action": "Exclusive service / early access", "detail": "Give them early access to new services or a free upgrade." },
+    "default": { "action": "Special reward", "detail": "Recognize this customer with something beyond a discount." }
+  },
+  "customers": {
+    "list": {
+      "total_one": "{{count}} total",
+      "total_other": "{{count}} total",
+      "import": "Import",
+      "addCustomer": "Add customer",
+      "searchPlaceholder": "Search name, phone, email…",
+      "allSegments": "All segments",
+      "loading": "Loading…",
+      "emptyTitle": "No customers yet",
+      "emptyTitleFiltered": "No customers match your filters",
+      "emptySubtitle": "Import a spreadsheet or add your first customer to get started.",
+      "importCustomers": "Import customers",
+      "columnName": "Name",
+      "columnSegment": "Segment",
+      "columnLastVisit": "Last {{visitLabel}}",
+      "columnVisits": "Visits",
+      "columnTotalSpending": "Total Spending"
+    },
+    "addModal": {
+      "title": "Add customer",
+      "nameLabel": "Name",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email"
+    },
+    "import": {
+      "title": "Import customers",
+      "instructions": "Upload a CSV or Excel file. We recognize columns like <b>Name</b>, <b>Phone</b>, <b>Email</b>, <b>Last Visit</b>, <b>Total Visits</b>, and <b>Total Spending</b> — headers are matched flexibly, and any missing column just defaults sensibly.",
+      "importing": "Importing…",
+      "chooseFile": "Click to choose a .csv, .xlsx, or .xls file",
+      "noValidRows": "No valid rows found — make sure there's a Name column.",
+      "summaryTotal": "Your business has {{count}} customers.",
+      "summaryInactive": "<b>{{count}}</b> customers have not returned in 60+ days.",
+      "summaryHighValueInactive": "<b>{{count}}</b> high-value customers are inactive.",
+      "summaryDueSoon": "<b>{{count}}</b> customers are due for a return.",
+      "summarySkipped": "{{count}} rows were skipped (missing a name).",
+      "seeDashboard": "See my dashboard"
+    },
+    "profile": {
+      "backToCustomers": "Back to Customers",
+      "customerSince": "Customer since {{date}}",
+      "totalVisits": "Total Visits",
+      "totalSpending": "Total Spending",
+      "daysSinceLastVisit": "Days Since Last Visit",
+      "avgReturnCycle": "Avg Return Cycle (days)",
+      "logVisit": "Log {{visitLabel}}",
+      "timeline": "Timeline",
+      "noVisitsYet": "No visits logged yet.",
+      "nextBestAction": "Next Best Action",
+      "churnRisk": "Churn Risk",
+      "suggestedMessage": "Suggested Message",
+      "addPhoneHint": "Add a phone number to this customer to enable WhatsApp.",
+      "notFound": "Customer not found.",
+      "logVisitModal": {
+        "title": "Log a visit",
+        "dateLabel": "Date",
+        "amountLabel": "Amount",
+        "serviceLabel": "Service"
+      }
+    }
+  },
+  "recovery": {
+    "addLead": "Add lead",
+    "editLead": "Edit lead",
+    "loading": "Loading…",
+    "emptyTitle": "No recovery opportunities",
+    "emptySubtitle": "Leads who asked about a service but didn't book will show up here.",
+    "followUpNow": "FOLLOW UP NOW",
+    "interestedIn": "Interested in: {{service}}",
+    "source": "Source: {{source}}",
+    "lastContact": "Last contact: {{value}}",
+    "estValue": "Est. value: {{value}}",
+    "allStatuses": "all",
+    "statuses": {
+      "New": "New",
+      "Contacted": "Contacted",
+      "Interested": "Interested",
+      "Follow-up Required": "Follow-up Required",
+      "Converted": "Converted",
+      "Lost": "Lost"
+    },
+    "form": {
+      "nameLabel": "Name",
+      "phoneLabel": "Phone",
+      "sourceLabel": "Source",
+      "sourcePlaceholder": "e.g. Instagram DM",
+      "interestedServiceLabel": "Interested service",
+      "inquiryDateLabel": "Inquiry date",
+      "lastContactLabel": "Last contact",
+      "estimatedValueLabel": "Estimated value",
+      "statusLabel": "Status",
+      "notesLabel": "Notes"
+    },
+    "convertModal": {
+      "title": "Mark as converted",
+      "body": "Record the revenue this recovered lead brought in — it powers the Revenue Recovered stat on the dashboard.",
+      "amountLabel": "Revenue amount"
+    }
+  },
+  "reactivation": {
+    "loading": "Loading…",
+    "emptyTitle": "No inactive customers",
+    "emptySubtitle": "Everyone is within their normal return window.",
+    "buckets": {
+      "30": "30+ days inactive",
+      "60": "60+ days inactive",
+      "90": "90+ days inactive",
+      "long": "Long-term lost (180+ days)"
+    },
+    "lastVisitInfo": "Last {{visitLabel}}: {{days}} days ago · Normal cycle: {{cycle}} days · {{visits}} past visits · Lifetime value: {{value}}",
+    "markReactivated": "Mark Reactivated",
+    "suggestedOffer": "Suggested offer: <b>{{text}}</b> ({{reason}})",
+    "markReactivatedModal": {
+      "title": "Mark {{name}} as reactivated",
+      "body": "Log the visit and its revenue — this powers Revenue Recovered and moves them out of the reactivation list.",
+      "amountLabel": "Visit amount"
+    }
+  },
+  "retention": {
+    "loading": "Loading…",
+    "dueSoonTab": "Due Soon ({{count}})",
+    "atRiskTab": "At Risk ({{count}})",
+    "atRiskBadge": "At Risk",
+    "riskBadge": "Risk {{score}}",
+    "dueWithinDays": "Likely due for another {{visitLabel}} within {{days}} days",
+    "sinceLastVisit": "{{days}} days since last {{visitLabel}}",
+    "lifetimeValue": "Lifetime value: {{value}}",
+    "emptyDueTitle": "No one is due soon",
+    "emptyDueSubtitle": "Nobody is approaching their expected return date right now.",
+    "emptyAtRiskTitle": "No at-risk customers",
+    "emptyAtRiskSubtitle": "No customers show a declining visit pattern right now."
+  },
+  "rewards": {
+    "addProgram": "Add program",
+    "editProgram": "Edit program",
+    "emptyTitle": "No reward programs yet",
+    "emptySubtitle": "Create a points, visits, or spending program to start rewarding loyal customers.",
+    "customerRewards": "Customer Rewards",
+    "loading": "Loading…",
+    "noCustomersYet": "No customers yet.",
+    "columnCustomer": "Customer",
+    "columnPointsBalance": "Points Balance",
+    "columnRedeemed": "Redeemed",
+    "columnAvailableRewards": "Available Rewards",
+    "redeem": "Redeem {{value}}",
+    "redeemNamed": "Redeem: {{name}}",
+    "pointsSummary": "Every {{amount}} = {{points}} pt · {{redeemPoints}} pts = {{redeemValue}}",
+    "visitsSummary": "{{count}} visits = {{reward}}",
+    "spendingSummary": "{{amount}} spent = {{reward}}",
+    "types": {
+      "points": "Points",
+      "visits": "Visits",
+      "spending": "Spending"
+    },
+    "form": {
+      "programNameLabel": "Program name",
+      "typeLabel": "Type",
+      "spendToEarnLabel": "Spend to earn",
+      "pointsEarnedLabel": "Points earned",
+      "pointsToRedeemLabel": "Points to redeem",
+      "rewardValueLabel": "Reward value",
+      "visitsRequiredLabel": "Visits required",
+      "rewardLabel": "Reward",
+      "spendingThresholdLabel": "Spending threshold"
+    }
+  },
+  "vip": {
+    "addTier": "Add tier",
+    "editTier": "Edit tier",
+    "vipCustomers": "VIP Customers",
+    "loading": "Loading…",
+    "emptyTitle": "No VIP customers yet",
+    "emptySubtitle": "Customers who cross a tier's spending threshold will show up here.",
+    "assigned": "Assigned",
+    "confirmTier": "Confirm tier",
+    "customerSummary": "{{spending}} lifetime · {{visits}} visits · last visit {{lastVisit}}",
+    "form": {
+      "tierNameLabel": "Tier name",
+      "minSpendingLabel": "Minimum lifetime spending",
+      "sortOrderLabel": "Sort order (higher = better tier)"
+    }
+  },
+  "offers": {
+    "addOffer": "Add offer",
+    "editOffer": "Edit offer",
+    "emptyTitle": "No offers yet",
+    "emptySubtitle": "Create an offer and pick which customer segment it targets — recommendations appear below automatically.",
+    "triggersFor": "Triggers for: {{segment}} · {{description}}",
+    "recommendedNow": "Recommended right now",
+    "noRecommendations": "No customers currently match an active offer's trigger segment.",
+    "recommendedBecause": "Recommended because: {{reason}}",
+    "sentSendAgain": "Sent — send again",
+    "markConverted": "Mark Converted",
+    "converted": "Converted",
+    "loading": "Loading…",
+    "form": {
+      "offerNameLabel": "Offer name",
+      "triggersForSegmentLabel": "Triggers for segment",
+      "offerTypeLabel": "Offer type",
+      "offerTypePlaceholder": "e.g. discount, exclusive_benefit, free_upgrade",
+      "descriptionLabel": "Description (what the customer gets)"
+    },
+    "convertModal": {
+      "title": "Mark offer as converted",
+      "body": "Record the revenue from this offer — it counts toward Revenue Generated from Offers on Analytics.",
+      "amountLabel": "Revenue amount"
+    }
+  },
+  "settings": {
+    "segmentation": {
+      "intro": "These transparent, editable thresholds decide who counts as New, Active, Due, Inactive, Lost, VIP, High Value, Frequent, or At Risk.",
+      "saveChanges": "Save changes",
+      "loading": "Loading…",
+      "fields": {
+        "new": { "title": "New", "desc": "Customer created within the last N days.", "days": "Days since joining" },
+        "active": { "title": "Active", "desc": "Customer visited within N days.", "days": "Days since last visit" },
+        "due": { "title": "Due", "desc": "Customer is approaching their expected return date.", "days_before": "Days before expected return to flag as Due" },
+        "inactive": { "title": "Inactive", "desc": "Customer has exceeded their expected return period.", "days": "Days since last visit" },
+        "lost": { "title": "Lost", "desc": "Customer has been inactive for longer than this.", "days": "Days since last visit" },
+        "vip": { "title": "VIP", "desc": "Customer meets spending or visit thresholds.", "min_spending": "Minimum lifetime spending", "min_visits": "Minimum visits" },
+        "high_value": { "title": "High Value", "desc": "Customer lifetime value is above this threshold.", "min_lifetime_value": "Minimum lifetime value" },
+        "frequent": { "title": "Frequent", "desc": "Customer visits more often than this, per 90 days.", "min_visits_per_90d": "Minimum visits per 90 days" },
+        "at_risk": { "title": "At Risk", "desc": "Customer is this many times past their normal return cycle.", "overdue_ratio": "Overdue ratio (e.g. 1.3 = 30% late)" }
+      }
+    },
+    "team": {
+      "whoHasAccess": "Who has access to {{business}}.",
+      "inviteTeammate": "Invite teammate",
+      "loading": "Loading…",
+      "columnEmail": "Email",
+      "columnRole": "Role",
+      "pendingInvites": "Pending invites",
+      "removeConfirmLabel": "{{email}} from the team",
+      "inviteModal": {
+        "title": "Invite teammate",
+        "emailLabel": "Email",
+        "roleLabel": "Role",
+        "hint": "If they don't have an account yet, they'll join automatically as soon as they sign up with this email.",
+        "inviting": "Inviting…",
+        "sendInvite": "Send invite"
+      }
+    },
+    "business": {
+      "newBusiness": "New business",
+      "nameLabel": "Business name",
+      "typeLabel": "Business type",
+      "visitLabelLabel": "What do you call a visit?",
+      "defaultLanguageLabel": "Default language",
+      "currencyLabel": "Currency",
+      "saveChanges": "Save changes",
+      "readOnlyHint": "Only Owners and Admins can change business settings.",
+      "newBusinessModal": {
+        "title": "Create another business",
+        "creating": "Creating…",
+        "createBusiness": "Create business"
+      }
+    },
+    "billing": {
+      "currentPlan": "Current plan",
+      "trial": "Trial",
+      "trialDaysLeft_one": "{{count}} day left in your trial.",
+      "trialDaysLeft_other": "{{count}} days left in your trial.",
+      "trialEnded": "Your trial has ended.",
+      "noPaymentRequired": "No payment method is required yet — nothing will be charged automatically.",
+      "notConnected": "Payment processing isn't connected yet — this page tracks your plan, not real charges.",
+      "readyToGoLive": "When you're ready to go live, reach out and we'll set up billing.",
+      "askOwnerAdmin": "Ask an Owner or Admin to manage billing.",
+      "contactUpgrade": "Contact us about upgrading",
+      "plans": {
+        "trial": "Trial",
+        "starter": "Starter",
+        "growth": "Growth",
+        "professional": "Professional",
+        "enterprise": "Enterprise"
+      }
+    }
+  }
+}

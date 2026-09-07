@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Pencil, Trash2, MessageCircle, Check } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, TextInput, Modal, Field, Pill, ConfirmDelete, EmptyState, IconButton } from "../../components/ui";
@@ -16,19 +17,20 @@ function emptyTier() {
 }
 
 function TierForm({ initial, onSave, onCancel }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState(initial);
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSave(form); }} className="grid grid-cols-2 gap-3">
-      <Field label="Tier name" span><TextInput required value={form.tier_name} onChange={(e) => setForm((f) => ({ ...f, tier_name: e.target.value }))} /></Field>
-      <Field label="Minimum lifetime spending">
+      <Field label={t("vip.form.tierNameLabel")} span><TextInput required value={form.tier_name} onChange={(e) => setForm((f) => ({ ...f, tier_name: e.target.value }))} /></Field>
+      <Field label={t("vip.form.minSpendingLabel")}>
         <TextInput type="number" value={form.criteria.min_spending ?? ""} onChange={(e) => setForm((f) => ({ ...f, criteria: { ...f.criteria, min_spending: Number(e.target.value) || 0 } }))} />
       </Field>
-      <Field label="Sort order (higher = better tier)">
+      <Field label={t("vip.form.sortOrderLabel")}>
         <TextInput type="number" value={form.sort_order} onChange={(e) => setForm((f) => ({ ...f, sort_order: Number(e.target.value) || 0 }))} />
       </Field>
       <div className="col-span-2 mt-2 flex justify-end gap-2">
-        <Btn variant="secondary" type="button" onClick={onCancel}>Cancel</Btn>
-        <Btn type="submit">Save</Btn>
+        <Btn variant="secondary" type="button" onClick={onCancel}>{t("common.cancel")}</Btn>
+        <Btn type="submit">{t("common.save")}</Btn>
       </div>
     </form>
   );
@@ -48,6 +50,7 @@ function useVipStatus(businessId) {
 }
 
 export default function VIP() {
+  const { t } = useTranslation();
   const { business } = useAuth();
   const { rows: tiers, ready: tiersReady, insertRow, updateRow, deleteRow } = useBusinessTable("vip_tiers", business?.id, { orderBy: "sort_order", ascending: true });
   const { rows: customers, ready: customersReady } = useCustomerOverview(business?.id);
@@ -71,27 +74,27 @@ export default function VIP() {
   return (
     <div className="p-8">
       <div className="flex justify-end">
-        <Btn icon={Plus} onClick={() => setEditing(emptyTier())}>Add tier</Btn>
+        <Btn icon={Plus} onClick={() => setEditing(emptyTier())}>{t("vip.addTier")}</Btn>
       </div>
 
       {tiersReady && (
         <div className="mt-5 flex flex-wrap gap-2">
-          {tiers.map((t) => (
-            <div key={t.id} className="flex items-center gap-2 rounded-xl px-3 py-2" style={{ backgroundColor: C.white, border: `1px solid ${C.border}` }}>
-              <span className="text-sm font-bold" style={{ color: C.gold }}>{t.tier_name}</span>
-              <span className="text-xs" style={{ color: C.slateLight }}>{formatMoney(t.criteria?.min_spending, business?.currency)}+</span>
-              <IconButton title="Edit" onClick={() => setEditing(t)}><Pencil size={13} /></IconButton>
-              <IconButton title="Delete" danger onClick={() => setDeleting(t)}><Trash2 size={13} /></IconButton>
+          {tiers.map((tier) => (
+            <div key={tier.id} className="flex items-center gap-2 rounded-xl px-3 py-2" style={{ backgroundColor: C.white, border: `1px solid ${C.border}` }}>
+              <span className="text-sm font-bold" style={{ color: C.gold }}>{tier.tier_name}</span>
+              <span className="text-xs" style={{ color: C.slateLight }}>{formatMoney(tier.criteria?.min_spending, business?.currency)}+</span>
+              <IconButton title={t("common.edit")} onClick={() => setEditing(tier)}><Pencil size={13} /></IconButton>
+              <IconButton title={t("common.delete")} danger onClick={() => setDeleting(tier)}><Trash2 size={13} /></IconButton>
             </div>
           ))}
         </div>
       )}
 
-      <h2 className="mt-8 text-sm font-bold" style={{ color: C.ink }}>VIP Customers</h2>
+      <h2 className="mt-8 text-sm font-bold" style={{ color: C.ink }}>{t("vip.vipCustomers")}</h2>
       {!customersReady ? (
-        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>Loading…</p>
+        <p className="mt-2 text-xs" style={{ color: C.slateLight }}>{t("vip.loading")}</p>
       ) : vipCustomers.length === 0 ? (
-        <div className="mt-3"><EmptyState title="No VIP customers yet" subtitle="Customers who cross a tier's spending threshold will show up here." /></div>
+        <div className="mt-3"><EmptyState title={t("vip.emptyTitle")} subtitle={t("vip.emptySubtitle")} /></div>
       ) : (
         <div className="mt-3 space-y-3">
           {vipCustomers.map((c) => {
@@ -107,12 +110,12 @@ export default function VIP() {
                       <Pill color={C.gold} bg="#B8923A1a">{c.tier.tier_name}</Pill>
                     </div>
                     <div className="mt-1 text-xs" style={{ color: C.slateLight }}>
-                      {formatMoney(c.total_spending, business?.currency)} lifetime · {c.total_visits} visits · last visit {c.days_since_last_visit != null ? `${c.days_since_last_visit}d ago` : "—"}
+                      {t("vip.customerSummary", { spending: formatMoney(c.total_spending, business?.currency), visits: c.total_visits, lastVisit: c.days_since_last_visit != null ? `${c.days_since_last_visit}d ago` : "—" })}
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <Btn variant={isAssigned ? "secondary" : "primary"} icon={Check} disabled={isAssigned} onClick={() => assignTier(c.customer_id, c.tier.id)}>
-                      {isAssigned ? "Assigned" : "Confirm tier"}
+                      {isAssigned ? t("vip.assigned") : t("vip.confirmTier")}
                     </Btn>
                     <Btn
                       variant="secondary"
@@ -120,7 +123,7 @@ export default function VIP() {
                       disabled={!c.phone}
                       onClick={() => openWhatsApp(c.phone, generateMessage({ action: "VIP CARE", customerName: c.name, businessName: business?.name, language: business?.default_language }))}
                     >
-                      Open WhatsApp
+                      {t("common.openWhatsApp")}
                     </Btn>
                   </div>
                 </div>
@@ -135,7 +138,7 @@ export default function VIP() {
       )}
 
       {editing && (
-        <Modal title={editing.id ? "Edit tier" : "Add tier"} onClose={() => setEditing(null)}>
+        <Modal title={editing.id ? t("vip.editTier") : t("vip.addTier")} onClose={() => setEditing(null)}>
           <TierForm
             initial={editing}
             onCancel={() => setEditing(null)}

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { C } from "./theme";
 import Logo from "./Logo";
@@ -109,12 +110,13 @@ export function Modal({ title, onClose, children, wide }) {
 }
 
 export function ConfirmDelete({ label, onConfirm, onCancel }) {
+  const { t } = useTranslation();
   return (
-    <Modal title={`Delete ${label}?`} onClose={onCancel}>
-      <p className="mb-5 text-sm" style={{ color: C.slate }}>This can't be undone.</p>
+    <Modal title={t("common.deleteConfirmTitle", { label })} onClose={onCancel}>
+      <p className="mb-5 text-sm" style={{ color: C.slate }}>{t("common.deleteConfirmBody")}</p>
       <div className="flex justify-end gap-2">
-        <Btn variant="secondary" onClick={onCancel}>Cancel</Btn>
-        <Btn variant="danger" onClick={onConfirm}>Delete</Btn>
+        <Btn variant="secondary" onClick={onCancel}>{t("common.cancel")}</Btn>
+        <Btn variant="danger" onClick={onConfirm}>{t("common.delete")}</Btn>
       </div>
     </Modal>
   );
@@ -148,12 +150,13 @@ export function EmptyState({ title, subtitle, action }) {
   );
 }
 
-export function LoadingScreen({ label = "Loading…" }) {
+export function LoadingScreen({ label }) {
+  const { t } = useTranslation();
   return (
     <div className="flex h-screen w-full items-center justify-center" style={{ backgroundColor: C.bg }}>
       <div className="flex items-center gap-2 text-sm" style={{ color: C.slate }}>
         <Loader2 size={18} className="animate-spin" />
-        {label}
+        {label ?? t("common.loading")}
       </div>
     </div>
   );

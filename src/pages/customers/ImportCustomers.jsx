@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { Upload } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, Modal } from "../../components/ui";
@@ -6,6 +7,7 @@ import { parseSpreadsheetFile, rowsToCustomers } from "../../lib/csvImport";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function ImportCustomers({ businessId, onClose, onImported }) {
+  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState(null);
@@ -18,7 +20,7 @@ export default function ImportCustomers({ businessId, onClose, onImported }) {
     try {
       const rawRows = await parseSpreadsheetFile(file);
       const { customers, skipped } = rowsToCustomers(rawRows);
-      if (customers.length === 0) throw new Error("No valid rows found — make sure there's a Name column.");
+      if (customers.length === 0) throw new Error(t("customers.import.noValidRows"));
 
       const { error: insertError } = await supabase
         .from("customers")
@@ -46,13 +48,11 @@ export default function ImportCustomers({ businessId, onClose, onImported }) {
   }
 
   return (
-    <Modal title="Import customers" onClose={onClose} wide>
+    <Modal title={t("customers.import.title")} onClose={onClose} wide>
       {!summary ? (
         <div className="flex flex-col gap-4">
           <p className="text-sm" style={{ color: C.slate }}>
-            Upload a CSV or Excel file. We recognize columns like <strong>Name</strong>, <strong>Phone</strong>,
-            <strong> Email</strong>, <strong>Last Visit</strong>, <strong>Total Visits</strong>, and <strong>Total Spending</strong> —
-            headers are matched flexibly, and any missing column just defaults sensibly.
+            <Trans i18nKey="customers.import.instructions" components={{ b: <strong /> }} />
           </p>
           <label
             className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed p-10 text-center hover:bg-black/[0.02]"
@@ -60,7 +60,7 @@ export default function ImportCustomers({ businessId, onClose, onImported }) {
           >
             <Upload size={22} color={C.slateLight} />
             <span className="text-sm font-semibold" style={{ color: C.ink }}>
-              {busy ? "Importing…" : "Click to choose a .csv, .xlsx, or .xls file"}
+              {busy ? t("customers.import.importing") : t("customers.import.chooseFile")}
             </span>
             <input type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={handleFile} disabled={busy} />
           </label>
@@ -68,14 +68,14 @@ export default function ImportCustomers({ businessId, onClose, onImported }) {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          <p className="text-lg font-bold" style={{ color: C.ink }}>Your business has {summary.total} customers.</p>
+          <p className="text-lg font-bold" style={{ color: C.ink }}>{t("customers.import.summaryTotal", { count: summary.total })}</p>
           <ul className="space-y-2 text-sm" style={{ color: C.slate }}>
-            {summary.inactive60 > 0 && <li>• <strong>{summary.inactive60}</strong> customers have not returned in 60+ days.</li>}
-            {summary.highValueInactive > 0 && <li>• <strong>{summary.highValueInactive}</strong> high-value customers are inactive.</li>}
-            {summary.dueSoon > 0 && <li>• <strong>{summary.dueSoon}</strong> customers are due for a return.</li>}
-            {summary.skipped > 0 && <li className="pt-2" style={{ color: C.slateLight }}>{summary.skipped} rows were skipped (missing a name).</li>}
+            {summary.inactive60 > 0 && <li>• <Trans i18nKey="customers.import.summaryInactive" values={{ count: summary.inactive60 }} components={{ b: <strong /> }} /></li>}
+            {summary.highValueInactive > 0 && <li>• <Trans i18nKey="customers.import.summaryHighValueInactive" values={{ count: summary.highValueInactive }} components={{ b: <strong /> }} /></li>}
+            {summary.dueSoon > 0 && <li>• <Trans i18nKey="customers.import.summaryDueSoon" values={{ count: summary.dueSoon }} components={{ b: <strong /> }} /></li>}
+            {summary.skipped > 0 && <li className="pt-2" style={{ color: C.slateLight }}>{t("customers.import.summarySkipped", { count: summary.skipped })}</li>}
           </ul>
-          <Btn onClick={onClose} className="w-full justify-center">See my dashboard</Btn>
+          <Btn onClick={onClose} className="w-full justify-center">{t("customers.import.seeDashboard")}</Btn>
         </div>
       )}
     </Modal>

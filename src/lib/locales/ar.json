@@ -1,0 +1,568 @@
+{
+  "common": {
+    "appName": "سمارت مانجر لويالتي",
+    "loading": "جارٍ التحميل…",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم الحفظ",
+    "cancel": "إلغاء",
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "remove": "إزالة",
+    "confirm": "تأكيد",
+    "deleteConfirmTitle": "حذف {{label}}؟",
+    "deleteConfirmBody": "لا يمكن التراجع عن هذا الإجراء.",
+    "signOut": "تسجيل الخروج",
+    "you": "أنت",
+    "search": "بحث",
+    "noMatches": "لا توجد نتائج مطابقة.",
+    "back": "رجوع",
+    "openWhatsApp": "فتح واتساب",
+    "copyMessage": "نسخ الرسالة",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "na": "—",
+    "never": "أبداً",
+    "daysAgo_one": "منذ يوم واحد",
+    "daysAgo_two": "منذ يومين",
+    "daysAgo_few": "منذ {{count}} أيام",
+    "daysAgo_many": "منذ {{count}} يوماً",
+    "daysAgo_other": "منذ {{count}} يوم",
+    "days": "أيام",
+    "customer_one": "عميل واحد",
+    "customer_two": "عميلان",
+    "customer_few": "{{count}} عملاء",
+    "customer_many": "{{count}} عميلاً",
+    "customer_other": "{{count}} عميل"
+  },
+  "pageMeta": {
+    "dashboard": { "title": "لوحة التحكم", "subtitle": "أين نخسر العملاء، وما الذي يجب فعله اليوم؟" },
+    "customers": { "title": "العملاء", "subtitle": "قاعدة بيانات عملائك الكاملة." },
+    "customerProfile": { "title": "ملف العميل", "subtitle": "السجل، التصنيف، وأفضل إجراء تالٍ." },
+    "recovery": { "title": "الاسترداد", "subtitle": "عملاء محتملون استفسروا لكن لم يتحوّلوا أبداً." },
+    "reactivation": { "title": "إعادة التنشيط", "subtitle": "العملاء الذين توقفوا عن العودة، مرتبين حسب مدة التأخر." },
+    "retention": { "title": "الاحتفاظ", "subtitle": "تواصل مع العملاء قبل أن يصبحوا غير نشطين." },
+    "rewards": { "title": "المكافآت", "subtitle": "برامج مكافآت النقاط والزيارات والإنفاق." },
+    "vip": { "title": "كبار العملاء", "subtitle": "قدّر أفضل عملائك بالأولوية، لا بالخصومات." },
+    "offers": { "title": "العروض الذكية", "subtitle": "عروض مطابقة لسلوك العملاء." },
+    "analytics": { "title": "التحليلات", "subtitle": "القيمة التجارية التي تحققها هذه المنصة." },
+    "settingsSegmentation": { "title": "قواعد التصنيف", "subtitle": "الحدود التي تقرر من هو نشط أو مستحق أو معرّض للخطر وغير ذلك." },
+    "settingsTeam": { "title": "الفريق", "subtitle": "من يملك صلاحية الوصول لهذا النشاط التجاري." },
+    "settingsBusiness": { "title": "إعدادات النشاط التجاري", "subtitle": "ما يراه عملاؤك وموظفوك عبر التطبيق." },
+    "settingsBilling": { "title": "الفوترة", "subtitle": "خطتك وحالة اشتراكك." },
+    "default": { "title": "سمارت مانجر لويالتي", "subtitle": "" }
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "customers": "العملاء",
+    "recovery": "الاسترداد",
+    "reactivation": "إعادة التنشيط",
+    "retention": "الاحتفاظ",
+    "rewards": "المكافآت",
+    "vip": "كبار العملاء",
+    "smartOffers": "العروض الذكية",
+    "analytics": "التحليلات",
+    "segmentationRules": "قواعد التصنيف",
+    "team": "الفريق",
+    "business": "النشاط التجاري",
+    "billing": "الفوترة"
+  },
+  "roles": {
+    "owner": "مالك",
+    "admin": "مسؤول",
+    "manager": "مدير",
+    "staff": "موظف"
+  },
+  "header": {
+    "searchPlaceholder": "ابحث عن العملاء…",
+    "displayLanguage": "لغة العرض",
+    "businessCurrency": "عملة النشاط التجاري"
+  },
+  "languageSelector": {
+    "comingSoon": "(قريباً)"
+  },
+  "currencySelector": {
+    "searchPlaceholder": "ابحث عن عملة…"
+  },
+  "globalSearch": {
+    "placeholder": "ابحث عن العملاء بالاسم أو الهاتف أو البريد الإلكتروني…",
+    "searching": "جارٍ البحث…",
+    "noResults": "لا يوجد عملاء مطابقون لـ \"{{query}}\".",
+    "startTyping": "ابدأ الكتابة للبحث في قائمة عملائك."
+  },
+  "auth": {
+    "login": {
+      "tagline": "حوّل العملاء العابرين إلى عملاء دائمين.",
+      "emailLabel": "البريد الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "signingIn": "جارٍ تسجيل الدخول…",
+      "signIn": "تسجيل الدخول",
+      "newHere": "جديد هنا؟",
+      "createBusinessAccount": "أنشئ حساب نشاطك التجاري"
+    },
+    "signup": {
+      "title": "أنشئ حسابك",
+      "subtitle": "ستقوم بإعداد نشاطك التجاري في الخطوة التالية.",
+      "creatingAccount": "جارٍ إنشاء الحساب…",
+      "createAccount": "إنشاء حساب",
+      "alreadyHaveAccount": "لديك حساب بالفعل؟",
+      "signIn": "تسجيل الدخول",
+      "checkEmailTitle": "تحقق من بريدك الإلكتروني",
+      "checkEmailPrefix": "لقد أرسلنا رابط تأكيد إلى",
+      "checkEmailMiddle": ". أكّده، ثم",
+      "checkEmailLink": "سجّل الدخول",
+      "checkEmailSuffix": "لإعداد نشاطك التجاري."
+    },
+    "onboarding": {
+      "title": "أعدّ نشاطك التجاري",
+      "subtitle": "هذا ما سيراه عملاؤك وموظفوك.",
+      "businessNameLabel": "اسم النشاط التجاري",
+      "businessNamePlaceholder": "مثال: مركز النور الطبي",
+      "businessTypeLabel": "نوع النشاط التجاري",
+      "visitLabelLabel": "ماذا تسمّون الزيارة؟",
+      "defaultLanguageLabel": "اللغة الافتراضية",
+      "currencyLabel": "العملة",
+      "settingUp": "جارٍ الإعداد…",
+      "createBusiness": "إنشاء النشاط التجاري"
+    }
+  },
+  "businessTypes": {
+    "clinic": "عيادة",
+    "dental": "طب أسنان",
+    "physiotherapy": "علاج طبيعي",
+    "beauty_salon": "صالون تجميل",
+    "spa": "منتجع صحي",
+    "gym": "نادي رياضي",
+    "barber": "صالون حلاقة",
+    "car_service": "خدمة سيارات",
+    "training_center": "مركز تدريب",
+    "consultant": "استشاري",
+    "other": "أخرى"
+  },
+  "languages": {
+    "en": "الإنجليزية",
+    "ar": "العربية"
+  },
+  "dashboard": {
+    "loading": "جارٍ تحميل لوحة التحكم…",
+    "heroTitle": "حوّل المزيد من العملاء إلى عملاء متكررين",
+    "heroSubtitle": "يحدد سمارت مانجر العملاء الذين يحتاجون إلى اهتمام ويوصي بأفضل إجراء تالٍ.",
+    "kpi": {
+      "revenueRecovered": "الإيرادات المستردة",
+      "customersReactivated": "العملاء المعاد تنشيطهم",
+      "customersRecovered": "العملاء المستردون",
+      "retentionRate": "معدل الاحتفاظ",
+      "totalCustomers": "إجمالي العملاء",
+      "active": "نشط",
+      "new": "جديد",
+      "dueForReturn": "مستحق للعودة",
+      "inactive": "غير نشط",
+      "vipCustomers": "عملاء كبار",
+      "rewardsRedeemed": "المكافآت المستبدلة"
+    },
+    "priorityActions": {
+      "title": "إجراءات اليوم ذات الأولوية",
+      "reactivation": "عميل جاهز لإعادة التنشيط",
+      "recovery": "عميل محتمل بحاجة لمتابعة استرداد",
+      "due": "عميل مستحق للعودة",
+      "viewCustomers": "عرض العملاء",
+      "viewLeads": "عرض العملاء المحتملين"
+    },
+    "opportunity": {
+      "title": "فرصة الإيرادات",
+      "subtitle": "استناداً إلى الإنفاق السابق لهؤلاء العملاء — ليست ضماناً، لكنها تُظهر أين تتركز القيمة.",
+      "reactivation": "إعادة التنشيط",
+      "recovery": "الاسترداد",
+      "retention": "الاحتفاظ"
+    },
+    "health": {
+      "title": "صحة قاعدة العملاء"
+    },
+    "chart": {
+      "title": "الإيرادات المستردة",
+      "empty": "لم تُسجَّل أي أحداث إيراد بعد — استرد عميلاً محتملاً أو أعد تنشيط عميل ليظهر هذا هنا.",
+      "reactivation": "إعادة التنشيط",
+      "recovery": "الاسترداد"
+    },
+    "periods": {
+      "7d": "٧ أيام",
+      "30d": "٣٠ يوماً",
+      "3m": "٣ أشهر",
+      "6m": "٦ أشهر",
+      "12m": "١٢ شهراً"
+    },
+    "empty": {
+      "title": "لا يوجد عملاء بعد",
+      "subtitle": "استورد قائمة عملائك لترى التصنيفات وفرص الاسترداد والإجراءات الموصى بها هنا.",
+      "cta": "الذهاب إلى العملاء"
+    }
+  },
+  "analytics": {
+    "loading": "جارٍ تحميل التحليلات…",
+    "stat": {
+      "revenueRecovered": "الإيرادات المستردة",
+      "revenueFromOffers": "الإيرادات من العروض",
+      "vipRevenue": "إيرادات كبار العملاء",
+      "rewardsRedeemed": "المكافآت المستبدلة",
+      "openRecoveryOpportunities": "فرص الاسترداد (مفتوحة)",
+      "leadsContacted": "العملاء المحتملون الذين تم التواصل معهم",
+      "leadsConverted": "العملاء المحتملون المحوَّلون",
+      "reactivationRate": "معدل إعادة التنشيط",
+      "reactivationRateSub": "المعاد تنشيطهم ÷ (غير النشطين + المفقودين + المعاد تنشيطهم)",
+      "repeatCustomerRate": "معدل العملاء المتكررين",
+      "retentionRate": "معدل الاحتفاظ",
+      "retentionRateSub": "(الإجمالي − المفقودون) ÷ الإجمالي",
+      "avgLifetimeValue": "متوسط القيمة الدائمة للعميل",
+      "totalCustomers": "إجمالي العملاء"
+    },
+    "monthlyChart": {
+      "title": "الإيرادات المستردة شهرياً",
+      "empty": "لم تُسجَّل أي أحداث إيراد بعد — استرد عميلاً محتملاً أو أعد تنشيط عميل ليظهر هذا هنا."
+    },
+    "funnel": {
+      "title": "قمع الاسترداد",
+      "statuses": {
+        "New": "جديد",
+        "Contacted": "تم التواصل",
+        "Interested": "مهتم",
+        "Follow-up Required": "بحاجة لمتابعة",
+        "Converted": "تم التحويل",
+        "Lost": "مفقود"
+      }
+    }
+  },
+  "segments": {
+    "new": "جديد",
+    "active": "نشط",
+    "due": "مستحق",
+    "inactive": "غير نشط",
+    "lost": "مفقود",
+    "vip": "كبار العملاء",
+    "high_value": "عالي القيمة",
+    "frequent": "متكرر",
+    "at_risk": "معرّض للخطر"
+  },
+  "nextBestAction": {
+    "actions": {
+      "reactivate": "إعادة التنشيط",
+      "contactCustomer": "تواصل مع العميل",
+      "vipCare": "عناية بكبار العملاء",
+      "encourageSecondVisit": "تشجيع زيارة ثانية",
+      "noActionNeeded": "لا حاجة لإجراء"
+    },
+    "reasons": {
+      "lostWithCycle": "لم يعد العميل منذ {{days}} يوماً؛ ودورة عودته المعتادة {{cycle}} يوماً.",
+      "lostNoCycle": "لم يعد العميل منذ {{days}} يوماً.",
+      "inactiveWithCycle": "مضى على آخر {{visitLabel}} للعميل {{days}} يوماً، أي {{overdue}} يوماً بعد دورته المعتادة البالغة {{cycle}} يوماً.",
+      "inactiveNoCycle": "مضى على آخر {{visitLabel}} للعميل {{days}} يوماً.",
+      "atRisk": "معدل العودة آخذ في التراجع — {{days}} يوماً منذ آخر {{visitLabel}}، أطول من نمطه المعتاد البالغ {{cycle}} يوماً.",
+      "atRiskUnknownCycle": "؟",
+      "due": "من المرجح أن يعود العميل لـ{{visitLabel}} أخرى قريباً — دورته المعتادة {{cycle}} يوماً، وهو حالياً عند {{days}} يوماً.",
+      "vip": "عميل من الشريحة العليا من حيث الإنفاق/الزيارات — امنحه أولوية في الخدمة لا الخصومات.",
+      "new": "انضم مؤخراً — حافز الزيارة الثانية يحوّل العملاء الجدد إلى عملاء متكررين.",
+      "default": "العميل نشط وضمن دورة عودة صحية."
+    }
+  },
+  "churnRisk": {
+    "overdueWithCycle": "متأخر بنسبة {{pct}}% عن دورته المعتادة البالغة {{cycle}} يوماً",
+    "overdueNoHistory": "لا يوجد سجل زيارات كافٍ لتقييم مدى التأخر",
+    "segmentSeverity": "شدة التصنيف ({{segment}})"
+  },
+  "offerEngine": {
+    "vip": { "text": "ميزة حصرية لكبار العملاء (أولوية حجز، وليست خصماً)", "reason": "كبار العملاء يستجيبون بشكل أفضل للتقدير من الخصومات." },
+    "lost": { "text": "عرض عودة بخصم 15%", "reason": "العملاء المتغيبون لفترة طويلة يحتاجون عادةً لحافز أقوى للعودة." },
+    "inactiveAtRisk": { "text": "عرض عودة بخصم 10%", "reason": "دفعة بسيطة تكفي عادةً للعميل المتغيب مؤخراً." },
+    "new": { "text": "حافز زيارة ثانية", "reason": "تحويل عميل جديد إلى زيارة ثانية هو أكثر اللحظات تأثيراً." },
+    "frequent": { "text": "مكافأة ولاء", "reason": "العملاء المتكررون متفاعلون بالفعل — كافئ سلوكهم، لا تُخصّم عليهم." }
+  },
+  "vipTierActions": {
+    "VIP": { "action": "رسالة شكر شخصية", "detail": "رسالة شخصية قصيرة تقديراً لولائه." },
+    "Gold": { "action": "حجز بأولوية", "detail": "تجاوز قائمة الانتظار — امنحه أول اختيار للمواعيد." },
+    "Platinum": { "action": "خدمة حصرية / وصول مبكر", "detail": "امنحه وصولاً مبكراً للخدمات الجديدة أو ترقية مجانية." },
+    "default": { "action": "مكافأة خاصة", "detail": "قدّر هذا العميل بشيء يتجاوز الخصم." }
+  },
+  "customers": {
+    "list": {
+      "total_one": "عميل واحد",
+      "total_two": "عميلان",
+      "total_few": "{{count}} عملاء",
+      "total_many": "{{count}} عميلاً",
+      "total_other": "{{count}} إجمالي",
+      "import": "استيراد",
+      "addCustomer": "إضافة عميل",
+      "searchPlaceholder": "ابحث بالاسم أو الهاتف أو البريد الإلكتروني…",
+      "allSegments": "كل التصنيفات",
+      "loading": "جارٍ التحميل…",
+      "emptyTitle": "لا يوجد عملاء بعد",
+      "emptyTitleFiltered": "لا يوجد عملاء مطابقون لعوامل التصفية",
+      "emptySubtitle": "استورد جدول بيانات أو أضف عميلك الأول للبدء.",
+      "importCustomers": "استيراد العملاء",
+      "columnName": "الاسم",
+      "columnSegment": "التصنيف",
+      "columnLastVisit": "آخر {{visitLabel}}",
+      "columnVisits": "الزيارات",
+      "columnTotalSpending": "إجمالي الإنفاق"
+    },
+    "addModal": {
+      "title": "إضافة عميل",
+      "nameLabel": "الاسم",
+      "phoneLabel": "الهاتف",
+      "emailLabel": "البريد الإلكتروني"
+    },
+    "import": {
+      "title": "استيراد العملاء",
+      "instructions": "ارفع ملف CSV أو Excel. نتعرف على أعمدة مثل <b>الاسم</b>، <b>الهاتف</b>، <b>البريد الإلكتروني</b>، <b>آخر زيارة</b>، <b>إجمالي الزيارات</b>، و<b>إجمالي الإنفاق</b> — يتم مطابقة العناوين بمرونة، وأي عمود مفقود يُستكمل بقيمة افتراضية منطقية.",
+      "importing": "جارٍ الاستيراد…",
+      "chooseFile": "اضغط لاختيار ملف ‎.csv أو ‎.xlsx أو ‎.xls",
+      "noValidRows": "لم يتم العثور على صفوف صالحة — تأكد من وجود عمود للاسم.",
+      "summaryTotal": "يضم نشاطك التجاري {{count}} عميل.",
+      "summaryInactive": "<b>{{count}}</b> عميل لم يعد منذ 60 يوماً أو أكثر.",
+      "summaryHighValueInactive": "<b>{{count}}</b> عميل عالي القيمة غير نشط.",
+      "summaryDueSoon": "<b>{{count}}</b> عميل مستحق للعودة.",
+      "summarySkipped": "تم تخطي {{count}} صف (بدون اسم).",
+      "seeDashboard": "عرض لوحة التحكم"
+    },
+    "profile": {
+      "backToCustomers": "الرجوع إلى العملاء",
+      "customerSince": "عميل منذ {{date}}",
+      "totalVisits": "إجمالي الزيارات",
+      "totalSpending": "إجمالي الإنفاق",
+      "daysSinceLastVisit": "الأيام منذ آخر زيارة",
+      "avgReturnCycle": "متوسط دورة العودة (أيام)",
+      "logVisit": "تسجيل {{visitLabel}}",
+      "timeline": "السجل الزمني",
+      "noVisitsYet": "لا توجد زيارات مسجلة بعد.",
+      "nextBestAction": "أفضل إجراء تالٍ",
+      "churnRisk": "خطر فقدان العميل",
+      "suggestedMessage": "رسالة مقترحة",
+      "addPhoneHint": "أضف رقم هاتف لهذا العميل لتفعيل واتساب.",
+      "notFound": "العميل غير موجود.",
+      "logVisitModal": {
+        "title": "تسجيل زيارة",
+        "dateLabel": "التاريخ",
+        "amountLabel": "المبلغ",
+        "serviceLabel": "الخدمة"
+      }
+    }
+  },
+  "recovery": {
+    "addLead": "إضافة عميل محتمل",
+    "editLead": "تعديل العميل المحتمل",
+    "loading": "جارٍ التحميل…",
+    "emptyTitle": "لا توجد فرص استرداد",
+    "emptySubtitle": "العملاء المحتملون الذين استفسروا عن خدمة ولم يحجزوا سيظهرون هنا.",
+    "followUpNow": "تابع الآن",
+    "interestedIn": "مهتم بـ: {{service}}",
+    "source": "المصدر: {{source}}",
+    "lastContact": "آخر تواصل: {{value}}",
+    "estValue": "القيمة المقدّرة: {{value}}",
+    "allStatuses": "الكل",
+    "statuses": {
+      "New": "جديد",
+      "Contacted": "تم التواصل",
+      "Interested": "مهتم",
+      "Follow-up Required": "بحاجة لمتابعة",
+      "Converted": "تم التحويل",
+      "Lost": "مفقود"
+    },
+    "form": {
+      "nameLabel": "الاسم",
+      "phoneLabel": "الهاتف",
+      "sourceLabel": "المصدر",
+      "sourcePlaceholder": "مثال: رسالة إنستغرام",
+      "interestedServiceLabel": "الخدمة المهتم بها",
+      "inquiryDateLabel": "تاريخ الاستفسار",
+      "lastContactLabel": "آخر تواصل",
+      "estimatedValueLabel": "القيمة المقدّرة",
+      "statusLabel": "الحالة",
+      "notesLabel": "ملاحظات"
+    },
+    "convertModal": {
+      "title": "تحديد كمُحوَّل",
+      "body": "سجّل الإيراد الذي حققه هذا العميل المحتمل المسترد — يُستخدم في مؤشر الإيرادات المستردة على لوحة التحكم.",
+      "amountLabel": "مبلغ الإيراد"
+    }
+  },
+  "reactivation": {
+    "loading": "جارٍ التحميل…",
+    "emptyTitle": "لا يوجد عملاء غير نشطين",
+    "emptySubtitle": "جميع العملاء ضمن نافذة العودة المعتادة.",
+    "buckets": {
+      "30": "غير نشط منذ 30+ يوماً",
+      "60": "غير نشط منذ 60+ يوماً",
+      "90": "غير نشط منذ 90+ يوماً",
+      "long": "مفقود طويل الأمد (180+ يوماً)"
+    },
+    "lastVisitInfo": "آخر {{visitLabel}}: منذ {{days}} يوماً · الدورة المعتادة: {{cycle}} يوماً · {{visits}} زيارة سابقة · القيمة الدائمة: {{value}}",
+    "markReactivated": "تحديد كمُعاد تنشيطه",
+    "suggestedOffer": "العرض المقترح: <b>{{text}}</b> ({{reason}})",
+    "markReactivatedModal": {
+      "title": "تحديد {{name}} كمُعاد تنشيطه",
+      "body": "سجّل الزيارة وإيرادها — يُستخدم هذا في الإيرادات المستردة ويزيل العميل من قائمة إعادة التنشيط.",
+      "amountLabel": "مبلغ الزيارة"
+    }
+  },
+  "retention": {
+    "loading": "جارٍ التحميل…",
+    "dueSoonTab": "مستحق قريباً ({{count}})",
+    "atRiskTab": "معرّض للخطر ({{count}})",
+    "atRiskBadge": "معرّض للخطر",
+    "riskBadge": "خطر {{score}}",
+    "dueWithinDays": "من المرجح أن يعود لـ{{visitLabel}} أخرى خلال {{days}} يوماً",
+    "sinceLastVisit": "{{days}} يوماً منذ آخر {{visitLabel}}",
+    "lifetimeValue": "القيمة الدائمة: {{value}}",
+    "emptyDueTitle": "لا يوجد عملاء مستحقون قريباً",
+    "emptyDueSubtitle": "لا أحد يقترب من تاريخ عودته المتوقع حالياً.",
+    "emptyAtRiskTitle": "لا يوجد عملاء معرّضون للخطر",
+    "emptyAtRiskSubtitle": "لا يُظهر أي عميل نمط زيارات متراجعاً حالياً."
+  },
+  "rewards": {
+    "addProgram": "إضافة برنامج",
+    "editProgram": "تعديل البرنامج",
+    "emptyTitle": "لا توجد برامج مكافآت بعد",
+    "emptySubtitle": "أنشئ برنامج نقاط أو زيارات أو إنفاق لبدء مكافأة العملاء الأوفياء.",
+    "customerRewards": "مكافآت العملاء",
+    "loading": "جارٍ التحميل…",
+    "noCustomersYet": "لا يوجد عملاء بعد.",
+    "columnCustomer": "العميل",
+    "columnPointsBalance": "رصيد النقاط",
+    "columnRedeemed": "المستبدل",
+    "columnAvailableRewards": "المكافآت المتاحة",
+    "redeem": "استبدال {{value}}",
+    "redeemNamed": "استبدال: {{name}}",
+    "pointsSummary": "كل {{amount}} = {{points}} نقطة · {{redeemPoints}} نقطة = {{redeemValue}}",
+    "visitsSummary": "{{count}} زيارة = {{reward}}",
+    "spendingSummary": "إنفاق {{amount}} = {{reward}}",
+    "types": {
+      "points": "نقاط",
+      "visits": "زيارات",
+      "spending": "إنفاق"
+    },
+    "form": {
+      "programNameLabel": "اسم البرنامج",
+      "typeLabel": "النوع",
+      "spendToEarnLabel": "الإنفاق للكسب",
+      "pointsEarnedLabel": "النقاط المكتسبة",
+      "pointsToRedeemLabel": "النقاط اللازمة للاستبدال",
+      "rewardValueLabel": "قيمة المكافأة",
+      "visitsRequiredLabel": "الزيارات المطلوبة",
+      "rewardLabel": "المكافأة",
+      "spendingThresholdLabel": "حد الإنفاق"
+    }
+  },
+  "vip": {
+    "addTier": "إضافة فئة",
+    "editTier": "تعديل الفئة",
+    "vipCustomers": "كبار العملاء",
+    "loading": "جارٍ التحميل…",
+    "emptyTitle": "لا يوجد عملاء كبار بعد",
+    "emptySubtitle": "العملاء الذين يتجاوزون حد إنفاق إحدى الفئات سيظهرون هنا.",
+    "assigned": "مُعيَّن",
+    "confirmTier": "تأكيد الفئة",
+    "customerSummary": "{{spending}} إجمالي · {{visits}} زيارة · آخر زيارة {{lastVisit}}",
+    "form": {
+      "tierNameLabel": "اسم الفئة",
+      "minSpendingLabel": "الحد الأدنى للإنفاق الدائم",
+      "sortOrderLabel": "ترتيب الفرز (الأعلى = فئة أفضل)"
+    }
+  },
+  "offers": {
+    "addOffer": "إضافة عرض",
+    "editOffer": "تعديل العرض",
+    "emptyTitle": "لا توجد عروض بعد",
+    "emptySubtitle": "أنشئ عرضاً وحدد شريحة العملاء المستهدفة — ستظهر التوصيات أدناه تلقائياً.",
+    "triggersFor": "يُفعَّل لـ: {{segment}} · {{description}}",
+    "recommendedNow": "موصى به الآن",
+    "noRecommendations": "لا يوجد حالياً عملاء يطابقون شريحة تفعيل أي عرض نشط.",
+    "recommendedBecause": "موصى به لأن: {{reason}}",
+    "sentSendAgain": "تم الإرسال — إرسال مجدداً",
+    "markConverted": "تحديد كمُحوَّل",
+    "converted": "تم التحويل",
+    "loading": "جارٍ التحميل…",
+    "form": {
+      "offerNameLabel": "اسم العرض",
+      "triggersForSegmentLabel": "يُفعَّل لشريحة",
+      "offerTypeLabel": "نوع العرض",
+      "offerTypePlaceholder": "مثال: خصم، ميزة حصرية، ترقية مجانية",
+      "descriptionLabel": "الوصف (ما الذي يحصل عليه العميل)"
+    },
+    "convertModal": {
+      "title": "تحديد العرض كمُحوَّل",
+      "body": "سجّل الإيراد الناتج عن هذا العرض — يُحتسب ضمن الإيرادات المتحققة من العروض في التحليلات.",
+      "amountLabel": "مبلغ الإيراد"
+    }
+  },
+  "settings": {
+    "segmentation": {
+      "intro": "هذه الحدود الشفافة والقابلة للتعديل تحدد من يُصنَّف كجديد، نشط، مستحق، غير نشط، مفقود، كبار العملاء، عالي القيمة، متكرر، أو معرّض للخطر.",
+      "saveChanges": "حفظ التغييرات",
+      "loading": "جارٍ التحميل…",
+      "fields": {
+        "new": { "title": "جديد", "desc": "عميل تم إنشاؤه خلال آخر N يوماً.", "days": "الأيام منذ الانضمام" },
+        "active": { "title": "نشط", "desc": "عميل زار خلال N يوماً.", "days": "الأيام منذ آخر زيارة" },
+        "due": { "title": "مستحق", "desc": "عميل يقترب من تاريخ عودته المتوقع.", "days_before": "الأيام قبل العودة المتوقعة لتصنيفه كمستحق" },
+        "inactive": { "title": "غير نشط", "desc": "تجاوز العميل فترة عودته المتوقعة.", "days": "الأيام منذ آخر زيارة" },
+        "lost": { "title": "مفقود", "desc": "عميل غير نشط منذ أطول من هذه المدة.", "days": "الأيام منذ آخر زيارة" },
+        "vip": { "title": "كبار العملاء", "desc": "عميل يستوفي حدود الإنفاق أو الزيارات.", "min_spending": "الحد الأدنى للإنفاق الدائم", "min_visits": "الحد الأدنى للزيارات" },
+        "high_value": { "title": "عالي القيمة", "desc": "قيمة العميل الدائمة أعلى من هذا الحد.", "min_lifetime_value": "الحد الأدنى للقيمة الدائمة" },
+        "frequent": { "title": "متكرر", "desc": "يزور العميل أكثر من هذا المعدل، لكل 90 يوماً.", "min_visits_per_90d": "الحد الأدنى للزيارات لكل 90 يوماً" },
+        "at_risk": { "title": "معرّض للخطر", "desc": "تجاوز العميل دورة عودته المعتادة بهذا المعدل.", "overdue_ratio": "نسبة التأخر (مثال: 1.3 = تأخر 30%)" }
+      }
+    },
+    "team": {
+      "whoHasAccess": "من يملك صلاحية الوصول إلى {{business}}.",
+      "inviteTeammate": "دعوة عضو فريق",
+      "loading": "جارٍ التحميل…",
+      "columnEmail": "البريد الإلكتروني",
+      "columnRole": "الدور",
+      "pendingInvites": "الدعوات المعلّقة",
+      "removeConfirmLabel": "{{email}} من الفريق",
+      "inviteModal": {
+        "title": "دعوة عضو فريق",
+        "emailLabel": "البريد الإلكتروني",
+        "roleLabel": "الدور",
+        "hint": "إذا لم يكن لديه حساب بعد، فسينضم تلقائياً بمجرد التسجيل بهذا البريد الإلكتروني.",
+        "inviting": "جارٍ الدعوة…",
+        "sendInvite": "إرسال الدعوة"
+      }
+    },
+    "business": {
+      "newBusiness": "نشاط تجاري جديد",
+      "nameLabel": "اسم النشاط التجاري",
+      "typeLabel": "نوع النشاط التجاري",
+      "visitLabelLabel": "ماذا تسمّون الزيارة؟",
+      "defaultLanguageLabel": "اللغة الافتراضية",
+      "currencyLabel": "العملة",
+      "saveChanges": "حفظ التغييرات",
+      "readOnlyHint": "يمكن فقط للمالكين والمسؤولين تغيير إعدادات النشاط التجاري.",
+      "newBusinessModal": {
+        "title": "إنشاء نشاط تجاري آخر",
+        "creating": "جارٍ الإنشاء…",
+        "createBusiness": "إنشاء النشاط التجاري"
+      }
+    },
+    "billing": {
+      "currentPlan": "الخطة الحالية",
+      "trial": "تجريبية",
+      "trialDaysLeft_one": "تبقّى يوم واحد في فترتك التجريبية.",
+      "trialDaysLeft_two": "تبقّى يومان في فترتك التجريبية.",
+      "trialDaysLeft_few": "تبقّت {{count}} أيام في فترتك التجريبية.",
+      "trialDaysLeft_many": "تبقّى {{count}} يوماً في فترتك التجريبية.",
+      "trialDaysLeft_other": "تبقّى {{count}} يوم في فترتك التجريبية.",
+      "trialEnded": "انتهت فترتك التجريبية.",
+      "noPaymentRequired": "لا حاجة لطريقة دفع الآن — لن يتم خصم أي مبلغ تلقائياً.",
+      "notConnected": "لم يتم ربط معالجة الدفع بعد — هذه الصفحة تتابع خطتك، وليست رسوماً فعلية.",
+      "readyToGoLive": "عندما تكون جاهزاً للانطلاق الفعلي، تواصل معنا وسنقوم بإعداد الفوترة.",
+      "askOwnerAdmin": "اطلب من مالك أو مسؤول إدارة الفوترة.",
+      "contactUpgrade": "تواصل معنا بخصوص الترقية",
+      "plans": {
+        "trial": "تجريبية",
+        "starter": "أساسية",
+        "growth": "نمو",
+        "professional": "احترافية",
+        "enterprise": "مؤسسات"
+      }
+    }
+  }
+}

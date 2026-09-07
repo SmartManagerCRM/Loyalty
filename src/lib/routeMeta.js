@@ -6,28 +6,30 @@ import { matchPath } from "react-router-dom";
 // product. Order matters: matchPath checks these in order, so put more
 // specific patterns (e.g. a detail route) before their parent list route
 // only if there's ever overlap — there isn't yet, but keep it in mind.
+//
+// Returns i18n keys (under the "pageMeta" namespace), not translated text —
+// Header.jsx resolves them via t() so the title/subtitle react to language
+// changes without this module needing to know about i18next.
 const ROUTES = [
-  { path: "/", title: "Dashboard", subtitle: "Where are we losing customers, and what should we do today?" },
-  { path: "/customers", title: "Customers", subtitle: "Your full customer database." },
-  { path: "/customers/:id", title: "Customer Profile", subtitle: "History, segment, and next best action." },
-  { path: "/recovery", title: "Recovery", subtitle: "Leads who inquired but never converted." },
-  { path: "/reactivation", title: "Reactivation", subtitle: "Customers who stopped returning, by how overdue they are." },
-  { path: "/retention", title: "Retention", subtitle: "Reach customers before they become inactive." },
-  { path: "/rewards", title: "Rewards", subtitle: "Points, visit, and spending reward programs." },
-  { path: "/vip", title: "VIP", subtitle: "Recognize top customers with priority, not discounts." },
-  { path: "/offers", title: "Smart Offers", subtitle: "Offers matched to customer behavior." },
-  { path: "/analytics", title: "Analytics", subtitle: "The business value this platform is generating." },
-  { path: "/settings/segmentation", title: "Segmentation Rules", subtitle: "The thresholds that decide who's Active, Due, At Risk, and more." },
-  { path: "/settings/team", title: "Team", subtitle: "Who has access to this business." },
-  { path: "/settings/business", title: "Business Settings", subtitle: "What your customers and staff see across the app." },
-  { path: "/settings/billing", title: "Billing", subtitle: "Your plan and subscription status." },
+  { path: "/", key: "dashboard" },
+  { path: "/customers", key: "customers" },
+  { path: "/customers/:id", key: "customerProfile" },
+  { path: "/recovery", key: "recovery" },
+  { path: "/reactivation", key: "reactivation" },
+  { path: "/retention", key: "retention" },
+  { path: "/rewards", key: "rewards" },
+  { path: "/vip", key: "vip" },
+  { path: "/offers", key: "offers" },
+  { path: "/analytics", key: "analytics" },
+  { path: "/settings/segmentation", key: "settingsSegmentation" },
+  { path: "/settings/team", key: "settingsTeam" },
+  { path: "/settings/business", key: "settingsBusiness" },
+  { path: "/settings/billing", key: "settingsBilling" },
 ];
 
-const DEFAULT_META = { title: "SmartManager Loyalty", subtitle: "" };
-
-export function getPageMeta(pathname) {
+export function getPageMetaKey(pathname) {
   for (const route of ROUTES) {
-    if (matchPath({ path: route.path, end: true }, pathname)) return route;
+    if (matchPath({ path: route.path, end: true }, pathname)) return route.key;
   }
-  return DEFAULT_META;
+  return "default";
 }

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MessageCircle } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, EmptyState, Pill } from "../../components/ui";
@@ -10,6 +11,7 @@ import { openWhatsApp } from "../../lib/whatsapp";
 import { formatMoney } from "../../lib/currencies";
 
 function CustomerRow({ row, visitLabel, business, badge }) {
+  const { t } = useTranslation();
   const nba = nextBestAction(row, { visitLabel });
   const risk = churnRiskScore(row);
   const dueInDays = row.avg_return_cycle_days ? Math.round(row.avg_return_cycle_days - (row.days_since_last_visit || 0)) : null;
@@ -20,13 +22,13 @@ function CustomerRow({ row, visitLabel, business, badge }) {
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold" style={{ color: C.ink }}>{row.name}</span>
             {badge}
-            {risk && <Pill color={risk.score >= 50 ? C.red : C.slate} bg={risk.score >= 50 ? "#C63B3B1a" : C.bg}>Risk {risk.score}</Pill>}
+            {risk && <Pill color={risk.score >= 50 ? C.red : C.slate} bg={risk.score >= 50 ? "#C63B3B1a" : C.bg}>{t("retention.riskBadge", { score: risk.score })}</Pill>}
           </div>
           <div className="mt-1 text-xs" style={{ color: C.slateLight }}>
             {dueInDays !== null && dueInDays >= 0
-              ? `Likely due for another ${visitLabel.toLowerCase()} within ${dueInDays} days`
-              : `${row.days_since_last_visit} days since last ${visitLabel.toLowerCase()}`}
-            {" · "}Lifetime value: {formatMoney(row.total_spending, business?.currency)}
+              ? t("retention.dueWithinDays", { visitLabel: visitLabel.toLowerCase(), days: dueInDays })
+              : t("retention.sinceLastVisit", { days: row.days_since_last_visit, visitLabel: visitLabel.toLowerCase() })}
+            {" · "}{t("retention.lifetimeValue", { value: formatMoney(row.total_spending, business?.currency) })}
           </div>
         </div>
         <Btn
@@ -36,7 +38,7 @@ function CustomerRow({ row, visitLabel, business, badge }) {
             action: nba.action, customerName: row.name, businessName: business?.name, days: row.days_since_last_visit, language: business?.default_language,
           }))}
         >
-          Open WhatsApp
+          {t("common.openWhatsApp")}
         </Btn>
       </div>
       <div className="mt-3 rounded-xl p-3 text-xs" style={{ backgroundColor: C.bg }}>
@@ -48,6 +50,7 @@ function CustomerRow({ row, visitLabel, business, badge }) {
 }
 
 export default function Retention() {
+  const { t } = useTranslation();
   const { business } = useAuth();
   const { rows, ready } = useCustomerOverview(business?.id);
   const [tab, setTab] = useState("due");
@@ -58,7 +61,7 @@ export default function Retention() {
   const due = useMemo(() => rows.filter((r) => r.is_due).sort(byRiskThenValue), [rows]);
   const atRisk = useMemo(() => rows.filter((r) => r.is_at_risk).sort(byRiskThenValue), [rows]);
 
-  if (!ready) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>Loading…</div>;
+  if (!ready) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>{t("retention.loading")}</div>;
 
   const active = tab === "due" ? due : atRisk;
 
@@ -70,22 +73,22 @@ export default function Retention() {
           className="rounded-xl px-4 py-2 text-sm font-semibold"
           style={{ backgroundColor: tab === "due" ? C.green : C.white, color: tab === "due" ? C.white : C.navy, border: `1px solid ${C.border}` }}
         >
-          Due Soon ({due.length})
+          {t("retention.dueSoonTab", { count: due.length })}
         </button>
         <button
           onClick={() => setTab("at_risk")}
           className="rounded-xl px-4 py-2 text-sm font-semibold"
           style={{ backgroundColor: tab === "at_risk" ? C.amber : C.white, color: tab === "at_risk" ? C.white : C.navy, border: `1px solid ${C.border}` }}
         >
-          At Risk ({atRisk.length})
+          {t("retention.atRiskTab", { count: atRisk.length })}
         </button>
       </div>
 
       <div className="mt-5 space-y-3">
         {active.length === 0 ? (
           <EmptyState
-            title={tab === "due" ? "No one is due soon" : "No at-risk customers"}
-            subtitle={tab === "due" ? "Nobody is approaching their expected return date right now." : "No customers show a declining visit pattern right now."}
+            title={tab === "due" ? t("retention.emptyDueTitle") : t("retention.emptyAtRiskTitle")}
+            subtitle={tab === "due" ? t("retention.emptyDueSubtitle") : t("retention.emptyAtRiskSubtitle")}
           />
         ) : (
           active.map((row) => (
@@ -94,7 +97,7 @@ export default function Retention() {
               row={row}
               visitLabel={visitLabel}
               business={business}
-              badge={tab === "at_risk" ? <Pill color={C.amber} bg="#C77D141a">At Risk</Pill> : undefined}
+              badge={tab === "at_risk" ? <Pill color={C.amber} bg="#C77D141a">{t("retention.atRiskBadge")}</Pill> : undefined}
             />
           ))
         )}

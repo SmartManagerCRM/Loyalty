@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Check, Globe } from "lucide-react";
 import { C } from "./theme";
 
@@ -9,6 +10,7 @@ const LANGUAGES = [
 ];
 
 export default function LanguageSelector({ language, onChange }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const current = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
 
@@ -18,7 +20,7 @@ export default function LanguageSelector({ language, onChange }) {
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold hover:bg-black/5"
         style={{ color: C.slate }}
-        title="Display language"
+        title={t("header.displayLanguage")}
       >
         <Globe size={14} />
         {current.code.toUpperCase()}
@@ -27,16 +29,16 @@ export default function LanguageSelector({ language, onChange }) {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-1 w-44 overflow-hidden rounded-xl bg-white py-1 shadow-lg" style={{ border: `1px solid ${C.border}` }}>
+          <div className="absolute end-0 z-50 mt-1 w-44 overflow-hidden rounded-xl bg-white py-1 shadow-lg" style={{ border: `1px solid ${C.border}` }}>
             {LANGUAGES.map((l) => (
               <button
                 key={l.code}
                 disabled={l.comingSoon}
                 onClick={() => { onChange(l.code); setOpen(false); }}
-                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-40"
                 style={{ color: C.ink }}
               >
-                <span>{l.label}{l.comingSoon && <span className="ml-1 text-[10px]" style={{ color: C.slateLight }}>(soon)</span>}</span>
+                <span>{l.label}{l.comingSoon && <span className="ms-1 text-[10px]" style={{ color: C.slateLight }}>{t("languageSelector.comingSoon")}</span>}</span>
                 {language === l.code && <Check size={14} color={C.green} />}
               </button>
             ))}
