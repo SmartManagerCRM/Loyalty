@@ -7,7 +7,10 @@ import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabaseClient";
 import { CURRENCIES } from "../../lib/currencies";
 
-const BUSINESS_TYPE_KEYS = ["clinic", "dental", "physiotherapy", "beauty_salon", "spa", "gym", "barber", "car_service", "training_center", "consultant", "other"];
+const BUSINESS_TYPE_KEYS = [
+  "clinic", "dental", "physiotherapy", "dermatology", "aesthetic_clinic", "laser_clinic",
+  "beauty_salon", "spa", "gym", "barber", "car_service", "training_center", "consultant", "other",
+];
 // Business-chosen vocabulary, deliberately not translated — see the same
 // note in Onboarding.jsx.
 const VISIT_LABELS = ["Visit", "Appointment", "Session", "Service", "Purchase"];

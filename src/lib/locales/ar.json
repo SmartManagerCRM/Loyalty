@@ -40,6 +40,7 @@
     "dashboard": { "title": "لوحة التحكم", "subtitle": "أين نخسر العملاء، وما الذي يجب فعله اليوم؟" },
     "customers": { "title": "العملاء", "subtitle": "قاعدة بيانات عملائك الكاملة." },
     "customerProfile": { "title": "ملف العميل", "subtitle": "السجل، التصنيف، وأفضل إجراء تالٍ." },
+    "bookings": { "title": "الحجوزات", "subtitle": "تقويمك — الموظفون، الخدمات، والمواعيد المتاحة اليوم." },
     "recovery": { "title": "الاسترداد", "subtitle": "عملاء محتملون استفسروا لكن لم يتحوّلوا أبداً." },
     "reactivation": { "title": "إعادة التنشيط", "subtitle": "العملاء الذين توقفوا عن العودة، مرتبين حسب مدة التأخر." },
     "retention": { "title": "الاحتفاظ", "subtitle": "تواصل مع العملاء قبل أن يصبحوا غير نشطين." },
@@ -65,7 +66,9 @@
     "business": "النشاط التجاري",
     "billing": "الفوترة",
     "settings": "الإعدادات",
-    "services": "الخدمات"
+    "services": "الخدمات",
+    "staff": "الموظفون",
+    "bookings": "الحجوزات"
   },
   "roles": {
     "owner": "مالك",
@@ -222,6 +225,9 @@
     "clinic": "عيادة",
     "dental": "طب أسنان",
     "physiotherapy": "علاج طبيعي",
+    "dermatology": "طب جلدية",
+    "aesthetic_clinic": "عيادة تجميل",
+    "laser_clinic": "عيادة ليزر",
     "beauty_salon": "صالون تجميل",
     "spa": "منتجع صحي",
     "gym": "نادي رياضي",
@@ -245,6 +251,7 @@
       "customersRecovered": "العملاء المستردون",
       "retentionRate": "معدل الاحتفاظ",
       "totalCustomers": "إجمالي العملاء",
+      "bookingsToday": "حجوزات اليوم",
       "active": "نشط",
       "new": "جديد",
       "dueForReturn": "مستحق للعودة",
@@ -778,8 +785,25 @@
       "form": {
         "nameLabel": "اسم الخدمة",
         "priceLabel": "السعر (اختياري)",
+        "durationLabel": "المدة الافتراضية (دقائق)",
         "descriptionLabel": "الوصف (اختياري)",
         "activeLabel": "نشطة — متاحة للاختيار"
+      }
+    },
+    "staff": {
+      "intro": "أعضاء الفريق الذين يستقبلون الحجوزات — تُستخدم لبناء التقويم ومنع الحجز المزدوج.",
+      "addStaff": "إضافة موظف",
+      "editStaff": "تعديل الموظف",
+      "loading": "جارٍ التحميل…",
+      "emptyTitle": "لا يوجد موظفون بعد",
+      "emptySubtitle": "أضف فريقك حتى تتمكن من تعيين الحجوزات وجدولتها لهم.",
+      "columnName": "الاسم",
+      "columnRole": "الدور",
+      "columnStatus": "الحالة",
+      "form": {
+        "nameLabel": "الاسم",
+        "roleLabel": "الدور (اختياري)",
+        "activeLabel": "نشط — متاح للحجز"
       }
     },
     "business": {
@@ -817,6 +841,72 @@
         "growth": "نمو",
         "professional": "احترافية",
         "enterprise": "مؤسسات"
+      }
+    }
+  },
+  "bookings": {
+    "today": "اليوم",
+    "newBooking": "حجز جديد",
+    "unassignedColumn": "غير مُسنَد",
+    "views": {
+      "day": "يوم",
+      "week": "أسبوع",
+      "month": "شهر"
+    },
+    "filters": {
+      "allStaff": "كل الموظفين",
+      "allServices": "كل الخدمات",
+      "allStatuses": "كل الحالات"
+    },
+    "status": {
+      "pending": "قيد الانتظار",
+      "confirmed": "مؤكد",
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "no_show": "لم يحضر"
+    },
+    "emptyTitle": "لا توجد حجوزات بعد",
+    "emptySubtitle": "أنشئ أول حجز لبدء تعبئة تقويمك.",
+    "day": {
+      "noStaffTitle": "لا يوجد موظفون بعد",
+      "noStaffSubtitle": "أضف أعضاء الفريق في الإعدادات لبناء عرض اليوم حولهم."
+    },
+    "week": {
+      "empty": "لا حجوزات"
+    },
+    "emptySlots": {
+      "title": "المواعيد المتاحة اليوم",
+      "noGaps": "لا توجد مواعيد متاحة اليوم — الجدول ممتلئ.",
+      "summary": "{{count}} موعد متاح، حوالي {{hours}} ساعة فارغة",
+      "minutesShort": "{{count}} دقيقة",
+      "candidatesTitle": "عملاء جيدون لملء هذه المواعيد",
+      "noCandidates": "لا يوجد عملاء مستحقون أو غير نشطين أو مفقودون للتواصل معهم الآن."
+    },
+    "modal": {
+      "newTitle": "حجز جديد",
+      "editTitle": "تعديل الحجز",
+      "customerLabel": "العميل",
+      "searchCustomer": "ابحث عن العملاء…",
+      "newCustomer": "عميل جديد",
+      "newCustomerName": "اسم العميل",
+      "newCustomerPhone": "الهاتف (اختياري)",
+      "chooseExisting": "اختر عميلاً موجوداً بدلاً من ذلك",
+      "serviceLabel": "الخدمة",
+      "noService": "بدون خدمة",
+      "staffLabel": "الموظف",
+      "unassigned": "غير مُسنَد",
+      "dateLabel": "التاريخ",
+      "timeLabel": "الوقت",
+      "durationLabel": "المدة (دقيقة)",
+      "notesLabel": "ملاحظات (اختياري)",
+      "statusLabel": "الحالة",
+      "completeSection": "أكمل هذا الحجز لتسجيل زيارة وتحديث تصنيف العميل.",
+      "amountLabel": "المبلغ",
+      "markCompleted": "تحديد كمكتمل",
+      "cancelBooking": "إلغاء الحجز",
+      "errors": {
+        "customerRequired": "اختر أو أضف عميلاً أولاً.",
+        "overlap": "هذا الوقت يتعارض مع حجز آخر لهذا الموظف."
       }
     }
   }

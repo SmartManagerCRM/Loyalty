@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import {
-  Users, UserPlus, Clock, UserMinus, Crown, Gift, DollarSign, Repeat, RotateCcw, ChevronRight, Target, CheckCircle2,
+  Users, UserPlus, Clock, UserMinus, Crown, Gift, DollarSign, Repeat, RotateCcw, ChevronRight, Target, CheckCircle2, CalendarClock,
 } from "lucide-react";
 import { C } from "../components/theme";
 import { StatCard, Btn, EmptyState } from "../components/ui";
@@ -112,8 +112,18 @@ export default function Dashboard() {
   const { rows: recoveryLeads, ready: recoveryReady } = useBusinessTable("recovery_opportunities", business?.id);
   const { rows: redemptions, ready: redemptionsReady } = useBusinessTable("reward_redemptions", business?.id);
   const { rows: revenueEvents, ready: revenueReady } = useRevenueEvents(business?.id);
+  const { rows: bookings, ready: bookingsReady } = useBusinessTable("bookings", business?.id);
 
-  const ready = customersReady && recoveryReady && redemptionsReady && revenueReady;
+  const ready = customersReady && recoveryReady && redemptionsReady && revenueReady && bookingsReady;
+
+  const bookingsToday = useMemo(() => {
+    const now = new Date();
+    return bookings.filter((b) => {
+      if (b.status === "cancelled") return false;
+      const d = new Date(b.start_at);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+    }).length;
+  }, [bookings]);
   const currency = business?.currency;
 
   const stats = useMemo(() => {
@@ -210,8 +220,9 @@ export default function Dashboard() {
       </div>
 
       {/* Secondary metrics */}
-      <div className="mt-4 grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-7">
+      <div className="mt-4 grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-8">
         <StatCard label={t("dashboard.kpi.totalCustomers")} value={stats.total} icon={Users} accent={C.navy} to="/customers" />
+        <StatCard label={t("dashboard.kpi.bookingsToday")} value={bookingsToday} icon={CalendarClock} accent={C.teal} to="/bookings" />
         <StatCard label={t("dashboard.kpi.active")} value={stats.active} icon={Users} accent={C.green} to="/customers" />
         <StatCard label={t("dashboard.kpi.new")} value={stats.new} icon={UserPlus} accent={C.teal} to="/customers" />
         <StatCard label={t("dashboard.kpi.dueForReturn")} value={stats.due} icon={Clock} accent={C.amber} to="/retention" />

@@ -34,6 +34,7 @@
     "dashboard": { "title": "Dashboard", "subtitle": "Where are we losing customers, and what should we do today?" },
     "customers": { "title": "Customers", "subtitle": "Your full customer database." },
     "customerProfile": { "title": "Customer Profile", "subtitle": "History, segment, and next best action." },
+    "bookings": { "title": "Bookings", "subtitle": "Your calendar — staff, services, and today's open slots." },
     "recovery": { "title": "Recovery", "subtitle": "Leads who inquired but never converted." },
     "reactivation": { "title": "Reactivation", "subtitle": "Customers who stopped returning, by how overdue they are." },
     "retention": { "title": "Retention", "subtitle": "Reach customers before they become inactive." },
@@ -59,7 +60,9 @@
     "business": "Business",
     "billing": "Billing",
     "settings": "Settings",
-    "services": "Services"
+    "services": "Services",
+    "staff": "Staff",
+    "bookings": "Bookings"
   },
   "roles": {
     "owner": "Owner",
@@ -213,6 +216,9 @@
     "clinic": "Clinic",
     "dental": "Dental",
     "physiotherapy": "Physiotherapy",
+    "dermatology": "Dermatology",
+    "aesthetic_clinic": "Aesthetic Clinic",
+    "laser_clinic": "Laser Clinic",
     "beauty_salon": "Beauty Salon",
     "spa": "Spa",
     "gym": "Gym",
@@ -236,6 +242,7 @@
       "customersRecovered": "Customers Recovered",
       "retentionRate": "Retention Rate",
       "totalCustomers": "Total Customers",
+      "bookingsToday": "Bookings Today",
       "active": "Active",
       "new": "New",
       "dueForReturn": "Due for Return",
@@ -763,8 +770,25 @@
       "form": {
         "nameLabel": "Service name",
         "priceLabel": "Price (optional)",
+        "durationLabel": "Default duration (minutes)",
         "descriptionLabel": "Description (optional)",
         "activeLabel": "Active — available to select"
+      }
+    },
+    "staff": {
+      "intro": "The staff members who take bookings — used to build the calendar and prevent double-booking.",
+      "addStaff": "Add staff member",
+      "editStaff": "Edit staff member",
+      "loading": "Loading…",
+      "emptyTitle": "No staff yet",
+      "emptySubtitle": "Add your team so you can assign and schedule bookings to them.",
+      "columnName": "Name",
+      "columnRole": "Role",
+      "columnStatus": "Status",
+      "form": {
+        "nameLabel": "Name",
+        "roleLabel": "Role (optional)",
+        "activeLabel": "Active — available to book"
       }
     },
     "business": {
@@ -799,6 +823,72 @@
         "growth": "Growth",
         "professional": "Professional",
         "enterprise": "Enterprise"
+      }
+    }
+  },
+  "bookings": {
+    "today": "Today",
+    "newBooking": "New booking",
+    "unassignedColumn": "Unassigned",
+    "views": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month"
+    },
+    "filters": {
+      "allStaff": "All staff",
+      "allServices": "All services",
+      "allStatuses": "All statuses"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No-show"
+    },
+    "emptyTitle": "No bookings yet",
+    "emptySubtitle": "Create your first booking to start filling your calendar.",
+    "day": {
+      "noStaffTitle": "No staff yet",
+      "noStaffSubtitle": "Add staff members in Settings to build your day view around them."
+    },
+    "week": {
+      "empty": "No bookings"
+    },
+    "emptySlots": {
+      "title": "Today's open slots",
+      "noGaps": "No open slots today — fully booked.",
+      "summary": "{{count}} open slot(s), about {{hours}}h free",
+      "minutesShort": "{{count}} min",
+      "candidatesTitle": "Good customers to fill them",
+      "noCandidates": "No due, inactive, or lost customers to reach out to right now."
+    },
+    "modal": {
+      "newTitle": "New booking",
+      "editTitle": "Edit booking",
+      "customerLabel": "Customer",
+      "searchCustomer": "Search customers…",
+      "newCustomer": "New customer",
+      "newCustomerName": "Customer name",
+      "newCustomerPhone": "Phone (optional)",
+      "chooseExisting": "Choose an existing customer instead",
+      "serviceLabel": "Service",
+      "noService": "No service",
+      "staffLabel": "Staff",
+      "unassigned": "Unassigned",
+      "dateLabel": "Date",
+      "timeLabel": "Time",
+      "durationLabel": "Duration (min)",
+      "notesLabel": "Notes (optional)",
+      "statusLabel": "Status",
+      "completeSection": "Mark this booking as completed to log a visit and update the customer's segment.",
+      "amountLabel": "Amount",
+      "markCompleted": "Mark completed",
+      "cancelBooking": "Cancel booking",
+      "errors": {
+        "customerRequired": "Choose or add a customer first.",
+        "overlap": "This time overlaps with another booking for this staff member."
       }
     }
   }

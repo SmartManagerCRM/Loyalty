@@ -7,6 +7,10 @@
 -- only ever sees its own data. Membership + role live in `business_users`.
 
 create extension if not exists "pgcrypto";
+-- Kept out of the public schema per Supabase's linter guidance; used below
+-- for the bookings table's double-booking-prevention exclusion constraint.
+create schema if not exists extensions;
+create extension if not exists "btree_gist" schema extensions;
 
 -- ── Tenancy ──────────────────────────────────────────────────────────────
 
@@ -14,7 +18,10 @@ create table if not exists businesses (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   business_type text not null default 'other'
-    check (business_type in ('clinic','dental','physiotherapy','beauty_salon','spa','gym','barber','car_service','training_center','consultant','other')),
+    check (business_type in (
+      'clinic','dental','physiotherapy','dermatology','aesthetic_clinic','laser_clinic',
+      'beauty_salon','spa','gym','barber','car_service','training_center','consultant','other'
+    )),
   -- what a "visit" is called in this business's UI (Appointment/Session/Service/Purchase/Visit)
   visit_label text not null default 'Visit',
   default_language text not null default 'en' check (default_language in ('en','ar')),
@@ -209,7 +216,7 @@ create table if not exists customer_visits (
   visit_date date not null default current_date,
   amount numeric not null default 0,
   service text,
-  source text not null default 'manual' check (source in ('manual','import')),
+  source text not null default 'manual' check (source in ('manual','import','booking')),
   created_at timestamptz not null default now()
 );
 create index if not exists customer_visits_business_idx on customer_visits(business_id);
@@ -434,10 +441,99 @@ create table if not exists services (
   name text not null,
   description text,
   price numeric,
+  -- default length of a booking for this service, in minutes
+  duration_minutes int not null default 30,
   active boolean not null default true,
   created_at timestamptz not null default now()
 );
 create index if not exists services_business_idx on services(business_id);
+
+-- ── Staff ────────────────────────────────────────────────────────────────
+
+create table if not exists staff (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  name text not null,
+  role text,
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+create index if not exists staff_business_idx on staff(business_id);
+
+alter table staff enable row level security;
+create policy "members read/write staff" on staff
+  for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+
+-- ── Bookings ─────────────────────────────────────────────────────────────
+-- Real double-booking prevention lives at the database level (an exclusion
+-- constraint), not just in application code — it holds even under
+-- concurrent requests. A cancelled/no-show booking frees its slot (the
+-- partial WHERE clause excludes those statuses from the overlap check).
+
+create table if not exists bookings (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  customer_id uuid references customers(id) on delete set null,
+  service_id uuid references services(id) on delete set null,
+  staff_id uuid references staff(id) on delete set null,
+  start_at timestamptz not null,
+  end_at timestamptz not null,
+  status text not null default 'pending' check (status in ('pending','confirmed','completed','cancelled','no_show')),
+  notes text,
+  source text not null default 'manual',
+  created_at timestamptz not null default now(),
+  check (end_at > start_at)
+);
+create index if not exists bookings_business_idx on bookings(business_id);
+create index if not exists bookings_staff_idx on bookings(staff_id);
+create index if not exists bookings_customer_idx on bookings(customer_id);
+create index if not exists bookings_start_idx on bookings(business_id, start_at);
+
+alter table bookings add constraint bookings_no_overlap
+  exclude using gist (
+    staff_id with =,
+    tstzrange(start_at, end_at) with &&
+  ) where (staff_id is not null and status not in ('cancelled','no_show'));
+
+alter table bookings enable row level security;
+create policy "members read/write bookings" on bookings
+  for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+
+-- ── Booking → Loyalty integration ───────────────────────────────────────
+-- The entire segmentation/NBA/dashboard engine already reads from
+-- customer_visits (see customer_stats / customer_segment_flags above) — so
+-- a completed booking only needs to insert a normal visit row and
+-- everything downstream recalculates automatically, with zero changes to
+-- the existing engine. This RPC is the one and only place that happens,
+-- and it's idempotent (completing an already-completed booking is a
+-- no-op) so the UI can safely call it without double-inserting visits.
+
+create or replace function complete_booking(p_booking_id uuid, p_amount numeric default 0)
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  b record;
+  svc_name text;
+begin
+  select * into b from bookings where id = p_booking_id;
+  if b is null then
+    raise exception 'booking not found';
+  end if;
+  if not is_business_member(b.business_id) then
+    raise exception 'not authorized';
+  end if;
+  if b.status = 'completed' then
+    return;
+  end if;
+
+  update bookings set status = 'completed' where id = p_booking_id;
+
+  if b.customer_id is not null then
+    select name into svc_name from services where id = b.service_id;
+    insert into customer_visits (business_id, customer_id, visit_date, amount, service, source)
+    values (b.business_id, b.customer_id, b.start_at::date, coalesce(p_amount, 0), svc_name, 'booking');
+  end if;
+end;
+$$;
 
 -- ── Revenue analytics ────────────────────────────────────────────────────
 
@@ -503,6 +599,8 @@ alter publication supabase_realtime add table customer_visits;
 alter publication supabase_realtime add table recovery_opportunities;
 alter publication supabase_realtime add table reward_redemptions;
 alter publication supabase_realtime add table offers;
+alter publication supabase_realtime add table bookings;
+alter publication supabase_realtime add table staff;
 
 -- ── Platform Admin ──────────────────────────────────────────────────────
 -- Separate from business_users entirely: a platform admin is a person who

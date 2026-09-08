@@ -12,6 +12,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import CustomersList from "./pages/customers/CustomersList";
 import CustomerProfile from "./pages/customers/CustomerProfile";
+import Bookings from "./pages/bookings/Bookings";
 import RecoveryPipeline from "./pages/recovery/RecoveryPipeline";
 import Reactivation from "./pages/reactivation/Reactivation";
 import Retention from "./pages/retention/Retention";
@@ -74,6 +75,7 @@ function Gate() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/customers" element={<CustomersList />} />
         <Route path="/customers/:id" element={<CustomerProfile />} />
+        <Route path="/bookings" element={<Bookings />} />
         <Route path="/recovery" element={<RecoveryPipeline />} />
         <Route path="/reactivation" element={<Reactivation />} />
         <Route path="/retention" element={<Retention />} />

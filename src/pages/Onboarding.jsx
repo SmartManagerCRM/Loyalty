@@ -10,7 +10,10 @@ import { CURRENCIES } from "../lib/currencies";
 import { COUNTRIES } from "../lib/countries";
 import { parseSpreadsheetFile, rowsToCustomers } from "../lib/csvImport";
 
-const BUSINESS_TYPE_KEYS = ["clinic", "dental", "physiotherapy", "beauty_salon", "spa", "gym", "barber", "car_service", "training_center", "consultant", "other"];
+const BUSINESS_TYPE_KEYS = [
+  "clinic", "dental", "physiotherapy", "dermatology", "aesthetic_clinic", "laser_clinic",
+  "beauty_salon", "spa", "gym", "barber", "car_service", "training_center", "consultant", "other",
+];
 
 // The business's own word for "visit" (Appointment/Session/…) is stored
 // and reused verbatim across the whole app (e.g. "Log {visit_label}") —
