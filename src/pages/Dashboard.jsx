@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import {
-  Users, UserPlus, Clock, UserMinus, Crown, Gift, DollarSign, Repeat, RotateCcw, ChevronRight, Target,
+  Users, UserPlus, Clock, UserMinus, Crown, Gift, DollarSign, Repeat, RotateCcw, ChevronRight, Target, CheckCircle2,
 } from "lucide-react";
 import { C } from "../components/theme";
 import { StatCard, Btn, EmptyState } from "../components/ui";
@@ -221,9 +221,14 @@ export default function Dashboard() {
       </div>
 
       {/* Today's Priority Actions */}
-      {(stats.reactivationCandidates.length > 0 || openRecoveryLeads.length > 0 || stats.due > 0) && (
-        <div className="mt-8">
-          <h2 className="text-sm font-bold" style={{ color: C.ink }}>{t("dashboard.priorityActions.title")}</h2>
+      <div className="mt-8">
+        <h2 className="text-sm font-bold" style={{ color: C.ink }}>{t("dashboard.priorityActions.title")}</h2>
+        {stats.reactivationCandidates.length === 0 && openRecoveryLeads.length === 0 && stats.due === 0 ? (
+          <div className="mt-3 flex items-center gap-2 rounded-2xl bg-white p-4 text-sm shadow-sm" style={{ border: `1px solid ${C.border}`, color: C.slate }}>
+            <CheckCircle2 size={16} color={C.green} />
+            {t("dashboard.priorityActions.allCaughtUp")}
+          </div>
+        ) : (
           <div className="mt-3 space-y-2">
             {stats.reactivationCandidates.length > 0 && (
               <PriorityRow
@@ -253,8 +258,8 @@ export default function Dashboard() {
               />
             )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Revenue Opportunity + Customer Health */}
       <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">

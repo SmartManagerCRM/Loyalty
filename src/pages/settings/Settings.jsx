@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Sliders, UsersRound, Building2, CreditCard } from "lucide-react";
+import { Sliders, UsersRound, Package, Building2, CreditCard } from "lucide-react";
 import { C } from "../../components/theme";
 import SegmentationSettings from "./SegmentationSettings";
 import Team from "./Team";
+import ServicesSettings from "./ServicesSettings";
 import BusinessSettings from "./BusinessSettings";
 import Billing from "./Billing";
 
 const TABS = [
   { key: "segmentation", labelKey: "nav.segmentationRules", icon: Sliders, Component: SegmentationSettings },
   { key: "team", labelKey: "nav.team", icon: UsersRound, Component: Team },
+  { key: "services", labelKey: "nav.services", icon: Package, Component: ServicesSettings },
   { key: "business", labelKey: "nav.business", icon: Building2, Component: BusinessSettings },
   { key: "billing", labelKey: "nav.billing", icon: CreditCard, Component: Billing },
 ];

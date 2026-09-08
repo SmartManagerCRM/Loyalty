@@ -19,18 +19,8 @@ const NAV = [
   { to: "/vip", labelKey: "nav.vip", icon: Crown },
   { to: "/offers", labelKey: "nav.smartOffers", icon: Sparkles },
   { to: "/analytics", labelKey: "nav.analytics", icon: BarChart3 },
-];
-
-const SETTINGS_NAV = [
   { to: "/settings", labelKey: "nav.settings", icon: Settings },
 ];
-
-function settingsLinkStyle({ isActive }) {
-  return {
-    backgroundColor: isActive ? C.greenTint : "transparent",
-    color: isActive ? C.greenDeep : C.slate,
-  };
-}
 
 // Persistent column on desktop (lg+); off-canvas drawer below that,
 // toggled by the header's menu button. `open`/`onClose` are ignored at
@@ -95,21 +85,6 @@ export default function Sidebar({ open, onClose }) {
             </NavLink>
           ))}
         </nav>
-
-        <div className="space-y-0.5 px-3 pb-1">
-          {SETTINGS_NAV.map((n) => (
-            <NavLink
-              key={n.to}
-              to={n.to}
-              onClick={onClose}
-              className={({ isActive }) => `flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${isActive ? "" : "hover:bg-black/5"}`}
-              style={settingsLinkStyle}
-            >
-              <n.icon size={15} />
-              {t(n.labelKey)}
-            </NavLink>
-          ))}
-        </div>
 
         <button
           onClick={signOut}

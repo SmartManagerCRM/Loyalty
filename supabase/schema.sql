@@ -423,6 +423,22 @@ create table if not exists offer_recommendations (
   action_taken text not null default 'pending' check (action_taken in ('pending','sent','ignored','converted'))
 );
 
+-- ── Services / Products ─────────────────────────────────────────────────
+-- The services or products a business sells — a simple reference catalog
+-- managed from Settings. Not wired into visit logging yet (that field
+-- stays free text); this is the seam for that later.
+
+create table if not exists services (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  name text not null,
+  description text,
+  price numeric,
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+create index if not exists services_business_idx on services(business_id);
+
 -- ── Revenue analytics ────────────────────────────────────────────────────
 
 create table if not exists revenue_events (
@@ -470,7 +486,7 @@ begin
   foreach t in array array[
     'customers','customer_visits','segmentation_rules','recovery_opportunities',
     'reward_programs','customer_rewards','reward_redemptions',
-    'vip_tiers','customer_vip_status','offers','offer_recommendations','revenue_events'
+    'vip_tiers','customer_vip_status','offers','offer_recommendations','revenue_events','services'
   ] loop
     execute format('alter table %I enable row level security', t);
     execute format(

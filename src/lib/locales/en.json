@@ -58,7 +58,8 @@
     "team": "Team",
     "business": "Business",
     "billing": "Billing",
-    "settings": "Settings"
+    "settings": "Settings",
+    "services": "Services"
   },
   "roles": {
     "owner": "Owner",
@@ -248,7 +249,8 @@
       "recovery": "leads need recovery follow-up",
       "due": "customers due for return",
       "viewCustomers": "View Customers",
-      "viewLeads": "View Leads"
+      "viewLeads": "View Leads",
+      "allCaughtUp": "You're all caught up — nothing needs attention right now."
     },
     "opportunity": {
       "title": "Revenue Opportunity",
@@ -746,6 +748,23 @@
         "hint": "If they don't have an account yet, they'll join automatically as soon as they sign up with this email.",
         "inviting": "Inviting…",
         "sendInvite": "Send invite"
+      }
+    },
+    "services": {
+      "intro": "The services or products you sell — a reference list your team can draw on when logging what a customer bought.",
+      "addService": "Add service",
+      "editService": "Edit service",
+      "loading": "Loading…",
+      "emptyTitle": "No services yet",
+      "emptySubtitle": "Add the services or products you sell to build your catalog.",
+      "columnName": "Name",
+      "columnPrice": "Price",
+      "columnStatus": "Status",
+      "form": {
+        "nameLabel": "Service name",
+        "priceLabel": "Price (optional)",
+        "descriptionLabel": "Description (optional)",
+        "activeLabel": "Active — available to select"
       }
     },
     "business": {
