@@ -19,10 +19,7 @@ import Rewards from "./pages/rewards/Rewards";
 import VIP from "./pages/vip/VIP";
 import Offers from "./pages/offers/Offers";
 import Analytics from "./pages/analytics/Analytics";
-import SegmentationSettings from "./pages/settings/SegmentationSettings";
-import Team from "./pages/settings/Team";
-import BusinessSettings from "./pages/settings/BusinessSettings";
-import Billing from "./pages/settings/Billing";
+import Settings from "./pages/settings/Settings";
 
 // Dev/ops configuration error, shown before any business or language
 // context exists — deliberately left untranslated (it's read by the
@@ -84,10 +81,11 @@ function Gate() {
         <Route path="/vip" element={<VIP />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/analytics" element={<Analytics />} />
-        <Route path="/settings/segmentation" element={<SegmentationSettings />} />
-        <Route path="/settings/team" element={<Team />} />
-        <Route path="/settings/business" element={<BusinessSettings />} />
-        <Route path="/settings/billing" element={<Billing />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/segmentation" element={<Navigate to="/settings?tab=segmentation" replace />} />
+        <Route path="/settings/team" element={<Navigate to="/settings?tab=team" replace />} />
+        <Route path="/settings/business" element={<Navigate to="/settings?tab=business" replace />} />
+        <Route path="/settings/billing" element={<Navigate to="/settings?tab=billing" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppShell>

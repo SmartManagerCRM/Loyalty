@@ -21,10 +21,7 @@ const ROUTES = [
   { path: "/vip", key: "vip" },
   { path: "/offers", key: "offers" },
   { path: "/analytics", key: "analytics" },
-  { path: "/settings/segmentation", key: "settingsSegmentation" },
-  { path: "/settings/team", key: "settingsTeam" },
-  { path: "/settings/business", key: "settingsBusiness" },
-  { path: "/settings/billing", key: "settingsBilling" },
+  { path: "/settings", key: "settings" },
 ];
 
 export function getPageMetaKey(pathname) {

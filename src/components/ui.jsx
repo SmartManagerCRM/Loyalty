@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { C } from "./theme";
@@ -122,9 +123,17 @@ export function ConfirmDelete({ label, onConfirm, onCancel }) {
   );
 }
 
-export function StatCard({ label, value, icon: Icon, accent = C.green, sub }) {
+// `to` is optional — pass a route to make the whole card a link with a
+// hover affordance (used on the Dashboard so each KPI drills into its
+// dedicated page); omit it for a plain, non-interactive card.
+export function StatCard({ label, value, icon: Icon, accent = C.green, sub, to }) {
+  const Tag = to ? Link : "div";
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
+    <Tag
+      {...(to ? { to } : {})}
+      className={`block rounded-2xl bg-white p-4 shadow-sm transition-all ${to ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-md" : ""}`}
+      style={{ border: `1px solid ${C.border}` }}
+    >
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold" style={{ color: C.slate }}>{label}</span>
         {Icon && (
@@ -135,7 +144,7 @@ export function StatCard({ label, value, icon: Icon, accent = C.green, sub }) {
       </div>
       <div className="mt-2 text-2xl font-bold" style={{ color: C.ink }}>{value}</div>
       {sub && <div className="mt-1 text-xs" style={{ color: C.slateLight }}>{sub}</div>}
-    </div>
+    </Tag>
   );
 }
 

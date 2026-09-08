@@ -21,15 +21,15 @@ function UserMenu() {
 
   return (
     <div className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-lg py-1 ps-1 pe-2 hover:bg-black/5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold text-white" style={{ backgroundColor: C.navy }}>
+      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2.5 rounded-lg py-1.5 ps-1 pe-2.5 hover:bg-black/5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold text-white" style={{ backgroundColor: C.navy }}>
           {initials}
         </div>
         <div className="hidden text-start md:block">
-          <div className="max-w-[140px] truncate text-xs font-semibold" style={{ color: C.ink }}>{user?.email}</div>
-          <div className="text-[10px]" style={{ color: C.slateLight }}>{roleLabel}</div>
+          <div className="max-w-[160px] truncate text-sm font-semibold" style={{ color: C.ink }}>{user?.email}</div>
+          <div className="text-xs" style={{ color: C.slateLight }}>{roleLabel}</div>
         </div>
-        <ChevronDown size={14} className="hidden md:block" style={{ color: C.slateLight }} />
+        <ChevronDown size={16} className="hidden md:block" style={{ color: C.slateLight }} />
       </button>
 
       {open && (
@@ -84,30 +84,30 @@ export default function Header({ onOpenMobileMenu }) {
 
   return (
     <header
-      className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b px-4 md:px-6"
+      className="sticky top-0 z-30 flex shrink-0 items-center gap-4 border-b px-5 py-5 md:px-8 md:py-6"
       style={{ backgroundColor: C.white, borderColor: C.border }}
     >
       <button onClick={onOpenMobileMenu} className="rounded-lg p-1.5 hover:bg-black/5 lg:hidden">
-        <Menu size={20} style={{ color: C.navy }} />
+        <Menu size={22} style={{ color: C.navy }} />
       </button>
 
       <div className="shrink-0 lg:hidden">
-        <Logo size={28} />
+        <Logo size={32} />
       </div>
 
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-sm font-bold md:text-base" style={{ color: C.ink }}>{metaTitle}</h1>
-        {metaSubtitle && <p className="hidden truncate text-xs md:block" style={{ color: C.slateLight }}>{metaSubtitle}</p>}
+        <h1 className="truncate text-xl font-bold md:text-3xl" style={{ color: C.ink }}>{metaTitle}</h1>
+        {metaSubtitle && <p className="mt-0.5 truncate text-xs md:text-sm" style={{ color: C.slateLight }}>{metaSubtitle}</p>}
       </div>
 
       <button
         onClick={() => setSearchOpen(true)}
-        className="hidden items-center gap-2 rounded-lg px-3 py-1.5 text-xs sm:flex"
+        className="hidden items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm sm:flex"
         style={{ backgroundColor: C.bg, color: C.slateLight }}
       >
-        <Search size={14} />
+        <Search size={16} />
         {t("header.searchPlaceholder")}
-        <kbd className="rounded border px-1 text-[10px]" style={{ borderColor: C.border, color: C.slateLight }}>⌘K</kbd>
+        <kbd className="rounded border px-1.5 py-0.5 text-[10px]" style={{ borderColor: C.border, color: C.slateLight }}>⌘K</kbd>
       </button>
       <button onClick={() => setSearchOpen(true)} className="rounded-lg p-1.5 hover:bg-black/5 sm:hidden">
         <Search size={18} style={{ color: C.navy }} />
@@ -118,7 +118,7 @@ export default function Header({ onOpenMobileMenu }) {
         <CurrencySelector currency={business?.currency || "SAR"} onChange={handleCurrencyChange} canEdit={canEditCurrency} />
       </div>
 
-      <div className="h-6 w-px shrink-0" style={{ backgroundColor: C.border }} />
+      <div className="h-8 w-px shrink-0" style={{ backgroundColor: C.border }} />
 
       <UserMenu />
 

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import {
@@ -51,9 +51,14 @@ function bucketRevenue(events, periodKey) {
   return buckets;
 }
 
-function PrimaryStat({ label, value, sub, icon: Icon, accent }) {
+function PrimaryStat({ label, value, sub, icon: Icon, accent, to }) {
+  const Tag = to ? Link : "div";
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
+    <Tag
+      {...(to ? { to } : {})}
+      className={`block rounded-2xl bg-white p-5 shadow-sm transition-all ${to ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-md" : ""}`}
+      style={{ border: `1px solid ${C.border}` }}
+    >
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold" style={{ color: C.slateLight }}>{label}</span>
         {Icon && (
@@ -64,7 +69,7 @@ function PrimaryStat({ label, value, sub, icon: Icon, accent }) {
       </div>
       <div className="mt-2 break-words text-2xl font-bold md:text-3xl" style={{ color: C.ink }}>{value}</div>
       {sub && <div className="mt-1 text-xs" style={{ color: C.slateLight }}>{sub}</div>}
-    </div>
+    </Tag>
   );
 }
 
@@ -84,15 +89,15 @@ function PriorityRow({ dot, count, label, cta, onClick }) {
   );
 }
 
-function OpportunityRow({ label, count, potential, color, t }) {
+function OpportunityRow({ label, count, potential, color, t, to }) {
   return (
-    <div className="flex items-center justify-between py-2.5">
+    <Link to={to} className="flex items-center justify-between rounded-lg py-2.5 -mx-2 px-2 transition-colors hover:bg-black/[0.03]">
       <div>
         <div className="text-sm font-semibold" style={{ color: C.ink }}>{label}</div>
         <div className="text-xs" style={{ color: C.slateLight }}>{t("common.customer", { count })}</div>
       </div>
       <div className="text-sm font-bold" style={{ color }}>{potential}</div>
-    </div>
+    </Link>
   );
 }
 
@@ -198,21 +203,21 @@ export default function Dashboard() {
 
       {/* Primary KPIs */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <PrimaryStat label={t("dashboard.kpi.revenueRecovered")} value={formatMoney(revenueStats.recoveredRevenue, currency)} icon={DollarSign} accent={C.green} />
-        <PrimaryStat label={t("dashboard.kpi.customersReactivated")} value={revenueStats.reactivatedCustomers} icon={RotateCcw} accent={C.teal} />
-        <PrimaryStat label={t("dashboard.kpi.customersRecovered")} value={revenueStats.recoveredCustomers} icon={Target} accent={C.amber} />
-        <PrimaryStat label={t("dashboard.kpi.retentionRate")} value={`${revenueStats.retentionRate.toFixed(1)}%`} icon={Repeat} accent={C.navy} />
+        <PrimaryStat label={t("dashboard.kpi.revenueRecovered")} value={formatMoney(revenueStats.recoveredRevenue, currency)} icon={DollarSign} accent={C.green} to="/analytics" />
+        <PrimaryStat label={t("dashboard.kpi.customersReactivated")} value={revenueStats.reactivatedCustomers} icon={RotateCcw} accent={C.teal} to="/reactivation" />
+        <PrimaryStat label={t("dashboard.kpi.customersRecovered")} value={revenueStats.recoveredCustomers} icon={Target} accent={C.amber} to="/recovery" />
+        <PrimaryStat label={t("dashboard.kpi.retentionRate")} value={`${revenueStats.retentionRate.toFixed(1)}%`} icon={Repeat} accent={C.navy} to="/retention" />
       </div>
 
       {/* Secondary metrics */}
       <div className="mt-4 grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-7">
-        <StatCard label={t("dashboard.kpi.totalCustomers")} value={stats.total} icon={Users} />
-        <StatCard label={t("dashboard.kpi.active")} value={stats.active} icon={Users} accent={C.green} />
-        <StatCard label={t("dashboard.kpi.new")} value={stats.new} icon={UserPlus} accent={C.teal} />
-        <StatCard label={t("dashboard.kpi.dueForReturn")} value={stats.due} icon={Clock} accent={C.amber} />
-        <StatCard label={t("dashboard.kpi.inactive")} value={stats.inactive + stats.lost} icon={UserMinus} accent={C.red} />
-        <StatCard label={t("dashboard.kpi.vipCustomers")} value={stats.vip} icon={Crown} accent={C.gold} />
-        <StatCard label={t("dashboard.kpi.rewardsRedeemed")} value={redemptions.length} icon={Gift} accent={C.teal} />
+        <StatCard label={t("dashboard.kpi.totalCustomers")} value={stats.total} icon={Users} accent={C.navy} to="/customers" />
+        <StatCard label={t("dashboard.kpi.active")} value={stats.active} icon={Users} accent={C.green} to="/customers" />
+        <StatCard label={t("dashboard.kpi.new")} value={stats.new} icon={UserPlus} accent={C.teal} to="/customers" />
+        <StatCard label={t("dashboard.kpi.dueForReturn")} value={stats.due} icon={Clock} accent={C.amber} to="/retention" />
+        <StatCard label={t("dashboard.kpi.inactive")} value={stats.inactive + stats.lost} icon={UserMinus} accent={C.red} to="/reactivation" />
+        <StatCard label={t("dashboard.kpi.vipCustomers")} value={stats.vip} icon={Crown} accent={C.gold} to="/vip" />
+        <StatCard label={t("dashboard.kpi.rewardsRedeemed")} value={redemptions.length} icon={Gift} accent={C.greenDeep} to="/rewards" />
       </div>
 
       {/* Today's Priority Actions */}
@@ -262,9 +267,9 @@ export default function Dashboard() {
             {t("dashboard.opportunity.subtitle")}
           </p>
           <div className="mt-2 divide-y" style={{ borderColor: C.border }}>
-            <OpportunityRow t={t} label={t("dashboard.opportunity.reactivation")} count={opportunity.reactivation.count} potential={formatMoney(opportunity.reactivation.potential, currency)} color={C.red} />
-            <OpportunityRow t={t} label={t("dashboard.opportunity.recovery")} count={opportunity.recovery.count} potential={formatMoney(opportunity.recovery.potential, currency)} color={C.amber} />
-            <OpportunityRow t={t} label={t("dashboard.opportunity.retention")} count={opportunity.retention.count} potential={formatMoney(opportunity.retention.potential, currency)} color={C.teal} />
+            <OpportunityRow t={t} to="/reactivation" label={t("dashboard.opportunity.reactivation")} count={opportunity.reactivation.count} potential={formatMoney(opportunity.reactivation.potential, currency)} color={C.red} />
+            <OpportunityRow t={t} to="/recovery" label={t("dashboard.opportunity.recovery")} count={opportunity.recovery.count} potential={formatMoney(opportunity.recovery.potential, currency)} color={C.amber} />
+            <OpportunityRow t={t} to="/retention" label={t("dashboard.opportunity.retention")} count={opportunity.retention.count} potential={formatMoney(opportunity.retention.potential, currency)} color={C.teal} />
           </div>
         </div>
 

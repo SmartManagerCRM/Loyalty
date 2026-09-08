@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Users, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3,
-  Sliders, UsersRound, Building2, CreditCard, LogOut, X,
+  Settings, LogOut, X,
 } from "lucide-react";
 import { C } from "./theme";
 import { useAuth } from "../context/AuthContext";
@@ -22,10 +22,7 @@ const NAV = [
 ];
 
 const SETTINGS_NAV = [
-  { to: "/settings/segmentation", labelKey: "nav.segmentationRules", icon: Sliders },
-  { to: "/settings/team", labelKey: "nav.team", icon: UsersRound },
-  { to: "/settings/business", labelKey: "nav.business", icon: Building2 },
-  { to: "/settings/billing", labelKey: "nav.billing", icon: CreditCard },
+  { to: "/settings", labelKey: "nav.settings", icon: Settings },
 ];
 
 function settingsLinkStyle({ isActive }) {
