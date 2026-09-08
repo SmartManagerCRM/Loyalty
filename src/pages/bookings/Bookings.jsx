@@ -6,6 +6,7 @@ import { Btn, Select, EmptyState } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { useBusinessTable } from "../../lib/useBusinessTable";
 import { useCustomerOverview } from "../../lib/useCustomerOverview";
+import { useMembershipsOverview } from "../../lib/useMembershipsOverview";
 import { sameDay, addDays, startOfWeek } from "../../lib/bookingUtils";
 import { DayView, WeekView, MonthView } from "./CalendarViews";
 import EmptySlotPanel from "./EmptySlotPanel";
@@ -24,6 +25,7 @@ export default function Bookings() {
   const { rows: services, ready: servicesReady } = useBusinessTable("services", business?.id, { orderBy: "name", ascending: true });
   const { rows: customers, ready: customersReady } = useBusinessTable("customers", business?.id, { orderBy: "name", ascending: true });
   const { rows: customerOverview, ready: overviewReady } = useCustomerOverview(business?.id);
+  const { rows: memberships, ready: membershipsReady } = useMembershipsOverview(business?.id);
 
   const [view, setView] = useState("day");
   const [date, setDate] = useState(new Date());
@@ -32,7 +34,7 @@ export default function Bookings() {
   const [statusFilter, setStatusFilter] = useState("");
   const [modal, setModal] = useState(null); // { booking?, defaultStart? } | null
 
-  const ready = bookingsReady && staffReady && servicesReady && customersReady && overviewReady;
+  const ready = bookingsReady && staffReady && servicesReady && customersReady && overviewReady && membershipsReady;
 
   const filtered = useMemo(() => {
     return bookings.filter((b) => {
@@ -169,6 +171,7 @@ export default function Bookings() {
           booking={modal.booking}
           defaultStart={modal.defaultStart}
           customers={customers}
+          memberships={memberships}
           services={services}
           staffList={staffList}
           onClose={() => setModal(null)}

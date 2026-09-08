@@ -499,6 +499,56 @@ alter table bookings enable row level security;
 create policy "members read/write bookings" on bookings
   for all using (is_business_member(business_id)) with check (is_business_member(business_id));
 
+-- ── Membership plans ────────────────────────────────────────────────────
+-- What a business sells as a package: N sessions (or unlimited) for a
+-- fixed price, optionally scoped to one service, optionally expiring after
+-- a fixed number of days from purchase.
+
+create table if not exists membership_plans (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  name text not null,
+  description text,
+  price numeric not null default 0,
+  total_sessions int,              -- null = unlimited
+  validity_days int,               -- null = never expires
+  service_id uuid references services(id) on delete set null,  -- null = any service
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+create index if not exists membership_plans_business_idx on membership_plans(business_id);
+
+alter table membership_plans enable row level security;
+create policy "members read/write membership_plans" on membership_plans
+  for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+
+-- ── Customer memberships ────────────────────────────────────────────────
+-- A customer's purchase of a plan. Plan fields are snapshotted here (not
+-- just plan_id) so editing or deleting a plan later never rewrites history
+-- for memberships already sold.
+
+create table if not exists customer_memberships (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  customer_id uuid not null references customers(id) on delete cascade,
+  plan_id uuid references membership_plans(id) on delete set null,
+  plan_name text not null,
+  total_sessions int,
+  sessions_used int not null default 0,
+  price_paid numeric not null default 0,
+  starts_at date not null default current_date,
+  expires_at date,
+  status text not null default 'active' check (status in ('active','cancelled')),
+  notes text,
+  created_at timestamptz not null default now()
+);
+create index if not exists customer_memberships_business_idx on customer_memberships(business_id);
+create index if not exists customer_memberships_customer_idx on customer_memberships(customer_id);
+
+alter table customer_memberships enable row level security;
+create policy "members read/write customer_memberships" on customer_memberships
+  for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+
 -- ── Booking → Loyalty integration ───────────────────────────────────────
 -- The entire segmentation/NBA/dashboard engine already reads from
 -- customer_visits (see customer_stats / customer_segment_flags above) — so
@@ -508,11 +558,35 @@ create policy "members read/write bookings" on bookings
 -- and it's idempotent (completing an already-completed booking is a
 -- no-op) so the UI can safely call it without double-inserting visits.
 
+-- A booking can optionally be taken against a specific membership; on
+-- completion, complete_booking() deducts one session instead of (or
+-- alongside) logging a charge. Declared here (after customer_memberships
+-- exists) rather than inline on the bookings table above.
+alter table bookings add column if not exists membership_id uuid references customer_memberships(id) on delete set null;
+create index if not exists bookings_membership_idx on bookings(membership_id);
+
+-- expired/completed/expiring-soon/unused are derived, not stored, so they
+-- never go stale — same approach as customer_segment_flags.
+create or replace view customer_memberships_overview
+with (security_invoker = true) as
+select
+  cm.*,
+  c.name as customer_name,
+  c.phone as customer_phone,
+  case when cm.total_sessions is not null then greatest(cm.total_sessions - cm.sessions_used, 0) else null end as sessions_remaining,
+  (cm.status = 'active' and cm.expires_at is not null and cm.expires_at < current_date) as is_expired,
+  (cm.status = 'active' and cm.total_sessions is not null and cm.sessions_used >= cm.total_sessions) as is_completed,
+  (cm.status = 'active' and cm.expires_at is not null and cm.expires_at >= current_date and cm.expires_at <= current_date + 7) as is_expiring_soon,
+  (cm.status = 'active' and cm.sessions_used = 0 and cm.created_at <= now() - interval '14 days') as is_unused
+from customer_memberships cm
+join customers c on c.id = cm.customer_id;
+
 create or replace function complete_booking(p_booking_id uuid, p_amount numeric default 0)
 returns void language plpgsql security definer set search_path = public as $$
 declare
   b record;
   svc_name text;
+  mem record;
 begin
   select * into b from bookings where id = p_booking_id;
   if b is null then
@@ -523,6 +597,24 @@ begin
   end if;
   if b.status = 'completed' then
     return;
+  end if;
+
+  if b.membership_id is not null then
+    select * into mem from customer_memberships where id = b.membership_id and business_id = b.business_id;
+    if mem is null then
+      raise exception 'membership not found';
+    end if;
+    if mem.status <> 'active' then
+      raise exception 'membership is not active';
+    end if;
+    if mem.expires_at is not null and mem.expires_at < current_date then
+      raise exception 'membership has expired';
+    end if;
+    if mem.total_sessions is not null and mem.sessions_used >= mem.total_sessions then
+      raise exception 'membership has no sessions remaining';
+    end if;
+
+    update customer_memberships set sessions_used = sessions_used + 1 where id = mem.id;
   end if;
 
   update bookings set status = 'completed' where id = p_booking_id;
@@ -601,6 +693,8 @@ alter publication supabase_realtime add table reward_redemptions;
 alter publication supabase_realtime add table offers;
 alter publication supabase_realtime add table bookings;
 alter publication supabase_realtime add table staff;
+alter publication supabase_realtime add table membership_plans;
+alter publication supabase_realtime add table customer_memberships;
 
 -- ── Platform Admin ──────────────────────────────────────────────────────
 -- Separate from business_users entirely: a platform admin is a person who

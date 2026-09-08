@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-  LayoutDashboard, Users, CalendarClock, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3,
+  LayoutDashboard, Users, CalendarClock, Ticket, Target, RotateCcw, ShieldCheck, Gift, Crown, Sparkles, BarChart3,
   Settings, LogOut, X,
 } from "lucide-react";
 import { C } from "./theme";
@@ -13,6 +13,7 @@ const NAV = [
   { to: "/", labelKey: "nav.dashboard", icon: LayoutDashboard, end: true },
   { to: "/customers", labelKey: "nav.customers", icon: Users },
   { to: "/bookings", labelKey: "nav.bookings", icon: CalendarClock },
+  { to: "/memberships", labelKey: "nav.memberships", icon: Ticket },
   { to: "/recovery", labelKey: "nav.recovery", icon: Target },
   { to: "/reactivation", labelKey: "nav.reactivation", icon: RotateCcw },
   { to: "/retention", labelKey: "nav.retention", icon: ShieldCheck },

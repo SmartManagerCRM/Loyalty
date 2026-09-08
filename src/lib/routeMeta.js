@@ -15,6 +15,7 @@ const ROUTES = [
   { path: "/customers", key: "customers" },
   { path: "/customers/:id", key: "customerProfile" },
   { path: "/bookings", key: "bookings" },
+  { path: "/memberships", key: "memberships" },
   { path: "/recovery", key: "recovery" },
   { path: "/reactivation", key: "reactivation" },
   { path: "/retention", key: "retention" },

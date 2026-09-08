@@ -41,3 +41,24 @@ export function generateRecoveryMessage({ leadName, businessName, interestedServ
   const lang = RECOVERY_TEMPLATES[language] ? language : "en";
   return RECOVERY_TEMPLATES[lang]({ leadName, businessName, interestedService });
 }
+
+const MEMBERSHIP_TEMPLATES = {
+  en: {
+    EXPIRING_SOON: ({ customerName, businessName, planName, sessionsRemaining }) =>
+      `Hi ${customerName}, this is ${businessName}. Your ${planName} membership is expiring soon${sessionsRemaining != null ? ` with ${sessionsRemaining} session(s) still left` : ""} — want to book before it runs out, or renew?`,
+    UNUSED_SESSIONS: ({ customerName, businessName, planName, sessionsRemaining }) =>
+      `Hi ${customerName}, this is ${businessName}. You still have ${sessionsRemaining != null ? `${sessionsRemaining} session(s)` : "sessions"} left on your ${planName} membership that haven't been used yet — would you like to book one in?`,
+  },
+  ar: {
+    EXPIRING_SOON: ({ customerName, businessName, planName, sessionsRemaining }) =>
+      `مرحباً ${customerName}، معك ${businessName}. عضويتك "${planName}" على وشك الانتهاء${sessionsRemaining != null ? ` ولا يزال لديك ${sessionsRemaining} جلسة` : ""} — تحب تحجز قبل انتهائها أو تجدد؟`,
+    UNUSED_SESSIONS: ({ customerName, businessName, planName, sessionsRemaining }) =>
+      `مرحباً ${customerName}، معك ${businessName}. لا يزال لديك ${sessionsRemaining != null ? `${sessionsRemaining} جلسة` : "جلسات"} لم تُستخدم بعد من عضوية "${planName}" — تحب نحجزلك موعد؟`,
+  },
+};
+
+export function generateMembershipMessage({ action, customerName, businessName, planName, sessionsRemaining, language = "en" }) {
+  const lang = MEMBERSHIP_TEMPLATES[language] ? language : "en";
+  const builder = MEMBERSHIP_TEMPLATES[lang][action] || MEMBERSHIP_TEMPLATES[lang].EXPIRING_SOON;
+  return builder({ customerName, businessName, planName, sessionsRemaining });
+}

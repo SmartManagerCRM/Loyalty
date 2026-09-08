@@ -35,6 +35,7 @@
     "customers": { "title": "Customers", "subtitle": "Your full customer database." },
     "customerProfile": { "title": "Customer Profile", "subtitle": "History, segment, and next best action." },
     "bookings": { "title": "Bookings", "subtitle": "Your calendar — staff, services, and today's open slots." },
+    "memberships": { "title": "Memberships", "subtitle": "Session packages and plans your customers have bought." },
     "recovery": { "title": "Recovery", "subtitle": "Leads who inquired but never converted." },
     "reactivation": { "title": "Reactivation", "subtitle": "Customers who stopped returning, by how overdue they are." },
     "retention": { "title": "Retention", "subtitle": "Reach customers before they become inactive." },
@@ -62,7 +63,9 @@
     "settings": "Settings",
     "services": "Services",
     "staff": "Staff",
-    "bookings": "Bookings"
+    "bookings": "Bookings",
+    "membershipPlans": "Membership Plans",
+    "memberships": "Memberships"
   },
   "roles": {
     "owner": "Owner",
@@ -243,6 +246,7 @@
       "retentionRate": "Retention Rate",
       "totalCustomers": "Total Customers",
       "bookingsToday": "Bookings Today",
+      "membershipsAttention": "Memberships Needing Attention",
       "active": "Active",
       "new": "New",
       "dueForReturn": "Due for Return",
@@ -791,6 +795,35 @@
         "activeLabel": "Active — available to book"
       }
     },
+    "membershipPlans": {
+      "intro": "The session packages and plans you sell — customers buy one, and each completed booking against it uses up a session.",
+      "addPlan": "Add plan",
+      "editPlan": "Edit plan",
+      "loading": "Loading…",
+      "emptyTitle": "No membership plans yet",
+      "emptySubtitle": "Add a plan — like a 10-session package or a monthly unlimited pass — so you can sell it to customers.",
+      "columnName": "Name",
+      "columnPrice": "Price",
+      "columnSessions": "Sessions",
+      "columnValidity": "Validity",
+      "columnStatus": "Status",
+      "unlimited": "Unlimited",
+      "noExpiry": "No expiry",
+      "daysValue_one": "{{count}} day",
+      "daysValue_other": "{{count}} days",
+      "form": {
+        "nameLabel": "Plan name",
+        "priceLabel": "Price",
+        "sessionsLabel": "Total sessions",
+        "unlimitedPlaceholder": "Unlimited",
+        "validityLabel": "Validity (days)",
+        "noExpiryPlaceholder": "Never expires",
+        "serviceLabel": "Service",
+        "anyService": "Any service",
+        "descriptionLabel": "Description (optional)",
+        "activeLabel": "Active — available to sell"
+      }
+    },
     "business": {
       "newBusiness": "New business",
       "nameLabel": "Business name",
@@ -877,18 +910,83 @@
       "noService": "No service",
       "staffLabel": "Staff",
       "unassigned": "Unassigned",
+      "membershipLabel": "Use membership (optional)",
+      "noMembership": "Don't use a membership",
+      "membershipOptionSessions": "{{plan}} ({{count}} left)",
+      "membershipOptionUnlimited": "{{plan}} (unlimited)",
       "dateLabel": "Date",
       "timeLabel": "Time",
       "durationLabel": "Duration (min)",
       "notesLabel": "Notes (optional)",
       "statusLabel": "Status",
       "completeSection": "Mark this booking as completed to log a visit and update the customer's segment.",
+      "completeUsesSession": "Completing this booking will use one session from the selected membership.",
       "amountLabel": "Amount",
       "markCompleted": "Mark completed",
       "cancelBooking": "Cancel booking",
       "errors": {
         "customerRequired": "Choose or add a customer first.",
         "overlap": "This time overlaps with another booking for this staff member."
+      }
+    }
+  },
+  "memberships": {
+    "intro": "Session packages and plans your customers have bought — completing a booking against one uses up a session automatically.",
+    "addMembership": "Add membership",
+    "noPlansHint": "Add a membership plan in Settings before you can assign one to a customer.",
+    "tabs": {
+      "active_one": "Active ({{count}})",
+      "active_other": "Active ({{count}})",
+      "expiringSoon_one": "Expiring Soon ({{count}})",
+      "expiringSoon_other": "Expiring Soon ({{count}})",
+      "unused_one": "Unused ({{count}})",
+      "unused_other": "Unused ({{count}})",
+      "expiredCompleted_one": "Expired / Completed ({{count}})",
+      "expiredCompleted_other": "Expired / Completed ({{count}})",
+      "cancelled_one": "Cancelled ({{count}})",
+      "cancelled_other": "Cancelled ({{count}})"
+    },
+    "empty": {
+      "activeTitle": "No active memberships",
+      "activeSubtitle": "Assign a plan to a customer to get started.",
+      "expiringSoonTitle": "Nothing expiring soon",
+      "expiringSoonSubtitle": "Memberships expiring within 7 days will show up here.",
+      "unusedTitle": "No unused memberships",
+      "unusedSubtitle": "Memberships bought 14+ days ago with zero sessions used will show up here.",
+      "expiredCompletedTitle": "Nothing expired or completed",
+      "expiredCompletedSubtitle": "Memberships that ran out of sessions or passed their expiry date will show up here.",
+      "cancelledTitle": "No cancelled memberships",
+      "cancelledSubtitle": "Memberships you cancel will show up here."
+    },
+    "status": {
+      "active": "Active",
+      "expiringSoon": "Expiring Soon",
+      "expired": "Expired",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "sessionsLeft": "{{used}} of {{total}} sessions used",
+    "unlimitedSessions": "Unlimited sessions",
+    "expiresOn": "expires {{date}}",
+    "cancelMembership": "Cancel",
+    "renewMembership": "Renew",
+    "modal": {
+      "title": "Add membership",
+      "customerLabel": "Customer",
+      "planLabel": "Plan",
+      "planSessionsSummary_one": "{{count}} session",
+      "planSessionsSummary_other": "{{count}} sessions",
+      "planUnlimitedSummary": "Unlimited sessions",
+      "planValiditySummary_one": "valid {{count}} day from purchase",
+      "planValiditySummary_other": "valid {{count}} days from purchase",
+      "planNoExpirySummary": "never expires",
+      "startsAtLabel": "Starts on",
+      "pricePaidLabel": "Price paid",
+      "expiresOn": "Expires {{date}}",
+      "notesLabel": "Notes (optional)",
+      "errors": {
+        "customerRequired": "Choose or add a customer first.",
+        "planRequired": "Choose a plan first."
       }
     }
   }

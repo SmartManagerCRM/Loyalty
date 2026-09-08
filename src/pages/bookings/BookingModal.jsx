@@ -22,7 +22,7 @@ const LOCKED_STATUSES = ["completed", "cancelled", "no_show"];
 // modal for every booking mutation. "Complete" always goes through the
 // complete_booking() RPC (never a raw status update) so the customer_visits
 // row it writes stays the single source of truth for loyalty segmentation.
-export default function BookingModal({ business, booking, customers, services, staffList, defaultStart, onClose, onSaved }) {
+export default function BookingModal({ business, booking, customers, services, staffList, memberships, defaultStart, onClose, onSaved }) {
   const { t } = useTranslation();
   const isEdit = Boolean(booking?.id);
   const locked = isEdit && LOCKED_STATUSES.includes(booking.status);
@@ -44,6 +44,7 @@ export default function BookingModal({ business, booking, customers, services, s
 
   const [serviceId, setServiceId] = useState(booking?.service_id || services[0]?.id || "");
   const [staffId, setStaffId] = useState(booking?.staff_id || "");
+  const [membershipId, setMembershipId] = useState(booking?.membership_id || "");
   const [date, setDate] = useState(toDateValue(start));
   const [time, setTime] = useState(toTimeValue(start));
   const [duration, setDuration] = useState(initialDuration);
@@ -59,6 +60,21 @@ export default function BookingModal({ business, booking, customers, services, s
     const q = customerSearch.toLowerCase();
     return customers.filter((c) => `${c.name} ${c.phone || ""}`.toLowerCase().includes(q)).slice(0, 8);
   }, [customers, customerSearch]);
+
+  // A membership stays selectable while this booking already points to it,
+  // even if it has since become unusable (expired/exhausted) — otherwise it
+  // would silently vanish from the dropdown while editing.
+  const usableMemberships = useMemo(() => {
+    return (memberships || []).filter((m) =>
+      m.customer_id === customerId
+      && (m.id === membershipId || (m.status === "active" && !m.is_expired && !m.is_completed))
+    );
+  }, [memberships, customerId, membershipId]);
+
+  function selectMembership(id) {
+    setMembershipId(id);
+    if (id) setAmount(0);
+  }
 
   function selectService(id) {
     setServiceId(id);
@@ -95,6 +111,7 @@ export default function BookingModal({ business, booking, customers, services, s
         customer_id: finalCustomerId,
         service_id: serviceId || null,
         staff_id: staffId || null,
+        membership_id: membershipId || null,
         start_at: startAt.toISOString(),
         end_at: endAt.toISOString(),
         notes: notes || null,
@@ -217,6 +234,25 @@ export default function BookingModal({ business, booking, customers, services, s
           </Field>
         </div>
 
+        {customerId && usableMemberships.length > 0 && (
+          <Field label={t("bookings.modal.membershipLabel")}>
+            <Select
+              disabled={locked}
+              value={membershipId}
+              onChange={(e) => selectMembership(e.target.value)}
+              options={[
+                { value: "", label: t("bookings.modal.noMembership") },
+                ...usableMemberships.map((m) => ({
+                  value: m.id,
+                  label: m.sessions_remaining != null
+                    ? t("bookings.modal.membershipOptionSessions", { plan: m.plan_name, count: m.sessions_remaining })
+                    : t("bookings.modal.membershipOptionUnlimited", { plan: m.plan_name }),
+                })),
+              ]}
+            />
+          </Field>
+        )}
+
         <div className="grid grid-cols-3 gap-3">
           <Field label={t("bookings.modal.dateLabel")}>
             <TextInput type="date" required disabled={locked} value={date} onChange={(e) => setDate(e.target.value)} />
@@ -254,6 +290,7 @@ export default function BookingModal({ business, booking, customers, services, s
         {isEdit && !locked && (
           <div className="rounded-xl p-3" style={{ backgroundColor: C.bg }}>
             <p className="mb-2 text-xs font-semibold" style={{ color: C.slate }}>{t("bookings.modal.completeSection")}</p>
+            {membershipId && <p className="mb-2 text-xs" style={{ color: C.teal }}>{t("bookings.modal.completeUsesSession")}</p>}
             <div className="flex flex-wrap items-center gap-2">
               <TextInput type="number" step="0.01" min="0" className="w-32" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={t("bookings.modal.amountLabel")} />
               <Btn type="button" variant="primary" disabled={busy} onClick={complete}>{t("bookings.modal.markCompleted")}</Btn>
