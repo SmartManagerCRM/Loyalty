@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, Search, LogOut, ChevronDown } from "lucide-react";
+import { Menu, Search, LogOut, ChevronDown, ShieldCheck } from "lucide-react";
 import { C } from "./theme";
 import Logo from "./Logo";
 import LanguageSelector from "./LanguageSelector";
@@ -9,12 +9,14 @@ import CurrencySelector from "./CurrencySelector";
 import GlobalSearch from "./GlobalSearch";
 import { useAuth } from "../context/AuthContext";
 import { useUILanguage } from "../lib/uiPrefs";
+import { useIsPlatformAdmin } from "../lib/useIsPlatformAdmin";
 import { getPageMetaKey } from "../lib/routeMeta";
 import { supabase } from "../lib/supabaseClient";
 
 function UserMenu() {
   const { t } = useTranslation();
   const { user, role, signOut } = useAuth();
+  const { isAdmin } = useIsPlatformAdmin(user?.id);
   const [open, setOpen] = useState(false);
   const initials = (user?.email || "?").slice(0, 2).toUpperCase();
   const roleLabel = role ? t(`roles.${role}`) : "—";
@@ -40,6 +42,16 @@ function UserMenu() {
               <div className="truncate text-xs font-semibold" style={{ color: C.ink }}>{user?.email}</div>
               <div className="text-[10px]" style={{ color: C.slateLight }}>{roleLabel}</div>
             </div>
+            {isAdmin && (
+              <a
+                href="/admin"
+                className="flex w-full items-center gap-2 px-3 py-2 text-start text-sm hover:bg-black/5"
+                style={{ color: C.navy }}
+              >
+                <ShieldCheck size={14} />
+                {t("admin.common.platformAdmin")}
+              </a>
+            )}
             <button
               onClick={signOut}
               className="flex w-full items-center gap-2 px-3 py-2 text-start text-sm hover:bg-black/5"
