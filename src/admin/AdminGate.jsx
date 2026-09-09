@@ -56,7 +56,7 @@ export default function AdminGate() {
   if (!session) {
     return (
       <Routes>
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="login" element={<AdminLogin />} />
         <Route path="*" element={<Navigate to="/admin/login" replace />} />
       </Routes>
     );
@@ -65,16 +65,22 @@ export default function AdminGate() {
   if (!checked) return <LoadingScreen />;
   if (!isAdmin) return <AccessDenied />;
 
+  // Relative paths here on purpose: this <Routes> is nested inside a
+  // splat-matched parent (App.jsx's <Route path="/admin/*">), and mixing
+  // that with absolute child paths is a known React Router v6 footgun —
+  // it can silently fail to match anything (see the "relative route
+  // resolution within Splat routes" warning). Relative paths are the
+  // pattern React Router actually supports for this nesting.
   return (
     <AdminShell mobileNavOpen={mobileNavOpen} onOpenMobileMenu={() => setMobileNavOpen(true)} onCloseMobileMenu={() => setMobileNavOpen(false)} onSignOut={signOut}>
       <Routes>
-        <Route path="/admin" element={<Overview />} />
-        <Route path="/admin/businesses" element={<Businesses />} />
-        <Route path="/admin/businesses/:id" element={<BusinessDetail />} />
-        <Route path="/admin/subscriptions" element={<Subscriptions />} />
-        <Route path="/admin/plans" element={<Plans />} />
-        <Route path="/admin/payments" element={<Payments />} />
-        <Route path="/admin/trials" element={<Trials />} />
+        <Route index element={<Overview />} />
+        <Route path="businesses" element={<Businesses />} />
+        <Route path="businesses/:id" element={<BusinessDetail />} />
+        <Route path="subscriptions" element={<Subscriptions />} />
+        <Route path="plans" element={<Plans />} />
+        <Route path="payments" element={<Payments />} />
+        <Route path="trials" element={<Trials />} />
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
     </AdminShell>
