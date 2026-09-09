@@ -936,3 +936,113 @@ $$;
 -- To grant someone platform admin access, run directly in the SQL editor:
 --   insert into platform_admins (user_id)
 --   select id from auth.users where lower(email) = lower('their@email.com');
+
+-- ── Subscription email notifications ────────────────────────────────────
+-- Fires straight from Postgres via pg_net (no Edge Function, so this
+-- covers every code path that touches `businesses` — signup, admin plan
+-- changes, everything): sends the business owner an email when their
+-- trial starts and again if their plan moves off the trial tier.
+-- Credentials live in Supabase Vault, never in this file — see the
+-- one-time setup note below. If the vault secrets aren't set yet, the
+-- trigger just no-ops; it never blocks signup or an admin's update.
+create extension if not exists pg_net;
+
+create or replace function notify_subscription_email()
+returns trigger
+language plpgsql security definer set search_path = public as $$
+declare
+  v_owner_email text;
+  v_plan_name text;
+  v_resend_key text;
+  v_from_email text;
+  v_event text;
+  v_subject text;
+  v_html text;
+  v_lang text;
+begin
+  if TG_OP = 'INSERT' then
+    v_event := 'trial_started';
+  elsif TG_OP = 'UPDATE' and NEW.subscription_plan is distinct from OLD.subscription_plan
+        and NEW.subscription_plan <> 'trial' then
+    v_event := 'plan_changed';
+  else
+    return NEW;
+  end if;
+
+  begin
+    select decrypted_secret into v_resend_key from vault.decrypted_secrets where name = 'resend_api_key';
+    select decrypted_secret into v_from_email from vault.decrypted_secrets where name = 'resend_from_email';
+    if v_resend_key is null or v_from_email is null then
+      return NEW;
+    end if;
+
+    select u.email into v_owner_email
+    from business_users bu join auth.users u on u.id = bu.user_id
+    where bu.business_id = NEW.id and bu.role = 'owner'
+    order by bu.created_at asc limit 1;
+    if v_owner_email is null then
+      return NEW;
+    end if;
+
+    select name into v_plan_name from plans where key = NEW.subscription_plan;
+    v_plan_name := coalesce(v_plan_name, initcap(NEW.subscription_plan));
+    v_lang := coalesce(NEW.default_language, 'en');
+
+    if v_event = 'trial_started' then
+      if v_lang = 'ar' then
+        v_subject := 'مرحبًا بك في SmartManager — بدأت فترتك التجريبية المجانية';
+        v_html := '<div dir="rtl" style="font-family:sans-serif;line-height:1.6"><h2>مرحبًا بك في SmartManager 👋</h2>'
+          || '<p>تم إنشاء حساب <b>' || NEW.name || '</b> بنجاح، وبدأت فترتك التجريبية المجانية لمدة 14 يومًا.</p>'
+          || '<p>تنتهي الفترة التجريبية في: <b>' || to_char(NEW.trial_ends_at, 'YYYY-MM-DD') || '</b></p>'
+          || '<p>يمكنك الترقية في أي وقت من داخل لوحة التحكم.</p></div>';
+      else
+        v_subject := 'Welcome to SmartManager — your free trial has started';
+        v_html := '<div style="font-family:sans-serif;line-height:1.6"><h2>Welcome to SmartManager 👋</h2>'
+          || '<p><b>' || NEW.name || '</b> is all set up, and your 14-day free trial has started.</p>'
+          || '<p>Your trial ends on: <b>' || to_char(NEW.trial_ends_at, 'YYYY-MM-DD') || '</b></p>'
+          || '<p>You can upgrade anytime from your dashboard.</p></div>';
+      end if;
+    else
+      if v_lang = 'ar' then
+        v_subject := 'تحديث اشتراك SmartManager: باقة ' || v_plan_name;
+        v_html := '<div dir="rtl" style="font-family:sans-serif;line-height:1.6"><h2>تم تحديث اشتراكك</h2>'
+          || '<p>أصبح اشتراك <b>' || NEW.name || '</b> الآن على باقة <b>' || v_plan_name || '</b>.</p>'
+          || '<p>شكرًا لاستخدامك SmartManager.</p></div>';
+      else
+        v_subject := 'Your SmartManager subscription is now on the ' || v_plan_name || ' plan';
+        v_html := '<div style="font-family:sans-serif;line-height:1.6"><h2>Subscription updated</h2>'
+          || '<p><b>' || NEW.name || '</b> is now on the <b>' || v_plan_name || '</b> plan.</p>'
+          || '<p>Thanks for using SmartManager.</p></div>';
+      end if;
+    end if;
+
+    perform net.http_post(
+      url := 'https://api.resend.com/emails',
+      headers := jsonb_build_object('Authorization', 'Bearer ' || v_resend_key, 'Content-Type', 'application/json'),
+      body := jsonb_build_object('from', v_from_email, 'to', jsonb_build_array(v_owner_email), 'subject', v_subject, 'html', v_html)
+    );
+  exception when others then
+    -- Never let an email/Resend hiccup break signup or an admin's update.
+    null;
+  end;
+
+  return NEW;
+end;
+$$;
+
+drop trigger if exists trg_business_trial_started on businesses;
+create trigger trg_business_trial_started
+  after insert on businesses
+  for each row execute function notify_subscription_email();
+
+drop trigger if exists trg_business_plan_changed on businesses;
+create trigger trg_business_plan_changed
+  after update of subscription_plan on businesses
+  for each row execute function notify_subscription_email();
+
+-- One-time setup (run directly in the SQL editor, not part of this file,
+-- so real credentials never end up in git history):
+--   select vault.create_secret('re_xxxxxxxx',        'resend_api_key');
+--   select vault.create_secret('notify@yourdomain.com', 'resend_from_email');
+-- The from-address's domain must be verified in Resend, or sends will fail
+-- silently (caught by the exception handler above).
