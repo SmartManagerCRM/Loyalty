@@ -56,7 +56,7 @@ export default function Login() {
         </div>
 
         <p className="mt-5 text-center text-xs" style={{ color: C.slateLight }}>
-          {t("auth.login.newHere")} <Link to="/signup" className="font-semibold" style={{ color: C.green }}>{t("auth.login.createBusinessAccount")}</Link>
+          {t("auth.login.newHere")} <Link to="/pricing" className="font-semibold" style={{ color: C.green }}>{t("auth.login.createBusinessAccount")}</Link>
         </p>
       </form>
     </div>

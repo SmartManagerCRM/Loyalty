@@ -15,6 +15,7 @@ import Subscriptions from "./pages/Subscriptions";
 import Plans from "./pages/Plans";
 import Payments from "./pages/Payments";
 import Trials from "./pages/Trials";
+import SubscriptionSettings from "./pages/SubscriptionSettings";
 
 function SetupNotice() {
   return (
@@ -81,6 +82,7 @@ export default function AdminGate() {
         <Route path="plans" element={<Plans />} />
         <Route path="payments" element={<Payments />} />
         <Route path="trials" element={<Trials />} />
+        <Route path="settings" element={<SubscriptionSettings />} />
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
     </AdminShell>

@@ -8,6 +8,7 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Pricing from "./pages/Pricing";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import CustomersList from "./pages/customers/CustomersList";
@@ -101,6 +102,7 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/admin/*" element={<AdminGate />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/*" element={<Gate />} />
       </Routes>
     </AuthProvider>

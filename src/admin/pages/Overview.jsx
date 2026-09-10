@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Building2, Hourglass, CheckCircle2, AlertTriangle, XCircle, UserPlus, DollarSign, ChevronRight } from "lucide-react";
+import { Building2, Hourglass, CheckCircle2, AlertTriangle, XCircle, UserPlus, DollarSign, ChevronRight, TrendingUp, PieChart } from "lucide-react";
 import { C } from "../../components/theme";
 import { StatCard, Btn } from "../../components/ui";
 import { fetchOverviewStats, fetchBusinesses } from "../../lib/adminApi";
@@ -50,6 +50,28 @@ export default function Overview() {
         <StatCard label={t("admin.overview.kpi.canceled")} value={stats.canceled_count} icon={XCircle} accent={C.slateLight} />
         <StatCard label={t("admin.overview.kpi.signups30d")} value={stats.signups_last_30d} icon={UserPlus} accent={C.teal} />
       </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <StatCard label={t("admin.overview.kpi.arr")} value={formatMoney(stats.arr, "USD")} icon={TrendingUp} accent={C.green} />
+        <StatCard label={t("admin.overview.kpi.conversion")} value={`${stats.trial_to_paid_conversion_pct ?? 0}%`} icon={PieChart} accent={C.teal} />
+      </div>
+
+      {(stats.revenue_by_plan || []).length > 0 && (
+        <div className="mt-8 rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
+          <h2 className="text-sm font-bold" style={{ color: C.ink }}>{t("admin.overview.revenueByPlan")}</h2>
+          <div className="mt-3 space-y-2">
+            {stats.revenue_by_plan.map((row) => (
+              <div key={row.plan} className="flex items-center justify-between rounded-xl px-3 py-2.5" style={{ backgroundColor: C.bg }}>
+                <div className="text-sm font-semibold capitalize" style={{ color: C.ink }}>{row.plan}</div>
+                <div className="flex items-center gap-4 text-xs" style={{ color: C.slateLight }}>
+                  <span>{t("admin.overview.subscribers", { count: row.subscribers })}</span>
+                  <span className="font-bold" style={{ color: C.ink }}>{formatMoney(row.mrr, "USD")}{t("admin.plans.perMonth")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 rounded-2xl bg-white p-5 shadow-sm" style={{ border: `1px solid ${C.border}` }}>
         <div className="flex items-center justify-between">

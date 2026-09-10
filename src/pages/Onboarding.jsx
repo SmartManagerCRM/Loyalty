@@ -43,6 +43,8 @@ const RULE_FIELD_KEYS = {
 };
 
 const STEP_KEYS = ["businessInfo", "country", "currency", "type", "import", "rules", "finish"];
+const SELECTED_PLAN_KEY = "smartmanager-loyalty:selected-plan-id";
+const SELECTED_BILLING_KEY = "smartmanager-loyalty:selected-billing-interval";
 
 function cloneDefaultRules() {
   return JSON.parse(JSON.stringify(DEFAULT_RULES));
@@ -331,10 +333,22 @@ export default function Onboarding() {
     setBusy(true);
     setError(null);
     try {
+      let planId = null, billingInterval = "monthly";
+      try {
+        planId = window.sessionStorage.getItem(SELECTED_PLAN_KEY);
+        billingInterval = window.sessionStorage.getItem(SELECTED_BILLING_KEY) || "monthly";
+      } catch (e) { /* ignore */ }
+      if (!planId) throw new Error(t("auth.onboarding.finish.noPlanSelected"));
+
       const businessId = await createBusiness({
-        name: form.name.trim(), businessType: form.businessType, visitLabel: form.visitLabel,
+        name: form.name.trim(), planId, billingInterval,
+        businessType: form.businessType, visitLabel: form.visitLabel,
         language: form.language, currency: form.currency,
       });
+      try {
+        window.sessionStorage.removeItem(SELECTED_PLAN_KEY);
+        window.sessionStorage.removeItem(SELECTED_BILLING_KEY);
+      } catch (e) { /* ignore */ }
 
       if (form.importCustomers.length > 0) {
         const { error: insertError } = await supabase

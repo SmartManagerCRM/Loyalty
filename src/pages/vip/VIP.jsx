@@ -11,6 +11,8 @@ import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 import { supabase } from "../../lib/supabaseClient";
 import { formatMoney } from "../../lib/currencies";
+import { usePlanFeatures } from "../../lib/plans";
+import UpgradePrompt from "../../components/UpgradePrompt";
 
 function emptyTier() {
   return { tier_name: "", criteria: { min_spending: 1000 }, sort_order: 1 };
@@ -55,6 +57,7 @@ export default function VIP() {
   const { rows: tiers, ready: tiersReady, insertRow, updateRow, deleteRow } = useBusinessTable("vip_tiers", business?.id, { orderBy: "sort_order", ascending: true });
   const { rows: customers, ready: customersReady } = useCustomerOverview(business?.id);
   const { byCustomer: statusByCustomer, refetch: refetchStatus } = useVipStatus(business?.id);
+  const { ready: featuresReady, hasFeature } = usePlanFeatures();
 
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -70,6 +73,8 @@ export default function VIP() {
     await supabase.from("customer_vip_status").upsert({ customer_id: customerId, business_id: business.id, tier_id: tierId });
     refetchStatus();
   }
+
+  if (featuresReady && !hasFeature("vip")) return <UpgradePrompt featureName={t("planFeatures.vip")} />;
 
   return (
     <div className="p-8">

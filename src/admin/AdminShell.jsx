@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-  LayoutDashboard, Building2, CreditCard, Layers, Receipt, Hourglass, LogOut, X, Menu, ShieldCheck,
+  LayoutDashboard, Building2, CreditCard, Layers, Receipt, Hourglass, LogOut, X, Menu, ShieldCheck, Settings,
 } from "lucide-react";
 import { C } from "../components/theme";
 import LanguageSelector from "../components/LanguageSelector";
@@ -15,6 +15,7 @@ const NAV = [
   { to: "/admin/plans", labelKey: "admin.nav.plans", icon: CreditCard },
   { to: "/admin/payments", labelKey: "admin.nav.payments", icon: Receipt },
   { to: "/admin/trials", labelKey: "admin.nav.trials", icon: Hourglass },
+  { to: "/admin/settings", labelKey: "admin.nav.settings", icon: Settings },
 ];
 
 // Deliberately its own visual identity (dark navy sidebar, "PLATFORM
@@ -92,6 +93,7 @@ function AdminHeader({ onOpenMobileMenu, onSignOut }) {
     : path.startsWith("/admin/plans") ? "admin.plans.title"
     : path.startsWith("/admin/payments") ? "admin.payments.title"
     : path.startsWith("/admin/trials") ? "admin.trials.title"
+    : path.startsWith("/admin/settings") ? "admin.subscriptionSettings.title"
     : "admin.overview.title";
 
   return (

@@ -31,20 +31,62 @@
     "customer_other": "{{count}} customers"
   },
   "pageMeta": {
-    "dashboard": { "title": "Dashboard", "subtitle": "Where are we losing customers, and what should we do today?" },
-    "customers": { "title": "Customers", "subtitle": "Your full customer database." },
-    "customerProfile": { "title": "Customer Profile", "subtitle": "History, segment, and next best action." },
-    "bookings": { "title": "Bookings", "subtitle": "Your calendar — staff, services, and today's open slots." },
-    "memberships": { "title": "Memberships", "subtitle": "Session packages and plans your customers have bought." },
-    "recovery": { "title": "Recovery", "subtitle": "Leads who inquired but never converted." },
-    "reactivation": { "title": "Reactivation", "subtitle": "Customers who stopped returning, by how overdue they are." },
-    "retention": { "title": "Retention", "subtitle": "Reach customers before they become inactive." },
-    "rewards": { "title": "Rewards", "subtitle": "Points, visit, and spending reward programs." },
-    "vip": { "title": "VIP", "subtitle": "Recognize top customers with priority, not discounts." },
-    "offers": { "title": "Smart Offers", "subtitle": "Offers matched to customer behavior." },
-    "analytics": { "title": "Analytics", "subtitle": "The business value this platform is generating." },
-    "settings": { "title": "Settings", "subtitle": "Segmentation rules, team, business, and billing." },
-    "default": { "title": "SmartManager Loyalty", "subtitle": "" }
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Where are we losing customers, and what should we do today?"
+    },
+    "customers": {
+      "title": "Customers",
+      "subtitle": "Your full customer database."
+    },
+    "customerProfile": {
+      "title": "Customer Profile",
+      "subtitle": "History, segment, and next best action."
+    },
+    "bookings": {
+      "title": "Bookings",
+      "subtitle": "Your calendar — staff, services, and today's open slots."
+    },
+    "memberships": {
+      "title": "Memberships",
+      "subtitle": "Session packages and plans your customers have bought."
+    },
+    "recovery": {
+      "title": "Recovery",
+      "subtitle": "Leads who inquired but never converted."
+    },
+    "reactivation": {
+      "title": "Reactivation",
+      "subtitle": "Customers who stopped returning, by how overdue they are."
+    },
+    "retention": {
+      "title": "Retention",
+      "subtitle": "Reach customers before they become inactive."
+    },
+    "rewards": {
+      "title": "Rewards",
+      "subtitle": "Points, visit, and spending reward programs."
+    },
+    "vip": {
+      "title": "VIP",
+      "subtitle": "Recognize top customers with priority, not discounts."
+    },
+    "offers": {
+      "title": "Smart Offers",
+      "subtitle": "Offers matched to customer behavior."
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "The business value this platform is generating."
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Segmentation rules, team, business, and billing."
+    },
+    "default": {
+      "title": "SmartManager Loyalty",
+      "subtitle": ""
+    }
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -111,7 +153,11 @@
       "checkEmailPrefix": "We sent a confirmation link to",
       "checkEmailMiddle": ". Confirm it, then",
       "checkEmailLink": "sign in",
-      "checkEmailSuffix": "to set up your business."
+      "checkEmailSuffix": "to set up your business.",
+      "selectedPlan": "Selected plan",
+      "billing": "Billing",
+      "price": "Price",
+      "freeTrial": "Free trial"
     },
     "onboarding": {
       "title": "Set up your business",
@@ -184,7 +230,8 @@
         "summaryCustomers": "Customers to import",
         "summaryCustomersNone": "None — you can import later",
         "creating": "Creating your business…",
-        "createMyBusiness": "Create my business"
+        "createMyBusiness": "Create my business",
+        "noPlanSelected": "No plan was selected — please start again from the pricing page."
       }
     }
   },
@@ -364,17 +411,44 @@
     "segmentSeverity": "Segment severity ({{segment}})"
   },
   "offerEngine": {
-    "vip": { "text": "an exclusive VIP benefit (priority booking, not a discount)", "reason": "VIP customers respond better to recognition than discounts." },
-    "lost": { "text": "a 15% comeback offer", "reason": "Long-lapsed customers usually need a stronger incentive to return." },
-    "inactiveAtRisk": { "text": "a 10% return offer", "reason": "A modest nudge is usually enough for a recently-lapsed customer." },
-    "new": { "text": "a second-visit incentive", "reason": "Converting a first-time customer into a second visit is the highest-leverage moment." },
-    "frequent": { "text": "a loyalty reward", "reason": "Frequent customers are already engaged — reward the behavior, don't discount it." }
+    "vip": {
+      "text": "an exclusive VIP benefit (priority booking, not a discount)",
+      "reason": "VIP customers respond better to recognition than discounts."
+    },
+    "lost": {
+      "text": "a 15% comeback offer",
+      "reason": "Long-lapsed customers usually need a stronger incentive to return."
+    },
+    "inactiveAtRisk": {
+      "text": "a 10% return offer",
+      "reason": "A modest nudge is usually enough for a recently-lapsed customer."
+    },
+    "new": {
+      "text": "a second-visit incentive",
+      "reason": "Converting a first-time customer into a second visit is the highest-leverage moment."
+    },
+    "frequent": {
+      "text": "a loyalty reward",
+      "reason": "Frequent customers are already engaged — reward the behavior, don't discount it."
+    }
   },
   "vipTierActions": {
-    "VIP": { "action": "Personal thank-you", "detail": "A short personal message acknowledging their loyalty." },
-    "Gold": { "action": "Priority booking", "detail": "Skip the queue — offer them first pick of times/slots." },
-    "Platinum": { "action": "Exclusive service / early access", "detail": "Give them early access to new services or a free upgrade." },
-    "default": { "action": "Special reward", "detail": "Recognize this customer with something beyond a discount." }
+    "VIP": {
+      "action": "Personal thank-you",
+      "detail": "A short personal message acknowledging their loyalty."
+    },
+    "Gold": {
+      "action": "Priority booking",
+      "detail": "Skip the queue — offer them first pick of times/slots."
+    },
+    "Platinum": {
+      "action": "Exclusive service / early access",
+      "detail": "Give them early access to new services or a free upgrade."
+    },
+    "default": {
+      "action": "Special reward",
+      "detail": "Recognize this customer with something beyond a discount."
+    }
   },
   "customers": {
     "list": {
@@ -399,7 +473,9 @@
       "title": "Add customer",
       "nameLabel": "Name",
       "phoneLabel": "Phone",
-      "emailLabel": "Email"
+      "emailLabel": "Email",
+      "limitReachedTitle": "You've reached your customer limit",
+      "limitReachedBody": "Your current plan's customer limit has been reached. Upgrade your plan to add more customers."
     },
     "import": {
       "title": "Import customers",
@@ -412,7 +488,8 @@
       "summaryHighValueInactive": "<b>{{count}}</b> high-value customers are inactive.",
       "summaryDueSoon": "<b>{{count}}</b> customers are due for a return.",
       "summarySkipped": "{{count}} rows were skipped (missing a name).",
-      "seeDashboard": "See my dashboard"
+      "seeDashboard": "See my dashboard",
+      "limitReached": "This import would exceed your plan's customer limit. Upgrade your plan to import more customers."
     },
     "profile": {
       "backToCustomers": "Back to Customers",
@@ -596,7 +673,9 @@
         "trialing": "Trialing",
         "active": "Active",
         "past_due": "Past Due",
-        "canceled": "Canceled"
+        "canceled": "Canceled",
+        "expired": "Expired",
+        "suspended": "Suspended"
       }
     },
     "nav": {
@@ -605,7 +684,8 @@
       "subscriptions": "Subscriptions",
       "plans": "Plans",
       "payments": "Payments",
-      "trials": "Trials"
+      "trials": "Trials",
+      "settings": "Settings"
     },
     "login": {
       "title": "Platform Admin",
@@ -622,11 +702,16 @@
         "pastDue": "Past Due",
         "canceled": "Canceled",
         "signups30d": "New Businesses (30d)",
-        "mrr": "Monthly Recurring Revenue"
+        "mrr": "Monthly Recurring Revenue",
+        "arr": "ARR",
+        "conversion": "Trial → Paid Conversion"
       },
       "trialsEndingSoon": "Trials Ending Soon",
       "noTrialsEndingSoon": "No trials ending in the next 7 days.",
-      "viewAll": "View all"
+      "viewAll": "View all",
+      "revenueByPlan": "Revenue by plan",
+      "subscribers_one": "{{count}} subscriber",
+      "subscribers_other": "{{count}} subscribers"
     },
     "businesses": {
       "title": "Businesses",
@@ -686,6 +771,36 @@
         "maxCustomersLabel": "Customer limit (leave blank for unlimited)",
         "featuresLabel": "Features (one per line)",
         "activeLabel": "Active — visible to businesses"
+      },
+      "editor": {
+        "badgeLabel": "Badge text",
+        "badgePlaceholder": "e.g. Most Popular",
+        "basicInfo": "Basic information",
+        "customPricePlaceholder": "Leave blank for custom pricing",
+        "descriptionLabel": "Description",
+        "duplicate": "Duplicate",
+        "featuredLabel": "Featured (highlighted on the pricing page)",
+        "features": "Features",
+        "keyLabel": "Key",
+        "limits": "Limits",
+        "livePreview": "Live preview",
+        "locationLimitLabel": "Location limit",
+        "more": "more",
+        "pricing": "Pricing",
+        "saveFirstForFeatures": "Save the plan's basic info first to manage its features.",
+        "shortDescriptionLabel": "Short description",
+        "sortOrderLabel": "Display order",
+        "subscribers": "Subscribers",
+        "trialDaysLabel": "Trial days (override)",
+        "trialDaysPlaceholder": "Uses the global default",
+        "untitled": "Untitled plan",
+        "userLimitLabel": "User limit",
+        "categories": {
+          "core": "Core",
+          "analytics": "Analytics",
+          "growth_tools": "Growth tools",
+          "team_support": "Team & support"
+        }
       }
     },
     "payments": {
@@ -700,7 +815,11 @@
       "columnRecordedBy": "Recorded by",
       "columnDate": "Date",
       "empty": "No payments recorded yet.",
-      "statuses": { "recorded": "Recorded", "refunded": "Refunded", "failed": "Failed" },
+      "statuses": {
+        "recorded": "Recorded",
+        "refunded": "Refunded",
+        "failed": "Failed"
+      },
       "form": {
         "title": "Record a payment",
         "businessLabel": "Business",
@@ -725,6 +844,14 @@
       "expired": "Expired",
       "daysLeft_one": "{{count}} day left",
       "daysLeft_other": "{{count}} days left"
+    },
+    "subscriptionSettings": {
+      "title": "Subscription Settings",
+      "subtitle": "Control the free trial offered to every new signup.",
+      "freeTrialEnabled": "Free trial enabled",
+      "freeTrialDays": "Free trial length (days)",
+      "freeTrialDaysHint": "Applies to all new signups unless a plan sets its own override.",
+      "saved": "Saved"
     }
   },
   "settings": {
@@ -733,15 +860,52 @@
       "saveChanges": "Save changes",
       "loading": "Loading…",
       "fields": {
-        "new": { "title": "New", "desc": "Customer created within the last N days.", "days": "Days since joining" },
-        "active": { "title": "Active", "desc": "Customer visited within N days.", "days": "Days since last visit" },
-        "due": { "title": "Due", "desc": "Customer is approaching their expected return date.", "days_before": "Days before expected return to flag as Due" },
-        "inactive": { "title": "Inactive", "desc": "Customer has exceeded their expected return period.", "days": "Days since last visit" },
-        "lost": { "title": "Lost", "desc": "Customer has been inactive for longer than this.", "days": "Days since last visit" },
-        "vip": { "title": "VIP", "desc": "Customer meets spending or visit thresholds.", "min_spending": "Minimum lifetime spending", "min_visits": "Minimum visits" },
-        "high_value": { "title": "High Value", "desc": "Customer lifetime value is above this threshold.", "min_lifetime_value": "Minimum lifetime value" },
-        "frequent": { "title": "Frequent", "desc": "Customer visits more often than this, per 90 days.", "min_visits_per_90d": "Minimum visits per 90 days" },
-        "at_risk": { "title": "At Risk", "desc": "Customer is this many times past their normal return cycle.", "overdue_ratio": "Overdue ratio (e.g. 1.3 = 30% late)" }
+        "new": {
+          "title": "New",
+          "desc": "Customer created within the last N days.",
+          "days": "Days since joining"
+        },
+        "active": {
+          "title": "Active",
+          "desc": "Customer visited within N days.",
+          "days": "Days since last visit"
+        },
+        "due": {
+          "title": "Due",
+          "desc": "Customer is approaching their expected return date.",
+          "days_before": "Days before expected return to flag as Due"
+        },
+        "inactive": {
+          "title": "Inactive",
+          "desc": "Customer has exceeded their expected return period.",
+          "days": "Days since last visit"
+        },
+        "lost": {
+          "title": "Lost",
+          "desc": "Customer has been inactive for longer than this.",
+          "days": "Days since last visit"
+        },
+        "vip": {
+          "title": "VIP",
+          "desc": "Customer meets spending or visit thresholds.",
+          "min_spending": "Minimum lifetime spending",
+          "min_visits": "Minimum visits"
+        },
+        "high_value": {
+          "title": "High Value",
+          "desc": "Customer lifetime value is above this threshold.",
+          "min_lifetime_value": "Minimum lifetime value"
+        },
+        "frequent": {
+          "title": "Frequent",
+          "desc": "Customer visits more often than this, per 90 days.",
+          "min_visits_per_90d": "Minimum visits per 90 days"
+        },
+        "at_risk": {
+          "title": "At Risk",
+          "desc": "Customer is this many times past their normal return cycle.",
+          "overdue_ratio": "Overdue ratio (e.g. 1.3 = 30% late)"
+        }
       }
     },
     "team": {
@@ -856,7 +1020,16 @@
         "growth": "Growth",
         "professional": "Professional",
         "enterprise": "Enterprise"
-      }
+      },
+      "billingInterval": "Billing interval",
+      "trialDaysRemaining": "Trial days remaining",
+      "activeSince": "Active since",
+      "upgradeSubject": "Upgrade my plan",
+      "changeBillingSubject": "Change my billing interval",
+      "changeBillingInterval": "Change billing interval",
+      "cancelSubject": "Cancel my subscription",
+      "cancelSubscription": "Cancel subscription",
+      "switchTo": "Switch to {{plan}}"
     }
   },
   "bookings": {
@@ -989,5 +1162,47 @@
         "planRequired": "Choose a plan first."
       }
     }
+  },
+  "planFeatures": {
+    "vip": "VIP",
+    "smart_offers": "Smart Offers",
+    "memberships": "Memberships"
+  },
+  "pricing": {
+    "seoTitle": "SmartManager Loyalty Pricing",
+    "seoDescription": "Simple, powerful customer retention and loyalty software for growing businesses.",
+    "heroTitle": "Choose the plan that fits your business",
+    "heroSubtitle": "Turn more customers into repeat customers, recover lost revenue, and build stronger customer relationships.",
+    "trialBanner_one": "Start your {{count}}-day free trial — no credit card required.",
+    "trialBanner_other": "Start your {{count}}-day free trial — no credit card required.",
+    "billing": {
+      "monthly": "Monthly",
+      "annual": "Annual"
+    },
+    "twoMonthsFree": "2 months free",
+    "custom": "Custom",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "saveAmount": "Save {{amount}}/year",
+    "monthsFree_one": "{{count}} month free",
+    "monthsFree_other": "{{count}} months free",
+    "upToCustomers_one": "Up to {{count}} customer",
+    "upToCustomers_other": "Up to {{count}} customers",
+    "unlimitedCustomers": "Unlimited customers",
+    "upToLocations_one": "Up to {{count}} location",
+    "upToLocations_other": "Up to {{count}} locations",
+    "unlimitedLocations": "Unlimited locations",
+    "startFreeTrial": "Start Free Trial",
+    "contactSales": "Contact Sales",
+    "goToDashboard": "Go to Dashboard",
+    "unavailableTitle": "Plans are currently unavailable",
+    "unavailableBody": "Please contact us and we'll help you get set up.",
+    "trialDays_one": "{{count}} day",
+    "trialDays_other": "{{count}} days"
+  },
+  "upgradePrompt": {
+    "title": "{{feature}} isn't on your plan",
+    "body": "Upgrade your plan to unlock {{feature}} and more.",
+    "cta": "Upgrade Plan"
   }
 }

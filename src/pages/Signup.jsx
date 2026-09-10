@@ -1,10 +1,15 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { C } from "../components/theme";
 import Logo from "../components/Logo";
-import { Btn, TextInput, Field } from "../components/ui";
+import { Btn, TextInput, Field, LoadingScreen } from "../components/ui";
 import { supabase } from "../lib/supabaseClient";
+import { fetchPublicPlans, fetchSubscriptionSettings } from "../lib/plans";
+import { formatMoney } from "../lib/currencies";
+
+const SELECTED_PLAN_KEY = "smartmanager-loyalty:selected-plan-id";
+const SELECTED_BILLING_KEY = "smartmanager-loyalty:selected-billing-interval";
 
 export default function Signup() {
   const { t } = useTranslation();
@@ -14,6 +19,25 @@ export default function Signup() {
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(undefined); // undefined = loading, null = none found
+  const [trialDays, setTrialDays] = useState(14);
+  const billingInterval = (() => { try { return window.sessionStorage.getItem(SELECTED_BILLING_KEY) || "monthly"; } catch (e) { return "monthly"; } })();
+
+  // Plan selection is mandatory before an account can be created — the
+  // only way here is through /pricing, which stamps sessionStorage.
+  useEffect(() => {
+    let planId = null;
+    try { planId = window.sessionStorage.getItem(SELECTED_PLAN_KEY); } catch (e) { /* ignore */ }
+    if (!planId) { setSelectedPlan(null); return; }
+    Promise.all([fetchPublicPlans(), fetchSubscriptionSettings()]).then(([plans, settings]) => {
+      const plan = plans.find((p) => p.id === planId) || null;
+      setSelectedPlan(plan);
+      if (plan) setTrialDays(plan.trial_days ?? settings.free_trial_days ?? 14);
+    }).catch(() => setSelectedPlan(null));
+  }, []);
+
+  if (selectedPlan === undefined) return <LoadingScreen />;
+  if (selectedPlan === null) return <Navigate to="/pricing" replace />;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -47,6 +71,30 @@ export default function Signup() {
           <Logo size={56} className="mb-3" />
           <h1 className="text-lg font-bold" style={{ color: C.ink }}>{t("auth.signup.title")}</h1>
           <p className="mt-1 text-xs" style={{ color: C.slateLight }}>{t("auth.signup.subtitle")}</p>
+        </div>
+
+        <div className="mb-5 rounded-xl p-3 text-xs" style={{ backgroundColor: C.greenTint }}>
+          <div className="flex items-center justify-between">
+            <span style={{ color: C.slate }}>{t("auth.signup.selectedPlan")}</span>
+            <span className="font-bold" style={{ color: C.greenDeep }}>{selectedPlan.name}</span>
+          </div>
+          <div className="mt-1 flex items-center justify-between">
+            <span style={{ color: C.slate }}>{t("auth.signup.billing")}</span>
+            <span className="font-semibold" style={{ color: C.ink }}>{t(`pricing.billing.${billingInterval}`)}</span>
+          </div>
+          {selectedPlan.price_monthly != null && (
+            <div className="mt-1 flex items-center justify-between">
+              <span style={{ color: C.slate }}>{t("auth.signup.price")}</span>
+              <span className="font-semibold" style={{ color: C.ink }}>
+                {formatMoney(billingInterval === "annual" ? selectedPlan.price_yearly : selectedPlan.price_monthly, selectedPlan.currency)}
+                {billingInterval === "annual" ? t("pricing.perYear") : t("pricing.perMonth")}
+              </span>
+            </div>
+          )}
+          <div className="mt-1 flex items-center justify-between">
+            <span style={{ color: C.slate }}>{t("auth.signup.freeTrial")}</span>
+            <span className="font-semibold" style={{ color: C.ink }}>{t("pricing.trialDays", { count: trialDays })}</span>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">

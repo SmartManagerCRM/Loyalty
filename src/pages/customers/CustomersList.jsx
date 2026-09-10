@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Plus, Upload, Search } from "lucide-react";
+import { Plus, Upload, Search, ArrowUpCircle } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, TextInput, Modal, Field, Select, Pill, EmptyState } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
@@ -15,23 +15,46 @@ const SEGMENT_KEYS = ["new", "active", "due", "inactive", "lost", "vip", "high_v
 
 function AddCustomerModal({ businessId, onClose, onAdded }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const [limitReached, setLimitReached] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    setLimitReached(false);
     const { error } = await supabase.from("customers").insert({
       business_id: businessId, name: name.trim(), phone: phone.trim() || null, email: email.trim() || null,
     });
     setBusy(false);
-    if (error) { setError(error.message); return; }
+    if (error) {
+      // Raised by the enforce_customer_limit() DB trigger — the plan's
+      // customer cap is enforced server-side, never trusted client-side.
+      if (error.message?.includes("customer_limit_reached")) setLimitReached(true);
+      else setError(error.message);
+      return;
+    }
     onAdded();
     onClose();
+  }
+
+  if (limitReached) {
+    return (
+      <Modal title={t("customers.addModal.title")} onClose={onClose}>
+        <div className="flex flex-col items-center gap-3 py-4 text-center">
+          <p className="text-sm font-semibold" style={{ color: C.ink }}>{t("customers.addModal.limitReachedTitle")}</p>
+          <p className="text-xs" style={{ color: C.slateLight }}>{t("customers.addModal.limitReachedBody")}</p>
+          <Btn icon={ArrowUpCircle} onClick={() => navigate("/settings?tab=billing")} className="mt-2">
+            {t("upgradePrompt.cta")}
+          </Btn>
+        </div>
+      </Modal>
+    );
   }
 
   return (

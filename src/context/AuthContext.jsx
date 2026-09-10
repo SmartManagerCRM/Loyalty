@@ -58,6 +58,8 @@ export function AuthProvider({ children }) {
   const createBusiness = useCallback(async (params) => {
     const { data, error } = await supabase.rpc("create_business", {
       p_name: params.name,
+      p_plan_id: params.planId,
+      p_billing_interval: params.billingInterval || "monthly",
       p_business_type: params.businessType || "other",
       p_visit_label: params.visitLabel || "Visit",
       p_language: params.language || "en",

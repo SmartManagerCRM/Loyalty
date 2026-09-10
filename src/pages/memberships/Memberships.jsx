@@ -10,6 +10,8 @@ import { generateMembershipMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 import { formatMoney } from "../../lib/currencies";
 import { supabase } from "../../lib/supabaseClient";
+import { usePlanFeatures } from "../../lib/plans";
+import UpgradePrompt from "../../components/UpgradePrompt";
 import AssignMembershipModal from "./AssignMembershipModal";
 
 const TABS = ["active", "expiringSoon", "unused", "expiredCompleted", "cancelled"];
@@ -80,6 +82,7 @@ export default function Memberships() {
   const { rows, ready, refetch } = useMembershipsOverview(business?.id);
   const { rows: customers, ready: customersReady } = useBusinessTable("customers", business?.id, { orderBy: "name", ascending: true });
   const { rows: plans, ready: plansReady } = useBusinessTable("membership_plans", business?.id, { orderBy: "name", ascending: true });
+  const { ready: featuresReady, hasFeature } = usePlanFeatures();
 
   const [tab, setTab] = useState("active");
   const [showAssign, setShowAssign] = useState(false);
@@ -124,6 +127,7 @@ export default function Memberships() {
   }
 
   if (!ready2) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>{t("common.loading")}</div>;
+  if (featuresReady && !hasFeature("memberships")) return <UpgradePrompt featureName={t("planFeatures.memberships")} />;
 
   const active = grouped[tab];
 

@@ -10,6 +10,8 @@ import { nextBestAction } from "../../lib/segmentation";
 import { generateMessage } from "../../lib/messageTemplates";
 import { openWhatsApp } from "../../lib/whatsapp";
 import { supabase } from "../../lib/supabaseClient";
+import { usePlanFeatures } from "../../lib/plans";
+import UpgradePrompt from "../../components/UpgradePrompt";
 
 const SEGMENTS = ["new", "active", "due", "inactive", "lost", "vip", "high_value", "frequent", "at_risk"];
 const SEGMENT_ACTION = { inactive: "REACTIVATE", lost: "REACTIVATE", due: "CONTACT CUSTOMER", at_risk: "CONTACT CUSTOMER", vip: "VIP CARE", new: "ENCOURAGE SECOND VISIT", active: "CONTACT CUSTOMER", high_value: "VIP CARE", frequent: "ENCOURAGE SECOND VISIT" };
@@ -103,6 +105,7 @@ export default function Offers() {
   const { rows: offers, ready: offersReady, insertRow, updateRow, deleteRow } = useBusinessTable("offers", business?.id);
   const { rows: customers, ready: customersReady } = useCustomerOverview(business?.id);
   const { sentPairs, convertedPairs, refetch: refetchLog } = useRecommendationLog(business?.id);
+  const { ready: featuresReady, hasFeature } = usePlanFeatures();
 
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -135,6 +138,7 @@ export default function Offers() {
   }
 
   if (!offersReady || !customersReady) return <div className="p-8 text-sm" style={{ color: C.slateLight }}>{t("offers.loading")}</div>;
+  if (featuresReady && !hasFeature("smart_offers")) return <UpgradePrompt featureName={t("planFeatures.smart_offers")} />;
 
   return (
     <div className="p-8">

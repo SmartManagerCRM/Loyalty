@@ -98,12 +98,43 @@ npm run dev
   wiring a real processor (e.g. Stripe) is the next step when you're ready
   to charge
 
+**Phase 7 — Database-driven pricing, plans & sign-up flow**
+- `/pricing`: a public, pre-auth pricing page reading live from the
+  database (`list_public_plans()` / `get_subscription_settings()`) — no
+  plan pricing, limits, or feature list is ever hard-coded in the
+  frontend. Monthly/Annual toggle with dynamically computed savings
+  (never a hard-coded "17%").
+- Sign-up now requires picking a plan + billing interval on `/pricing`
+  first; `/signup` shows that selection and `create_business()` resolves
+  the real price/limits/trial server-side from the chosen `plan_id` — the
+  client can never submit its own price.
+- Admin → Plans: full plan editor (pricing, limits, trial-day override,
+  feature toggles by category, live preview, duplicate/reorder/
+  activate/deactivate, delete guarded when businesses are on the plan) —
+  backed by `admin_upsert_plan` / `admin_set_plan_feature` /
+  `admin_duplicate_plan` / `admin_reorder_plans` / `admin_delete_plan`,
+  each writing to `plan_audit_log`.
+- Admin → Settings: global free-trial toggle + day count
+  (`subscription_settings`, read by `create_business()` — never
+  hard-coded).
+- `enforce_customer_limit()` (a `customers` trigger) enforces each plan's
+  customer cap server-side; `my_plan_features()` + `usePlanFeatures()`
+  gate premium pages (VIP, Smart Offers, Memberships) behind an upgrade
+  prompt instead of hiding them.
+- `subscriptions` is an append-only ledger behind `businesses`' live
+  `subscription_plan`/`subscription_status`/`billing_interval`/
+  `subscription_price` columns — ready for a real payment gateway's
+  webhooks to write into later. No payment is faked anywhere: Billing's
+  Upgrade/Downgrade/Change interval/Cancel actions go to a contact-us
+  email, exactly like before.
+
 ## What's next
 
 Nothing from the original build brief remains unbuilt at the data-model
-level — every table Phase 1-5 needs already exists in `supabase/schema.sql`.
+level — every table Phase 1-7 needs already exists in `supabase/schema.sql`.
 The one genuinely external dependency left is connecting a real payment
-processor for Billing.
+processor for Billing (and, downstream of that, self-serve plan changes
+from `/pricing` for an already-signed-up business).
 
 ## Tech stack
 

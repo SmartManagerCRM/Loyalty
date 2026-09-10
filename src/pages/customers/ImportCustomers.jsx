@@ -41,7 +41,7 @@ export default function ImportCustomers({ businessId, onClose, onImported }) {
       setSummary({ total: customers.length, skipped, inactive60, highValueInactive, dueSoon });
       onImported?.();
     } catch (err) {
-      setError(err.message);
+      setError(err.message?.includes("customer_limit_reached") ? t("customers.import.limitReached") : err.message);
     } finally {
       setBusy(false);
     }

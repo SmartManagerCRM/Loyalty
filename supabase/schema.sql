@@ -1046,3 +1046,676 @@ create trigger trg_business_plan_changed
 --   select vault.create_secret('notify@yourdomain.com', 'resend_from_email');
 -- The from-address's domain must be verified in Resend, or sends will fail
 -- silently (caught by the exception handler above).
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- Pricing, Plans & Sign-up Flow — database-driven SaaS subscription
+-- architecture. The database is the single source of truth for plan
+-- pricing, limits, features and trial settings; nothing here is
+-- duplicated in frontend code. See create_business() below for how a
+-- signup's selected plan becomes the business's live subscription.
+-- ═══════════════════════════════════════════════════════════════════════
+
+-- `key` already serves as the plan's slug (unique, url-safe) — no
+-- separate slug column, so there's nothing to drift out of sync.
+alter table plans
+  add column if not exists description text,
+  add column if not exists short_description text,
+  add column if not exists location_limit int,
+  add column if not exists user_limit int,
+  add column if not exists trial_days int,
+  add column if not exists badge_text text,
+  add column if not exists is_featured boolean not null default false;
+
+create table if not exists plan_features (
+  id uuid primary key default gen_random_uuid(),
+  key text not null unique,
+  name text not null,
+  description text,
+  category text not null default 'core',
+  display_order int not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table plan_features enable row level security;
+create policy "anyone can read active features" on plan_features
+  for select using (is_active or is_platform_admin());
+create policy "platform admins manage features" on plan_features
+  for all using (is_platform_admin()) with check (is_platform_admin());
+
+create table if not exists plan_feature_links (
+  id uuid primary key default gen_random_uuid(),
+  plan_id uuid not null references plans(id) on delete cascade,
+  feature_id uuid not null references plan_features(id) on delete cascade,
+  enabled boolean not null default true,
+  value_text text,
+  display_text text,
+  display_order int not null default 0,
+  unique (plan_id, feature_id)
+);
+
+alter table plan_feature_links enable row level security;
+create policy "anyone can read plan feature links" on plan_feature_links
+  for select using (true);
+create policy "platform admins manage plan feature links" on plan_feature_links
+  for all using (is_platform_admin()) with check (is_platform_admin());
+
+-- Singleton row — admin-editable trial length, read by both the public
+-- pricing page and create_business() (never hard-coded).
+create table if not exists subscription_settings (
+  is_singleton boolean primary key default true check (is_singleton),
+  free_trial_enabled boolean not null default true,
+  free_trial_days int not null default 14,
+  updated_at timestamptz not null default now()
+);
+insert into subscription_settings (is_singleton) values (true) on conflict do nothing;
+
+alter table subscription_settings enable row level security;
+create policy "anyone can read subscription settings" on subscription_settings
+  for select using (true);
+create policy "platform admins manage subscription settings" on subscription_settings
+  for all using (is_platform_admin()) with check (is_platform_admin());
+
+-- Append-only ledger behind `businesses`' live denormalized subscription
+-- columns (below) — one row per state change, ready for a real payment
+-- gateway's webhooks to write into later.
+create table if not exists subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  plan_id uuid not null references plans(id),
+  status text not null check (status in ('trial','active','past_due','canceled','expired','suspended')),
+  billing_interval text not null default 'monthly' check (billing_interval in ('monthly','annual')),
+  price numeric,
+  currency text not null default 'USD',
+  trial_start timestamptz,
+  trial_end timestamptz,
+  subscription_start timestamptz,
+  current_period_start timestamptz,
+  current_period_end timestamptz,
+  cancelled_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists subscriptions_business_idx on subscriptions(business_id, created_at desc);
+
+alter table subscriptions enable row level security;
+create policy "business members can read their subscriptions" on subscriptions
+  for select using (is_business_member(business_id) or is_platform_admin());
+-- no insert/update/delete policies: written only by security-definer RPCs.
+
+create table if not exists plan_audit_log (
+  id uuid primary key default gen_random_uuid(),
+  admin_user_id uuid references auth.users(id) on delete set null,
+  action text not null,
+  plan_id uuid references plans(id) on delete set null,
+  old_value jsonb,
+  new_value jsonb,
+  created_at timestamptz not null default now()
+);
+alter table plan_audit_log enable row level security;
+create policy "platform admins read audit log" on plan_audit_log
+  for select using (is_platform_admin());
+
+alter table businesses
+  add column if not exists billing_interval text not null default 'monthly' check (billing_interval in ('monthly','annual')),
+  add column if not exists subscription_price numeric,
+  add column if not exists subscription_currency text not null default 'USD';
+
+alter table businesses drop constraint if exists businesses_subscription_status_check;
+alter table businesses add constraint businesses_subscription_status_check
+  check (subscription_status in ('trialing','active','past_due','canceled','expired','suspended'));
+
+-- create_business() now requires a plan up front (see Signup/Pricing in
+-- the app): plan selection happens before account creation, and the
+-- server — never the client — resolves the real price/limits/trial from
+-- p_plan_id. This replaces the earlier 5-arg version.
+drop function if exists create_business(text, text, text, text, text);
+
+create or replace function create_business(
+  p_name text,
+  p_plan_id uuid,
+  p_billing_interval text default 'monthly',
+  p_business_type text default 'other',
+  p_visit_label text default 'Visit',
+  p_language text default 'en',
+  p_currency text default 'SAR'
+)
+returns uuid
+language plpgsql security definer set search_path = public as $$
+declare
+  new_id uuid;
+  v_plan plans%rowtype;
+  v_trial_days int;
+  v_price numeric;
+begin
+  if auth.uid() is null then
+    raise exception 'not authenticated';
+  end if;
+
+  select * into v_plan from plans where id = p_plan_id and is_active = true;
+  if not found then
+    raise exception 'invalid or inactive plan';
+  end if;
+  if p_billing_interval not in ('monthly','annual') then
+    raise exception 'invalid billing interval';
+  end if;
+
+  select coalesce(v_plan.trial_days, free_trial_days) into v_trial_days from subscription_settings limit 1;
+  v_price := case when p_billing_interval = 'annual' then v_plan.price_yearly else v_plan.price_monthly end;
+
+  insert into businesses (
+    name, business_type, visit_label, default_language, currency,
+    subscription_plan, subscription_status, trial_ends_at,
+    billing_interval, subscription_price, subscription_currency
+  )
+  values (
+    p_name, p_business_type, p_visit_label, p_language, p_currency,
+    v_plan.key, 'trialing', now() + make_interval(days => coalesce(v_trial_days, 14)),
+    p_billing_interval, v_price, v_plan.currency
+  )
+  returning id into new_id;
+
+  insert into business_users (business_id, user_id, role)
+  values (new_id, auth.uid(), 'owner');
+
+  insert into subscriptions (business_id, plan_id, status, billing_interval, price, currency, trial_start, trial_end)
+  values (new_id, v_plan.id, 'trial', p_billing_interval, v_price, v_plan.currency, now(), now() + make_interval(days => coalesce(v_trial_days, 14)));
+
+  insert into segmentation_rules (business_id, segment_key, rule_config) values
+    (new_id, 'new',        '{"days": 14}'),
+    (new_id, 'active',     '{"days": 30}'),
+    (new_id, 'due',        '{"days_before": 5}'),
+    (new_id, 'inactive',   '{"days": 30}'),
+    (new_id, 'lost',       '{"days": 90}'),
+    (new_id, 'vip',        '{"min_spending": 3000, "min_visits": 10}'),
+    (new_id, 'high_value', '{"min_lifetime_value": 2000}'),
+    (new_id, 'frequent',   '{"min_visits_per_90d": 3}'),
+    (new_id, 'at_risk',    '{"overdue_ratio": 1.3}');
+
+  insert into vip_tiers (business_id, tier_name, criteria, sort_order) values
+    (new_id, 'VIP',      '{"min_spending": 3000}',  1),
+    (new_id, 'Gold',     '{"min_spending": 8000}',  2),
+    (new_id, 'Platinum', '{"min_spending": 20000}', 3);
+
+  return new_id;
+end;
+$$;
+
+-- Platform-admin plan change — appends to the subscriptions ledger too.
+create or replace function admin_update_business(
+  p_business_id uuid,
+  p_subscription_plan text default null,
+  p_subscription_status text default null,
+  p_trial_ends_at timestamptz default null,
+  p_billing_interval text default null
+)
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  v_plan plans%rowtype;
+  v_old businesses%rowtype;
+  v_new_interval text;
+  v_price numeric;
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  select * into v_old from businesses where id = p_business_id;
+  if not found then raise exception 'business not found'; end if;
+
+  v_new_interval := coalesce(p_billing_interval, v_old.billing_interval);
+
+  if p_subscription_plan is not null then
+    select * into v_plan from plans where key = p_subscription_plan;
+    if found then
+      v_price := case when v_new_interval = 'annual' then v_plan.price_yearly else v_plan.price_monthly end;
+    end if;
+  end if;
+
+  update businesses set
+    subscription_plan = coalesce(p_subscription_plan, subscription_plan),
+    subscription_status = coalesce(p_subscription_status, subscription_status),
+    trial_ends_at = coalesce(p_trial_ends_at, trial_ends_at),
+    billing_interval = v_new_interval,
+    subscription_price = coalesce(v_price, subscription_price)
+  where id = p_business_id;
+
+  if p_subscription_plan is not null and p_subscription_plan is distinct from v_old.subscription_plan and v_plan.id is not null then
+    insert into subscriptions (business_id, plan_id, status, billing_interval, price, currency, subscription_start, current_period_start)
+    values (p_business_id, v_plan.id, coalesce(p_subscription_status, v_old.subscription_status, 'active'), v_new_interval, v_price, v_plan.currency, now(), now());
+  end if;
+end;
+$$;
+
+-- Enforced server-side — the client never gets to decide its own limit.
+create or replace function enforce_customer_limit()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  v_limit int;
+  v_count int;
+begin
+  select p.max_customers into v_limit
+  from businesses b join plans p on p.key = b.subscription_plan
+  where b.id = NEW.business_id;
+
+  if v_limit is not null then
+    select count(*) into v_count from customers where business_id = NEW.business_id;
+    if v_count >= v_limit then
+      raise exception 'customer_limit_reached' using errcode = 'P0001';
+    end if;
+  end if;
+
+  return NEW;
+end;
+$$;
+revoke execute on function enforce_customer_limit() from public;
+
+drop trigger if exists trg_enforce_customer_limit on customers;
+create trigger trg_enforce_customer_limit
+  before insert on customers
+  for each row execute function enforce_customer_limit();
+
+-- ── Public read API (pricing page + signup — no auth required) ─────────
+
+create or replace function list_public_plans()
+returns table (
+  id uuid, key text, name text, description text, short_description text,
+  price_monthly numeric, price_yearly numeric, currency text,
+  max_customers int, location_limit int, user_limit int, trial_days int,
+  badge_text text, is_featured boolean, sort_order int,
+  features jsonb
+)
+language sql stable security definer set search_path = public as $$
+  select
+    p.id, p.key, p.name, p.description, p.short_description,
+    p.price_monthly, p.price_yearly, p.currency,
+    p.max_customers, p.location_limit, p.user_limit, p.trial_days,
+    p.badge_text, p.is_featured, p.sort_order,
+    coalesce((
+      select jsonb_agg(jsonb_build_object(
+        'key', f.key, 'name', f.name, 'category', f.category,
+        'display_text', pfl.display_text, 'value_text', pfl.value_text
+      ) order by pfl.display_order, f.display_order)
+      from plan_feature_links pfl join plan_features f on f.id = pfl.feature_id
+      where pfl.plan_id = p.id and pfl.enabled = true and f.is_active = true
+    ), '[]'::jsonb) as features
+  from plans p
+  where p.is_active = true and p.key <> 'trial'
+  order by p.sort_order asc;
+$$;
+grant execute on function list_public_plans() to anon, authenticated;
+
+create or replace function get_subscription_settings()
+returns table (free_trial_enabled boolean, free_trial_days int)
+language sql stable security definer set search_path = public as $$
+  select free_trial_enabled, free_trial_days from subscription_settings limit 1;
+$$;
+grant execute on function get_subscription_settings() to anon, authenticated;
+
+-- ── Admin plan management RPCs ──────────────────────────────────────────
+
+create or replace function admin_list_plans_full()
+returns table (
+  id uuid, key text, name text, description text, short_description text,
+  price_monthly numeric, price_yearly numeric, currency text,
+  max_customers int, location_limit int, user_limit int, trial_days int,
+  badge_text text, is_featured boolean, is_active boolean, sort_order int,
+  created_at timestamptz, updated_at timestamptz,
+  subscriber_count bigint,
+  features jsonb
+)
+language sql stable security definer set search_path = public as $$
+  select
+    p.id, p.key, p.name, p.description, p.short_description,
+    p.price_monthly, p.price_yearly, p.currency,
+    p.max_customers, p.location_limit, p.user_limit, p.trial_days,
+    p.badge_text, p.is_featured, p.is_active, p.sort_order,
+    p.created_at, p.updated_at,
+    (select count(*) from businesses b where b.subscription_plan = p.key) as subscriber_count,
+    coalesce((
+      select jsonb_agg(jsonb_build_object(
+        'feature_id', f.id, 'key', f.key, 'name', f.name, 'category', f.category,
+        'enabled', pfl.enabled, 'display_text', pfl.display_text, 'value_text', pfl.value_text
+      ) order by f.display_order)
+      from plan_feature_links pfl join plan_features f on f.id = pfl.feature_id
+      where pfl.plan_id = p.id
+    ), '[]'::jsonb) as features
+  from plans p
+  where is_platform_admin()
+  order by p.sort_order asc;
+$$;
+
+create or replace function admin_list_plan_features()
+returns table (id uuid, key text, name text, description text, category text, display_order int, is_active boolean)
+language sql stable security definer set search_path = public as $$
+  select id, key, name, description, category, display_order, is_active
+  from plan_features
+  where is_platform_admin()
+  order by display_order asc;
+$$;
+
+create or replace function admin_upsert_plan(
+  p_id uuid default null,
+  p_key text default null,
+  p_name text default null,
+  p_description text default null,
+  p_short_description text default null,
+  p_price_monthly numeric default null,
+  p_price_yearly numeric default null,
+  p_currency text default 'USD',
+  p_max_customers int default null,
+  p_location_limit int default null,
+  p_user_limit int default null,
+  p_trial_days int default null,
+  p_badge_text text default null,
+  p_is_featured boolean default false,
+  p_is_active boolean default true,
+  p_sort_order int default 0
+)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  v_id uuid;
+  v_old jsonb;
+  v_new jsonb;
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  if p_id is not null then
+    select to_jsonb(p) into v_old from plans p where id = p_id;
+  end if;
+
+  insert into plans (
+    id, key, name, description, short_description, price_monthly, price_yearly, currency,
+    max_customers, location_limit, user_limit, trial_days, badge_text, is_featured, is_active, sort_order, updated_at
+  ) values (
+    coalesce(p_id, gen_random_uuid()), p_key, p_name, p_description, p_short_description,
+    p_price_monthly, p_price_yearly, coalesce(p_currency, 'USD'),
+    p_max_customers, p_location_limit, p_user_limit, p_trial_days, p_badge_text,
+    coalesce(p_is_featured, false), coalesce(p_is_active, true), coalesce(p_sort_order, 0), now()
+  )
+  on conflict (id) do update set
+    key = excluded.key, name = excluded.name, description = excluded.description,
+    short_description = excluded.short_description, price_monthly = excluded.price_monthly,
+    price_yearly = excluded.price_yearly, currency = excluded.currency,
+    max_customers = excluded.max_customers, location_limit = excluded.location_limit,
+    user_limit = excluded.user_limit, trial_days = excluded.trial_days,
+    badge_text = excluded.badge_text, is_featured = excluded.is_featured,
+    is_active = excluded.is_active, sort_order = excluded.sort_order, updated_at = now()
+  returning id into v_id;
+
+  select to_jsonb(p) into v_new from plans p where id = v_id;
+  insert into plan_audit_log (admin_user_id, action, plan_id, old_value, new_value)
+  values (auth.uid(), case when v_old is null then 'create_plan' else 'update_plan' end, v_id, v_old, v_new);
+
+  return v_id;
+end;
+$$;
+
+create or replace function admin_set_plan_feature(
+  p_plan_id uuid,
+  p_feature_id uuid,
+  p_enabled boolean,
+  p_display_text text default null,
+  p_value_text text default null,
+  p_display_order int default 0
+)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  insert into plan_feature_links (plan_id, feature_id, enabled, display_text, value_text, display_order)
+  values (p_plan_id, p_feature_id, p_enabled, p_display_text, p_value_text, p_display_order)
+  on conflict (plan_id, feature_id) do update set
+    enabled = excluded.enabled, display_text = excluded.display_text,
+    value_text = excluded.value_text, display_order = excluded.display_order;
+
+  insert into plan_audit_log (admin_user_id, action, plan_id, new_value)
+  values (auth.uid(), 'set_plan_feature', p_plan_id, jsonb_build_object('feature_id', p_feature_id, 'enabled', p_enabled));
+end;
+$$;
+
+create or replace function admin_duplicate_plan(p_plan_id uuid)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  v_new_id uuid;
+  v_src plans%rowtype;
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  select * into v_src from plans where id = p_plan_id;
+  if not found then raise exception 'plan not found'; end if;
+
+  insert into plans (key, name, description, short_description, price_monthly, price_yearly, currency,
+    max_customers, location_limit, user_limit, trial_days, badge_text, is_featured, is_active, sort_order)
+  values (v_src.key || '_copy_' || substr(gen_random_uuid()::text, 1, 6), v_src.name || ' (Copy)',
+    v_src.description, v_src.short_description, v_src.price_monthly, v_src.price_yearly, v_src.currency,
+    v_src.max_customers, v_src.location_limit, v_src.user_limit, v_src.trial_days, v_src.badge_text,
+    false, false, v_src.sort_order + 1)
+  returning id into v_new_id;
+
+  insert into plan_feature_links (plan_id, feature_id, enabled, display_text, value_text, display_order)
+  select v_new_id, feature_id, enabled, display_text, value_text, display_order
+  from plan_feature_links where plan_id = p_plan_id;
+
+  insert into plan_audit_log (admin_user_id, action, plan_id, new_value)
+  values (auth.uid(), 'duplicate_plan', v_new_id, jsonb_build_object('source_plan_id', p_plan_id));
+
+  return v_new_id;
+end;
+$$;
+
+create or replace function admin_reorder_plans(p_plan_ids uuid[])
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  i int;
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+  for i in 1..array_length(p_plan_ids, 1) loop
+    update plans set sort_order = i - 1 where id = p_plan_ids[i];
+  end loop;
+  insert into plan_audit_log (admin_user_id, action, new_value)
+  values (auth.uid(), 'reorder_plans', to_jsonb(p_plan_ids));
+end;
+$$;
+
+create or replace function admin_delete_plan(p_plan_id uuid)
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  v_key text;
+  v_count int;
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  select key into v_key from plans where id = p_plan_id;
+  if v_key is null then raise exception 'plan not found'; end if;
+
+  select count(*) into v_count from businesses where subscription_plan = v_key;
+  if v_count > 0 then
+    raise exception 'plan_in_use: % business(es) are on this plan — deactivate instead of deleting', v_count;
+  end if;
+
+  delete from plans where id = p_plan_id;
+  insert into plan_audit_log (admin_user_id, action, plan_id) values (auth.uid(), 'delete_plan', p_plan_id);
+end;
+$$;
+
+create or replace function admin_update_subscription_settings(p_free_trial_enabled boolean, p_free_trial_days int)
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  v_old jsonb;
+begin
+  if not is_platform_admin() then
+    raise exception 'not authorized';
+  end if;
+  select to_jsonb(s) into v_old from subscription_settings s limit 1;
+
+  update subscription_settings set
+    free_trial_enabled = p_free_trial_enabled,
+    free_trial_days = p_free_trial_days,
+    updated_at = now();
+
+  insert into plan_audit_log (admin_user_id, action, old_value, new_value)
+  values (auth.uid(), 'update_subscription_settings', v_old,
+    jsonb_build_object('free_trial_enabled', p_free_trial_enabled, 'free_trial_days', p_free_trial_days));
+end;
+$$;
+
+-- Tenant-side: which feature keys does the signed-in business's plan
+-- include — every feature gate in the app (VIP, Smart Offers,
+-- Memberships, …) reads from this instead of re-deriving plan logic.
+create or replace function my_plan_features()
+returns table (key text)
+language sql stable security definer set search_path = public as $$
+  select f.key
+  from businesses b
+  join plans p on p.key = b.subscription_plan
+  join plan_feature_links pfl on pfl.plan_id = p.id and pfl.enabled = true
+  join plan_features f on f.id = pfl.feature_id and f.is_active = true
+  where b.id in (select business_id from business_users where user_id = auth.uid());
+$$;
+grant execute on function my_plan_features() to authenticated;
+
+-- Supersedes the earlier admin_overview_stats() with MRR/ARR, trial→paid
+-- conversion, and revenue-by-plan.
+drop function if exists admin_overview_stats();
+create or replace function admin_overview_stats()
+returns table (
+  total_businesses bigint,
+  trialing_count bigint,
+  active_count bigint,
+  past_due_count bigint,
+  canceled_count bigint,
+  signups_last_30d bigint,
+  mrr numeric,
+  arr numeric,
+  trial_to_paid_conversion_pct numeric,
+  revenue_by_plan jsonb
+)
+language sql stable security definer set search_path = public as $$
+  select
+    (select count(*) from businesses) as total_businesses,
+    (select count(*) from businesses where subscription_status = 'trialing') as trialing_count,
+    (select count(*) from businesses where subscription_status = 'active') as active_count,
+    (select count(*) from businesses where subscription_status = 'past_due') as past_due_count,
+    (select count(*) from businesses where subscription_status = 'canceled') as canceled_count,
+    (select count(*) from businesses where created_at >= now() - interval '30 days') as signups_last_30d,
+    (select coalesce(sum(p.price_monthly), 0)
+       from businesses b join plans p on p.key = b.subscription_plan
+       where b.subscription_status = 'active') as mrr,
+    (select coalesce(sum(p.price_monthly), 0) * 12
+       from businesses b join plans p on p.key = b.subscription_plan
+       where b.subscription_status = 'active') as arr,
+    (select case when count(*) filter (where subscription_status in ('trialing','active','past_due','canceled','expired')) = 0 then 0
+       else round(100.0 * count(*) filter (where subscription_status in ('active','past_due')) /
+         count(*) filter (where subscription_status in ('trialing','active','past_due','canceled','expired')), 1)
+       end
+     from businesses) as trial_to_paid_conversion_pct,
+    (select coalesce(jsonb_agg(jsonb_build_object('plan', plan_key, 'subscribers', subscribers, 'mrr', plan_mrr)), '[]'::jsonb)
+     from (
+       select b.subscription_plan as plan_key, count(*) as subscribers,
+         coalesce(sum(p.price_monthly) filter (where b.subscription_status = 'active'), 0) as plan_mrr
+       from businesses b join plans p on p.key = b.subscription_plan
+       group by b.subscription_plan
+     ) x) as revenue_by_plan
+  where is_platform_admin();
+$$;
+
+-- ── Seed: the four sellable plans + a 19-feature catalog ────────────────
+-- Adjust freely from Admin → Plans afterwards; these are initial values
+-- only, matching the product's launch pricing.
+
+insert into plan_features (key, name, category, display_order) values
+  ('customer_management', 'Customer Management', 'core', 1),
+  ('recovery', 'Recovery', 'core', 2),
+  ('reactivation', 'Reactivation', 'core', 3),
+  ('retention', 'Retention', 'core', 4),
+  ('rewards', 'Rewards', 'core', 5),
+  ('customer_segmentation', 'Customer Segmentation', 'core', 6),
+  ('bookings', 'Bookings', 'core', 7),
+  ('basic_analytics', 'Basic Analytics', 'analytics', 8),
+  ('vip', 'VIP', 'growth_tools', 9),
+  ('smart_offers', 'Smart Offers', 'growth_tools', 10),
+  ('advanced_segmentation', 'Advanced Segmentation', 'growth_tools', 11),
+  ('advanced_analytics', 'Advanced Analytics', 'analytics', 12),
+  ('memberships', 'Memberships', 'growth_tools', 13),
+  ('revenue_opportunity', 'Revenue Opportunity', 'analytics', 14),
+  ('advanced_customer_insights', 'Advanced Customer Insights', 'analytics', 15),
+  ('advanced_revenue_analytics', 'Advanced Revenue Analytics', 'analytics', 16),
+  ('advanced_team_controls', 'Advanced Team Controls', 'team_support', 17),
+  ('multi_location', 'Multi-location Support', 'team_support', 18),
+  ('priority_support', 'Priority Support', 'team_support', 19)
+on conflict (key) do update set name = excluded.name, category = excluded.category, display_order = excluded.display_order;
+
+-- The old generic "trial" plan is superseded: businesses now trial on
+-- whichever real plan they picked at signup (see create_business() above).
+update plans set is_active = false where key = 'trial';
+
+insert into plans (key, name, description, short_description, price_monthly, price_yearly, currency,
+  max_customers, location_limit, user_limit, badge_text, is_featured, is_active, sort_order)
+values
+  ('starter', 'Starter', 'Everything a growing business needs to start turning customers into repeat customers.',
+    'Get started with customer retention.', 49, 490, 'USD', 500, 1, null, null, false, true, 1),
+  ('growth', 'Growth', 'Advanced tools to recover lost revenue and build real customer loyalty.',
+    'Turn more customers into repeat customers.', 99, 990, 'USD', 2500, 3, null, 'Most Popular', true, true, 2),
+  ('professional', 'Professional', 'The full platform for businesses scaling retention across multiple locations.',
+    'Scale customer retention across your business.', 249, 2490, 'USD', 10000, 10, null, null, false, true, 3),
+  ('enterprise', 'Enterprise', 'A tailored plan for large, multi-location operations with custom needs.',
+    'Built for scale. Talk to us.', null, null, 'USD', null, null, null, null, false, true, 4)
+on conflict (key) do update set
+  name = excluded.name, description = excluded.description, short_description = excluded.short_description,
+  price_monthly = excluded.price_monthly, price_yearly = excluded.price_yearly, currency = excluded.currency,
+  max_customers = excluded.max_customers, location_limit = excluded.location_limit, user_limit = excluded.user_limit,
+  badge_text = excluded.badge_text, is_featured = excluded.is_featured, is_active = excluded.is_active,
+  sort_order = excluded.sort_order, updated_at = now();
+
+with plan_feature_map(plan_key, feature_key, ord) as (
+  values
+    ('starter','customer_management',1), ('starter','recovery',2), ('starter','reactivation',3),
+    ('starter','retention',4), ('starter','rewards',5), ('starter','customer_segmentation',6),
+    ('starter','bookings',7), ('starter','basic_analytics',8),
+
+    ('growth','customer_management',1), ('growth','recovery',2), ('growth','reactivation',3),
+    ('growth','retention',4), ('growth','rewards',5), ('growth','customer_segmentation',6),
+    ('growth','bookings',7), ('growth','basic_analytics',8),
+    ('growth','vip',9), ('growth','smart_offers',10), ('growth','advanced_segmentation',11),
+    ('growth','advanced_analytics',12), ('growth','memberships',13), ('growth','revenue_opportunity',14),
+    ('growth','advanced_customer_insights',15),
+
+    ('professional','customer_management',1), ('professional','recovery',2), ('professional','reactivation',3),
+    ('professional','retention',4), ('professional','rewards',5), ('professional','customer_segmentation',6),
+    ('professional','bookings',7), ('professional','basic_analytics',8),
+    ('professional','vip',9), ('professional','smart_offers',10), ('professional','advanced_segmentation',11),
+    ('professional','advanced_analytics',12), ('professional','memberships',13), ('professional','revenue_opportunity',14),
+    ('professional','advanced_customer_insights',15),
+    ('professional','advanced_revenue_analytics',16), ('professional','advanced_team_controls',17),
+    ('professional','multi_location',18), ('professional','priority_support',19),
+
+    ('enterprise','customer_management',1), ('enterprise','recovery',2), ('enterprise','reactivation',3),
+    ('enterprise','retention',4), ('enterprise','rewards',5), ('enterprise','customer_segmentation',6),
+    ('enterprise','bookings',7), ('enterprise','basic_analytics',8),
+    ('enterprise','vip',9), ('enterprise','smart_offers',10), ('enterprise','advanced_segmentation',11),
+    ('enterprise','advanced_analytics',12), ('enterprise','memberships',13), ('enterprise','revenue_opportunity',14),
+    ('enterprise','advanced_customer_insights',15),
+    ('enterprise','advanced_revenue_analytics',16), ('enterprise','advanced_team_controls',17),
+    ('enterprise','multi_location',18), ('enterprise','priority_support',19)
+)
+insert into plan_feature_links (plan_id, feature_id, enabled, display_order)
+select p.id, f.id, true, m.ord
+from plan_feature_map m
+join plans p on p.key = m.plan_key
+join plan_features f on f.key = m.feature_key
+on conflict (plan_id, feature_id) do update set enabled = true, display_order = excluded.display_order;
+
+-- To grant/adjust the Resend subscription-email trigger's credentials,
+-- see the "Subscription email notifications" section above — unaffected
+-- by this migration.

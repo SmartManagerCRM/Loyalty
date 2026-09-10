@@ -30,12 +30,13 @@ export async function fetchBusinessMembers(businessId) {
   return data || [];
 }
 
-export async function updateBusiness(businessId, { subscriptionPlan, subscriptionStatus, trialEndsAt } = {}) {
+export async function updateBusiness(businessId, { subscriptionPlan, subscriptionStatus, trialEndsAt, billingInterval } = {}) {
   const { error } = await supabase.rpc("admin_update_business", {
     p_business_id: businessId,
     p_subscription_plan: subscriptionPlan ?? null,
     p_subscription_status: subscriptionStatus ?? null,
     p_trial_ends_at: trialEndsAt ?? null,
+    p_billing_interval: billingInterval ?? null,
   });
   if (error) throw error;
 }
@@ -77,5 +78,72 @@ export async function createPlan(plan) {
 
 export async function updatePlan(id, plan) {
   const { error } = await supabase.from("plans").update(plan).eq("id", id);
+  if (error) throw error;
+}
+
+// ── Full plan management surface (Admin → Plans) ─────────────────────────
+
+export async function fetchPlansFull() {
+  const { data, error } = await supabase.rpc("admin_list_plans_full");
+  if (error) throw error;
+  return data || [];
+}
+
+export async function fetchPlanFeatureCatalog() {
+  const { data, error } = await supabase.rpc("admin_list_plan_features");
+  if (error) throw error;
+  return data || [];
+}
+
+export async function upsertPlan(plan) {
+  const { data, error } = await supabase.rpc("admin_upsert_plan", {
+    p_id: plan.id ?? null,
+    p_key: plan.key,
+    p_name: plan.name,
+    p_description: plan.description ?? null,
+    p_short_description: plan.short_description ?? null,
+    p_price_monthly: plan.price_monthly === "" ? null : plan.price_monthly,
+    p_price_yearly: plan.price_yearly === "" ? null : plan.price_yearly,
+    p_currency: plan.currency || "USD",
+    p_max_customers: plan.max_customers === "" ? null : plan.max_customers,
+    p_location_limit: plan.location_limit === "" ? null : plan.location_limit,
+    p_user_limit: plan.user_limit === "" ? null : plan.user_limit,
+    p_trial_days: plan.trial_days === "" ? null : plan.trial_days,
+    p_badge_text: plan.badge_text || null,
+    p_is_featured: !!plan.is_featured,
+    p_is_active: !!plan.is_active,
+    p_sort_order: plan.sort_order ?? 0,
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function setPlanFeature(planId, featureId, enabled, displayOrder = 0) {
+  const { error } = await supabase.rpc("admin_set_plan_feature", {
+    p_plan_id: planId, p_feature_id: featureId, p_enabled: enabled, p_display_order: displayOrder,
+  });
+  if (error) throw error;
+}
+
+export async function duplicatePlan(planId) {
+  const { data, error } = await supabase.rpc("admin_duplicate_plan", { p_plan_id: planId });
+  if (error) throw error;
+  return data;
+}
+
+export async function reorderPlans(planIds) {
+  const { error } = await supabase.rpc("admin_reorder_plans", { p_plan_ids: planIds });
+  if (error) throw error;
+}
+
+export async function deletePlan(planId) {
+  const { error } = await supabase.rpc("admin_delete_plan", { p_plan_id: planId });
+  if (error) throw error;
+}
+
+export async function updateSubscriptionSettings(freeTrialEnabled, freeTrialDays) {
+  const { error } = await supabase.rpc("admin_update_subscription_settings", {
+    p_free_trial_enabled: freeTrialEnabled, p_free_trial_days: freeTrialDays,
+  });
   if (error) throw error;
 }
