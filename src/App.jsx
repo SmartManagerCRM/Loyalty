@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Pricing from "./pages/Pricing";
+import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import CustomersList from "./pages/customers/CustomersList";
@@ -103,6 +104,7 @@ export default function App() {
       <Routes>
         <Route path="/admin/*" element={<AdminGate />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/*" element={<Gate />} />
       </Routes>
     </AuthProvider>

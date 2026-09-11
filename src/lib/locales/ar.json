@@ -146,7 +146,8 @@
       "signingIn": "جارٍ تسجيل الدخول…",
       "signIn": "تسجيل الدخول",
       "newHere": "جديد هنا؟",
-      "createBusinessAccount": "أنشئ حساب نشاطك التجاري"
+      "createBusinessAccount": "أنشئ حساب نشاطك التجاري",
+      "forgotPassword": "نسيت كلمة المرور؟"
     },
     "signup": {
       "title": "أنشئ حسابك",
@@ -242,6 +243,26 @@
         "createMyBusiness": "إنشاء نشاطي التجاري",
         "noPlanSelected": "لم يتم اختيار باقة — يرجى البدء من جديد من صفحة الأسعار."
       }
+    },
+    "forgotPassword": {
+      "title": "إعادة تعيين كلمة المرور",
+      "subtitle": "سنرسل إليك رابطًا لتعيين كلمة مرور جديدة.",
+      "sendResetLink": "إرسال رابط إعادة التعيين",
+      "sending": "جارٍ الإرسال…",
+      "checkEmailTitle": "تحقق من بريدك الإلكتروني",
+      "checkEmailBody": "إذا كان هناك حساب مرتبط بـ {{email}}، فقد أرسلنا إليه رابطًا لإعادة تعيين كلمة المرور.",
+      "backToSignIn": "العودة لتسجيل الدخول"
+    },
+    "resetPassword": {
+      "title": "تعيين كلمة مرور جديدة",
+      "newPasswordLabel": "كلمة المرور الجديدة",
+      "confirmPasswordLabel": "تأكيد كلمة المرور الجديدة",
+      "setNewPassword": "تعيين كلمة المرور الجديدة",
+      "saving": "جارٍ الحفظ…",
+      "mismatch": "كلمتا المرور غير متطابقتين.",
+      "success": "تم تحديث كلمة المرور الخاصة بك.",
+      "continueToApp": "المتابعة إلى SmartManager",
+      "expired": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد."
     }
   },
   "countries": {
@@ -1023,7 +1044,11 @@
         "title": "إنشاء نشاط تجاري آخر",
         "creating": "جارٍ الإنشاء…",
         "createBusiness": "إنشاء النشاط التجاري"
-      }
+      },
+      "workingHoursLabel": "ساعات العمل",
+      "opensAtLabel": "يفتح في",
+      "closesAtLabel": "يغلق في",
+      "workingHoursHint": "يحدد النطاق الزمني الظاهر في تقويم الحجوزات."
     },
     "billing": {
       "currentPlan": "الخطة الحالية",

@@ -15,6 +15,16 @@ const BUSINESS_TYPE_KEYS = [
 // note in Onboarding.jsx.
 const VISIT_LABELS = ["Visit", "Appointment", "Session", "Service", "Purchase"];
 
+// 24 is midnight-at-end-of-day (businesses.business_hours_end allows up to
+// 24), which Date can't represent as an hour — special-cased below.
+function hourLabel(h) {
+  if (h === 24) return new Date(2000, 0, 1, 0).toLocaleTimeString(undefined, { hour: "numeric" });
+  const d = new Date(); d.setHours(h, 0, 0, 0);
+  return d.toLocaleTimeString(undefined, { hour: "numeric" });
+}
+const START_HOUR_OPTIONS = Array.from({ length: 24 }, (_, h) => ({ value: h, label: hourLabel(h) }));
+const END_HOUR_OPTIONS = Array.from({ length: 24 }, (_, h) => ({ value: h + 1, label: hourLabel(h + 1) }));
+
 function NewBusinessModal({ onClose }) {
   const { t } = useTranslation();
   const BUSINESS_TYPES = BUSINESS_TYPE_KEYS.map((value) => ({ value, label: t(`businessTypes.${value}`) }));
@@ -66,6 +76,7 @@ export default function BusinessSettings() {
   const [form, setForm] = useState({
     name: business?.name || "", business_type: business?.business_type || "other", visit_label: business?.visit_label || "Visit",
     default_language: business?.default_language || "en", currency: business?.currency || "SAR",
+    business_hours_start: business?.business_hours_start ?? 8, business_hours_end: business?.business_hours_end ?? 20,
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -74,6 +85,7 @@ export default function BusinessSettings() {
   const canEdit = role === "owner" || role === "admin";
 
   function set(k) { return (e) => { setForm((f) => ({ ...f, [k]: e.target.value })); setSaved(false); }; }
+  function setNumber(k) { return (e) => { setForm((f) => ({ ...f, [k]: Number(e.target.value) })); setSaved(false); }; }
 
   async function handleSave(e) {
     e.preventDefault();
@@ -98,6 +110,19 @@ export default function BusinessSettings() {
         <Field label={t("settings.business.visitLabelLabel")}><Select options={VISIT_LABELS} disabled={!canEdit} value={form.visit_label} onChange={set("visit_label")} /></Field>
         <Field label={t("settings.business.defaultLanguageLabel")}><Select options={LANGUAGES} disabled={!canEdit} value={form.default_language} onChange={set("default_language")} /></Field>
         <Field label={t("settings.business.currencyLabel")}><Select options={CURRENCY_OPTIONS} disabled={!canEdit} value={form.currency} onChange={set("currency")} /></Field>
+
+        <div>
+          <span className="mb-1 block text-xs font-semibold" style={{ color: C.slate }}>{t("settings.business.workingHoursLabel")}</span>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label={t("settings.business.opensAtLabel")}>
+              <Select options={START_HOUR_OPTIONS} disabled={!canEdit} value={form.business_hours_start} onChange={setNumber("business_hours_start")} />
+            </Field>
+            <Field label={t("settings.business.closesAtLabel")}>
+              <Select options={END_HOUR_OPTIONS} disabled={!canEdit} value={form.business_hours_end} onChange={setNumber("business_hours_end")} />
+            </Field>
+          </div>
+          <p className="mt-1.5 text-xs" style={{ color: C.slateLight }}>{t("settings.business.workingHoursHint")}</p>
+        </div>
 
         {error && <p className="text-xs" style={{ color: C.red }}>{error}</p>}
         {!canEdit && <p className="text-xs" style={{ color: C.slateLight }}>{t("settings.business.readOnlyHint")}</p>}

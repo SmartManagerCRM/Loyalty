@@ -16,7 +16,7 @@ function daysLeft(dateStr) {
 
 function contactLink(subject, plan) {
   const s = encodeURIComponent(`${subject}${plan ? ` — ${plan}` : ""} (SmartManager Loyalty)`);
-  return `mailto:sales@smartmanager.app?subject=${s}`;
+  return `mailto:sales@smartmanager.me?subject=${s}`;
 }
 
 export default function Billing() {

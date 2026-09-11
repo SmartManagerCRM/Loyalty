@@ -18,11 +18,11 @@ function timeLabel(h) {
   return d.toLocaleTimeString(undefined, { hour: "numeric" });
 }
 
-function BookingBlock({ b, onClick }) {
+function BookingBlock({ b, onClick, startHour, endHour }) {
   const start = new Date(b.start_at);
   const end = new Date(b.end_at);
-  const dayStart = new Date(start); dayStart.setHours(DAY_START_HOUR, 0, 0, 0);
-  const totalMin = (DAY_END_HOUR - DAY_START_HOUR) * 60;
+  const dayStart = new Date(start); dayStart.setHours(startHour, 0, 0, 0);
+  const totalMin = (endHour - startHour) * 60;
   const top = Math.max(0, ((start - dayStart) / 60000 / totalMin) * 100);
   const height = Math.max(3, ((end - start) / 60000 / totalMin) * 100);
   const palette = STATUS_COLOR[statusColorKey(b.status)];
@@ -46,10 +46,10 @@ function BookingBlock({ b, onClick }) {
 // lane (one per active staff member, plus "Unassigned" when relevant);
 // bookings are absolutely positioned by their real start/end time within
 // business hours, so overlaps and gaps are visually obvious.
-export function DayView({ date, bookings, staffList, onSelect }) {
+export function DayView({ date, bookings, staffList, onSelect, startHour = DAY_START_HOUR, endHour = DAY_END_HOUR }) {
   const { t } = useTranslation();
   const hours = [];
-  for (let h = DAY_START_HOUR; h <= DAY_END_HOUR; h++) hours.push(h);
+  for (let h = startHour; h <= endHour; h++) hours.push(h);
 
   const lanes = staffList.filter((s) => s.active);
   const unassigned = bookings.filter((b) => !b.staff_id);
@@ -84,7 +84,7 @@ export function DayView({ date, bookings, staffList, onSelect }) {
                 {hours.slice(0, -1).map((h, i) => (
                   <div key={h} className="absolute w-full border-b" style={{ top: `${(i + 1) * 56}px`, borderColor: C.border }} />
                 ))}
-                {colBookings.map((b) => <BookingBlock key={b.id} b={b} onClick={() => onSelect(b)} />)}
+                {colBookings.map((b) => <BookingBlock key={b.id} b={b} onClick={() => onSelect(b)} startHour={startHour} endHour={endHour} />)}
               </div>
             </div>
           );

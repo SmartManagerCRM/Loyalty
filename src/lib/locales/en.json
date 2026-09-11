@@ -140,7 +140,8 @@
       "signingIn": "Signing in…",
       "signIn": "Sign in",
       "newHere": "New here?",
-      "createBusinessAccount": "Create your business account"
+      "createBusinessAccount": "Create your business account",
+      "forgotPassword": "Forgot password?"
     },
     "signup": {
       "title": "Create your account",
@@ -233,6 +234,26 @@
         "createMyBusiness": "Create my business",
         "noPlanSelected": "No plan was selected — please start again from the pricing page."
       }
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "subtitle": "We'll email you a link to set a new one.",
+      "sendResetLink": "Send reset link",
+      "sending": "Sending…",
+      "checkEmailTitle": "Check your email",
+      "checkEmailBody": "If an account exists for {{email}}, we've sent a link to reset your password.",
+      "backToSignIn": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Set a new password",
+      "newPasswordLabel": "New password",
+      "confirmPasswordLabel": "Confirm new password",
+      "setNewPassword": "Set new password",
+      "saving": "Saving…",
+      "mismatch": "Passwords don't match.",
+      "success": "Your password has been updated.",
+      "continueToApp": "Continue to SmartManager",
+      "expired": "This reset link is invalid or has expired. Please request a new one."
     }
   },
   "countries": {
@@ -1001,7 +1022,11 @@
         "title": "Create another business",
         "creating": "Creating…",
         "createBusiness": "Create business"
-      }
+      },
+      "workingHoursLabel": "Working hours",
+      "opensAtLabel": "Opens at",
+      "closesAtLabel": "Closes at",
+      "workingHoursHint": "Sets the visible time range on the Bookings calendar."
     },
     "billing": {
       "currentPlan": "Current plan",

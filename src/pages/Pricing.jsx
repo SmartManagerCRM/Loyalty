@@ -74,7 +74,7 @@ function PlanCard({ plan, billing, onSelect, ctaBusy }) {
       </ul>
 
       {isCustom ? (
-        <a href="mailto:sales@smartmanager.app?subject=SmartManager%20Loyalty%20Enterprise">
+        <a href="mailto:sales@smartmanager.me?subject=SmartManager%20Loyalty%20Enterprise">
           <Btn variant="secondary" icon={Mail} className="mt-6 w-full justify-center">{t("pricing.contactSales")}</Btn>
         </a>
       ) : (

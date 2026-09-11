@@ -22,19 +22,22 @@ function formatRange(start, end) {
 export default function EmptySlotPanel({ date, dayBookings, staffList, staffFilter, minMinutes, customerRows, business, visitLabel }) {
   const { t } = useTranslation();
 
+  const startHour = business?.business_hours_start;
+  const endHour = business?.business_hours_end;
+
   const gaps = useMemo(() => {
     if (staffFilter) {
-      return findGaps(dayBookings.filter((b) => b.staff_id === staffFilter), date, minMinutes)
+      return findGaps(dayBookings.filter((b) => b.staff_id === staffFilter), date, minMinutes, startHour, endHour)
         .map((g) => ({ ...g, staffName: staffList.find((s) => s.id === staffFilter)?.name }));
     }
     const activeStaff = staffList.filter((s) => s.active);
     if (activeStaff.length === 0) {
-      return findGaps(dayBookings, date, minMinutes).map((g) => ({ ...g, staffName: null }));
+      return findGaps(dayBookings, date, minMinutes, startHour, endHour).map((g) => ({ ...g, staffName: null }));
     }
     return activeStaff
-      .flatMap((s) => findGaps(dayBookings.filter((b) => b.staff_id === s.id), date, minMinutes).map((g) => ({ ...g, staffName: s.name })))
+      .flatMap((s) => findGaps(dayBookings.filter((b) => b.staff_id === s.id), date, minMinutes, startHour, endHour).map((g) => ({ ...g, staffName: s.name })))
       .sort((a, b) => a.start - b.start);
-  }, [dayBookings, date, minMinutes, staffFilter, staffList]);
+  }, [dayBookings, date, minMinutes, staffFilter, staffList, startHour, endHour]);
 
   const totalOpenMinutes = gaps.reduce((sum, g) => sum + g.minutes, 0);
 

@@ -959,6 +959,8 @@ declare
   v_subject text;
   v_html text;
   v_lang text;
+  v_sales_subject text;
+  v_sales_html text;
 begin
   if TG_OP = 'INSERT' then
     v_event := 'trial_started';
@@ -1020,6 +1022,28 @@ begin
       url := 'https://api.resend.com/emails',
       headers := jsonb_build_object('Authorization', 'Bearer ' || v_resend_key, 'Content-Type', 'application/json'),
       body := jsonb_build_object('from', v_from_email, 'to', jsonb_build_array(v_owner_email), 'subject', v_subject, 'html', v_html)
+    );
+
+    -- Internal record for the sales team — every signup and every plan
+    -- change, regardless of who triggered it (self-service or admin).
+    v_sales_subject := case when v_event = 'trial_started'
+      then 'New signup: ' || NEW.name || ' (' || v_plan_name || ' trial)'
+      else 'Plan change: ' || NEW.name || ' -> ' || v_plan_name
+    end;
+    v_sales_html := '<div style="font-family:sans-serif;line-height:1.6">'
+      || '<p><b>Event:</b> ' || v_event || '</p>'
+      || '<p><b>Business:</b> ' || NEW.name || '</p>'
+      || '<p><b>Owner email:</b> ' || v_owner_email || '</p>'
+      || '<p><b>Plan:</b> ' || v_plan_name || ' (' || NEW.subscription_plan || ')</p>'
+      || '<p><b>Billing interval:</b> ' || coalesce(NEW.billing_interval, 'monthly') || '</p>'
+      || '<p><b>Status:</b> ' || NEW.subscription_status || '</p>'
+      || '<p><b>Trial ends:</b> ' || to_char(NEW.trial_ends_at, 'YYYY-MM-DD') || '</p>'
+      || '</div>';
+
+    perform net.http_post(
+      url := 'https://api.resend.com/emails',
+      headers := jsonb_build_object('Authorization', 'Bearer ' || v_resend_key, 'Content-Type', 'application/json'),
+      body := jsonb_build_object('from', v_from_email, 'to', jsonb_build_array('sales@smartmanager.me'), 'subject', v_sales_subject, 'html', v_sales_html)
     );
   exception when others then
     -- Never let an email/Resend hiccup break signup or an admin's update.
@@ -1719,3 +1743,15 @@ on conflict (plan_id, feature_id) do update set enabled = true, display_order = 
 -- To grant/adjust the Resend subscription-email trigger's credentials,
 -- see the "Subscription email notifications" section above — unaffected
 -- by this migration.
+
+-- ── Business working hours ──────────────────────────────────────────────
+-- Drives the Bookings calendar's visible time window (see
+-- src/lib/bookingUtils.js). Default 8-20 matches the app's previous
+-- hard-coded constants, so existing businesses see no change until they
+-- set their own hours in Settings -> Business.
+alter table businesses
+  add column if not exists business_hours_start int not null default 8 check (business_hours_start >= 0 and business_hours_start <= 23),
+  add column if not exists business_hours_end int not null default 20 check (business_hours_end >= 1 and business_hours_end <= 24);
+
+alter table businesses drop constraint if exists businesses_hours_order_check;
+alter table businesses add constraint businesses_hours_order_check check (business_hours_end > business_hours_start);

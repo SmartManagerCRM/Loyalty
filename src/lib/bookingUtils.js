@@ -1,15 +1,14 @@
-// Shared time-grid math for the Bookings calendar views. Business hours are
-// a fixed display window for now (not a stored per-business setting) — a
-// reasonable default that keeps the day grid readable; making it
-// configurable is a clean seam for later, not something asked for here.
+// Shared time-grid math for the Bookings calendar views. Business hours
+// come from businesses.business_hours_start/end (Settings -> Business);
+// these are just the fallback for when a business row isn't loaded yet.
 export const DAY_START_HOUR = 8;
 export const DAY_END_HOUR = 20;
 
-export function dayWindow(date) {
+export function dayWindow(date, startHour = DAY_START_HOUR, endHour = DAY_END_HOUR) {
   const start = new Date(date);
-  start.setHours(DAY_START_HOUR, 0, 0, 0);
+  start.setHours(startHour, 0, 0, 0);
   const end = new Date(date);
-  end.setHours(DAY_END_HOUR, 0, 0, 0);
+  end.setHours(endHour, 0, 0, 0);
   return { start, end };
 }
 
@@ -37,8 +36,8 @@ export function isActiveBooking(b) {
 
 // Gaps of at least `minMinutes` between `bookings` (already the set for one
 // staff member / one lane) within that day's business-hours window.
-export function findGaps(bookings, day, minMinutes) {
-  const { start, end } = dayWindow(day);
+export function findGaps(bookings, day, minMinutes, startHour = DAY_START_HOUR, endHour = DAY_END_HOUR) {
+  const { start, end } = dayWindow(day, startHour, endHour);
   const busy = bookings
     .filter(isActiveBooking)
     .map((b) => ({ start: new Date(b.start_at), end: new Date(b.end_at) }))

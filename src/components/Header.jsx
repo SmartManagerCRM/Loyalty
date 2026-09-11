@@ -96,43 +96,53 @@ export default function Header({ onOpenMobileMenu }) {
 
   return (
     <header
-      className="sticky top-0 z-30 flex shrink-0 items-center gap-4 border-b px-5 py-5 md:px-8 md:py-6"
+      className="sticky top-0 z-30 flex shrink-0 flex-col border-b"
       style={{ backgroundColor: C.white, borderColor: C.border }}
     >
-      <button onClick={onOpenMobileMenu} className="rounded-lg p-1.5 hover:bg-black/5 lg:hidden">
-        <Menu size={22} style={{ color: C.navy }} />
-      </button>
+      <div className="flex items-center gap-4 px-5 py-5 md:px-8 md:py-6">
+        <button onClick={onOpenMobileMenu} className="rounded-lg p-1.5 hover:bg-black/5 lg:hidden">
+          <Menu size={22} style={{ color: C.navy }} />
+        </button>
 
-      <div className="shrink-0 lg:hidden">
-        <Logo size={32} />
+        <div className="shrink-0 lg:hidden">
+          <Logo size={32} />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-xl font-bold md:text-3xl" style={{ color: C.ink }}>{metaTitle}</h1>
+          {metaSubtitle && <p className="mt-0.5 truncate text-xs md:text-sm" style={{ color: C.slateLight }}>{metaSubtitle}</p>}
+        </div>
+
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="hidden items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm sm:flex"
+          style={{ backgroundColor: C.bg, color: C.slateLight }}
+        >
+          <Search size={16} />
+          {t("header.searchPlaceholder")}
+          <kbd className="rounded border px-1.5 py-0.5 text-[10px]" style={{ borderColor: C.border, color: C.slateLight }}>⌘K</kbd>
+        </button>
+        <button onClick={() => setSearchOpen(true)} className="rounded-lg p-1.5 hover:bg-black/5 sm:hidden">
+          <Search size={18} style={{ color: C.navy }} />
+        </button>
+
+        <div className="hidden items-center gap-1 md:flex">
+          <LanguageSelector language={language} onChange={setLanguage} />
+          <CurrencySelector currency={business?.currency || "SAR"} onChange={handleCurrencyChange} canEdit={canEditCurrency} />
+        </div>
+
+        <div className="h-8 w-px shrink-0" style={{ backgroundColor: C.border }} />
+
+        <UserMenu />
       </div>
 
-      <div className="min-w-0 flex-1">
-        <h1 className="truncate text-xl font-bold md:text-3xl" style={{ color: C.ink }}>{metaTitle}</h1>
-        {metaSubtitle && <p className="mt-0.5 truncate text-xs md:text-sm" style={{ color: C.slateLight }}>{metaSubtitle}</p>}
-      </div>
-
-      <button
-        onClick={() => setSearchOpen(true)}
-        className="hidden items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm sm:flex"
-        style={{ backgroundColor: C.bg, color: C.slateLight }}
-      >
-        <Search size={16} />
-        {t("header.searchPlaceholder")}
-        <kbd className="rounded border px-1.5 py-0.5 text-[10px]" style={{ borderColor: C.border, color: C.slateLight }}>⌘K</kbd>
-      </button>
-      <button onClick={() => setSearchOpen(true)} className="rounded-lg p-1.5 hover:bg-black/5 sm:hidden">
-        <Search size={18} style={{ color: C.navy }} />
-      </button>
-
-      <div className="hidden items-center gap-1 md:flex">
+      {/* Own row on mobile so the language/currency controls stay fully
+          visible instead of competing with the title and user menu for
+          space in one crowded line (md+ shows them inline above instead). */}
+      <div className="flex items-center gap-1 border-t px-5 py-2 md:hidden" style={{ borderColor: C.border }}>
         <LanguageSelector language={language} onChange={setLanguage} />
         <CurrencySelector currency={business?.currency || "SAR"} onChange={handleCurrencyChange} canEdit={canEditCurrency} />
       </div>
-
-      <div className="h-8 w-px shrink-0" style={{ backgroundColor: C.border }} />
-
-      <UserMenu />
 
       <GlobalSearch businessId={business?.id} open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>

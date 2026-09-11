@@ -143,7 +143,10 @@ export default function Bookings() {
               action={<Btn icon={Plus} onClick={() => setModal({ defaultStart: new Date(date) })}>{t("bookings.newBooking")}</Btn>}
             />
           ) : view === "day" ? (
-            <DayView date={date} bookings={dayBookings} staffList={staffList} onSelect={(b) => setModal({ booking: b })} />
+            <DayView
+              date={date} bookings={dayBookings} staffList={staffList} onSelect={(b) => setModal({ booking: b })}
+              startHour={business?.business_hours_start} endHour={business?.business_hours_end}
+            />
           ) : view === "week" ? (
             <WeekView date={date} bookings={weekBookings} onSelect={(b) => setModal({ booking: b })} onPickDay={(d) => { setDate(d); setView("day"); }} />
           ) : (
