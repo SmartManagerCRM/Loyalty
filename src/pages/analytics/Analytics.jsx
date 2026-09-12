@@ -109,7 +109,7 @@ export default function Analytics() {
                   <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
                   <XAxis dataKey="month" tick={{ fontSize: 12, fill: C.slateLight }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 12, fill: C.slateLight }} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={(v) => [formatMoney(v, business?.currency), "Revenue"]} />
+                  <Tooltip formatter={(v) => [formatMoney(v, business?.currency), t("analytics.stat.revenueRecovered")]} />
                   <Bar dataKey="revenue" fill={C.green} radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>

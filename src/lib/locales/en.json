@@ -254,7 +254,8 @@
       "success": "Your password has been updated.",
       "continueToApp": "Continue to SmartManager",
       "expired": "This reset link is invalid or has expired. Please request a new one."
-    }
+    },
+    "passwordMinLength": "At least 6 characters"
   },
   "countries": {
     "SA": "Saudi Arabia",

@@ -6,7 +6,7 @@ import { C } from "./theme";
 const LANGUAGES = [
   { code: "en", label: "English" },
   { code: "ar", label: "العربية" },
-  { code: "fr", label: "Français", comingSoon: true },
+  { code: "fr", label: "Français" },
 ];
 
 export default function LanguageSelector({ language, onChange }) {

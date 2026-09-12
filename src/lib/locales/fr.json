@@ -1,0 +1,1234 @@
+{
+  "common": {
+    "appName": "SmartManager Loyalty",
+    "loading": "Chargement…",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "cancel": "Annuler",
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "remove": "Retirer",
+    "confirm": "Confirmer",
+    "deleteConfirmTitle": "Supprimer {{label}} ?",
+    "deleteConfirmBody": "Cette action est irréversible.",
+    "signOut": "Se déconnecter",
+    "you": "vous",
+    "search": "Rechercher",
+    "noMatches": "Aucun résultat.",
+    "back": "Retour",
+    "openWhatsApp": "Ouvrir WhatsApp",
+    "copyMessage": "Copier le message",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "na": "—",
+    "never": "jamais",
+    "daysAgo_one": "il y a {{count}} jour",
+    "daysAgo_other": "il y a {{count}} jours",
+    "days": "jours",
+    "customer_one": "{{count}} client",
+    "customer_other": "{{count}} clients"
+  },
+  "pageMeta": {
+    "dashboard": {
+      "title": "Tableau de bord",
+      "subtitle": "Où perdons-nous des clients, et que devons-nous faire aujourd'hui ?"
+    },
+    "customers": {
+      "title": "Clients",
+      "subtitle": "Votre base de données clients complète."
+    },
+    "customerProfile": {
+      "title": "Profil client",
+      "subtitle": "Historique, segment et prochaine meilleure action."
+    },
+    "bookings": {
+      "title": "Réservations",
+      "subtitle": "Votre calendrier — personnel, services et créneaux disponibles aujourd'hui."
+    },
+    "memberships": {
+      "title": "Abonnements",
+      "subtitle": "Forfaits de séances et abonnements achetés par vos clients."
+    },
+    "recovery": {
+      "title": "Récupération",
+      "subtitle": "Prospects qui se sont renseignés mais n'ont jamais converti."
+    },
+    "reactivation": {
+      "title": "Réactivation",
+      "subtitle": "Clients qui ne reviennent plus, classés par retard."
+    },
+    "retention": {
+      "title": "Fidélisation",
+      "subtitle": "Contactez les clients avant qu'ils ne deviennent inactifs."
+    },
+    "rewards": {
+      "title": "Récompenses",
+      "subtitle": "Programmes de récompenses par points, visites et dépenses."
+    },
+    "vip": {
+      "title": "VIP",
+      "subtitle": "Reconnaissez vos meilleurs clients par la priorité, pas les remises."
+    },
+    "offers": {
+      "title": "Offres intelligentes",
+      "subtitle": "Des offres adaptées au comportement des clients."
+    },
+    "analytics": {
+      "title": "Analyses",
+      "subtitle": "La valeur commerciale générée par cette plateforme."
+    },
+    "settings": {
+      "title": "Paramètres",
+      "subtitle": "Règles de segmentation, équipe, entreprise et facturation."
+    },
+    "default": {
+      "title": "SmartManager Loyalty",
+      "subtitle": ""
+    }
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "customers": "Clients",
+    "recovery": "Récupération",
+    "reactivation": "Réactivation",
+    "retention": "Fidélisation",
+    "rewards": "Récompenses",
+    "vip": "VIP",
+    "smartOffers": "Offres intelligentes",
+    "analytics": "Analyses",
+    "segmentationRules": "Règles de segmentation",
+    "team": "Équipe",
+    "business": "Entreprise",
+    "billing": "Facturation",
+    "settings": "Paramètres",
+    "services": "Services",
+    "staff": "Personnel",
+    "bookings": "Réservations",
+    "membershipPlans": "Forfaits d'abonnement",
+    "memberships": "Abonnements"
+  },
+  "roles": {
+    "owner": "Propriétaire",
+    "admin": "Admin",
+    "manager": "Gérant",
+    "staff": "Personnel"
+  },
+  "header": {
+    "searchPlaceholder": "Rechercher des clients…",
+    "displayLanguage": "Langue d'affichage",
+    "businessCurrency": "Devise de l'entreprise"
+  },
+  "languageSelector": {
+    "comingSoon": "(bientôt)"
+  },
+  "currencySelector": {
+    "searchPlaceholder": "Rechercher une devise…"
+  },
+  "globalSearch": {
+    "placeholder": "Rechercher un client par nom, téléphone ou email…",
+    "searching": "Recherche…",
+    "noResults": "Aucun client ne correspond à « {{query}} ».",
+    "startTyping": "Commencez à taper pour rechercher vos clients."
+  },
+  "auth": {
+    "login": {
+      "tagline": "Transformez les clients occasionnels en clients fidèles.",
+      "emailLabel": "Email",
+      "passwordLabel": "Mot de passe",
+      "signingIn": "Connexion…",
+      "signIn": "Se connecter",
+      "newHere": "Nouveau ici ?",
+      "createBusinessAccount": "Créez votre compte professionnel",
+      "forgotPassword": "Mot de passe oublié ?"
+    },
+    "signup": {
+      "title": "Créez votre compte",
+      "subtitle": "Vous configurerez votre entreprise à l'étape suivante.",
+      "creatingAccount": "Création du compte…",
+      "createAccount": "Créer le compte",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "checkEmailTitle": "Vérifiez votre email",
+      "checkEmailPrefix": "Nous avons envoyé un lien de confirmation à",
+      "checkEmailMiddle": ". Confirmez-le, puis",
+      "checkEmailLink": "connectez-vous",
+      "checkEmailSuffix": "pour configurer votre entreprise.",
+      "selectedPlan": "Forfait sélectionné",
+      "billing": "Facturation",
+      "price": "Prix",
+      "freeTrial": "Essai gratuit"
+    },
+    "onboarding": {
+      "title": "Configurez votre entreprise",
+      "subtitle": "Voici ce que vos clients et votre personnel verront.",
+      "businessNameLabel": "Nom de l'entreprise",
+      "businessNamePlaceholder": "ex. Centre Médical Al Noor",
+      "businessTypeLabel": "Type d'entreprise",
+      "visitLabelLabel": "Comment appelez-vous une visite ?",
+      "defaultLanguageLabel": "Langue par défaut",
+      "currencyLabel": "Devise",
+      "settingUp": "Configuration…",
+      "createBusiness": "Créer l'entreprise",
+      "stepOf": "Étape {{current}} sur {{total}}",
+      "next": "Continuer",
+      "back": "Retour",
+      "skipForNow": "Passer pour l'instant",
+      "steps": {
+        "businessInfo": "Entreprise",
+        "country": "Pays",
+        "currency": "Devise",
+        "type": "Type",
+        "import": "Import",
+        "rules": "Règles",
+        "finish": "Terminer"
+      },
+      "businessInfo": {
+        "title": "Configurons votre entreprise",
+        "subtitle": "Commencez par le nom que verront vos clients et votre personnel."
+      },
+      "country": {
+        "title": "Où êtes-vous basé ?",
+        "subtitle": "Cela définit une devise et une langue par défaut sensées — les deux restent entièrement modifiables.",
+        "countryLabel": "Pays",
+        "searchPlaceholder": "Rechercher un pays…",
+        "other": "Autre / non listé"
+      },
+      "currency": {
+        "title": "Confirmez votre devise",
+        "subtitle": "Chaque montant dans l'application — revenus, récompenses, offres — s'affiche dans cette devise.",
+        "searchPlaceholder": "Rechercher une devise…"
+      },
+      "type": {
+        "title": "Quel type d'entreprise est-ce ?",
+        "subtitle": "Cela ajuste le vocabulaire utilisé dans l'application selon votre secteur."
+      },
+      "import": {
+        "title": "Importez vos clients",
+        "subtitle": "Facultatif — vous pourrez toujours le faire plus tard depuis Clients → Importer.",
+        "chooseFile": "Cliquez pour choisir un fichier .csv, .xlsx ou .xls",
+        "reading": "Lecture du fichier…",
+        "previewSummary_one": "{{count}} client prêt à être importé.",
+        "previewSummary_other": "{{count}} clients prêts à être importés.",
+        "previewSkipped": "{{count}} lignes ont été ignorées (nom manquant).",
+        "chooseAnother": "Choisir un autre fichier",
+        "clear": "Retirer le fichier"
+      },
+      "rules": {
+        "title": "Vérifiez vos règles de segmentation",
+        "subtitle": "Ces seuils transparents et modifiables déterminent qui est Nouveau, Actif, Dû, Inactif, Perdu, VIP, à Haute valeur, Fréquent ou à Risque — les valeurs par défaut conviennent à la plupart des entreprises, et vous pourrez toujours les modifier plus tard dans les Paramètres.",
+        "resetDefaults": "Réinitialiser par défaut"
+      },
+      "finish": {
+        "title": "Prêt à démarrer",
+        "subtitle": "Vérifiez vos choix, puis créez votre entreprise.",
+        "summaryBusiness": "Entreprise",
+        "summaryType": "Type",
+        "summaryCountry": "Pays",
+        "summaryCurrency": "Devise",
+        "summaryVisitLabel": "Appelle une visite",
+        "summaryCustomers": "Clients à importer",
+        "summaryCustomersNone": "Aucun — vous pourrez importer plus tard",
+        "creating": "Création de votre entreprise…",
+        "createMyBusiness": "Créer mon entreprise",
+        "noPlanSelected": "Aucun forfait n'a été sélectionné — veuillez recommencer depuis la page des tarifs."
+      }
+    },
+    "forgotPassword": {
+      "title": "Réinitialisez votre mot de passe",
+      "subtitle": "Nous vous enverrons un lien pour en définir un nouveau.",
+      "sendResetLink": "Envoyer le lien de réinitialisation",
+      "sending": "Envoi…",
+      "checkEmailTitle": "Vérifiez votre email",
+      "checkEmailBody": "Si un compte existe pour {{email}}, nous avons envoyé un lien pour réinitialiser le mot de passe.",
+      "backToSignIn": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Définir un nouveau mot de passe",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+      "setNewPassword": "Définir le nouveau mot de passe",
+      "saving": "Enregistrement…",
+      "mismatch": "Les mots de passe ne correspondent pas.",
+      "success": "Votre mot de passe a été mis à jour.",
+      "continueToApp": "Continuer vers SmartManager",
+      "expired": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau."
+    },
+    "passwordMinLength": "Au moins 6 caractères"
+  },
+  "countries": {
+    "SA": "Arabie Saoudite",
+    "AE": "Émirats Arabes Unis",
+    "QA": "Qatar",
+    "KW": "Koweït",
+    "BH": "Bahreïn",
+    "OM": "Oman",
+    "JO": "Jordanie",
+    "EG": "Égypte",
+    "IQ": "Irak",
+    "LB": "Liban",
+    "SY": "Syrie",
+    "YE": "Yémen",
+    "LY": "Libye",
+    "TN": "Tunisie",
+    "DZ": "Algérie",
+    "MA": "Maroc",
+    "MR": "Mauritanie",
+    "DJ": "Djibouti",
+    "SO": "Somalie",
+    "SD": "Soudan",
+    "IL": "Israël",
+    "US": "États-Unis",
+    "EU": "Zone euro",
+    "GB": "Royaume-Uni",
+    "TR": "Turquie"
+  },
+  "businessTypes": {
+    "clinic": "Clinique",
+    "dental": "Dentaire",
+    "physiotherapy": "Physiothérapie",
+    "dermatology": "Dermatologie",
+    "aesthetic_clinic": "Clinique esthétique",
+    "laser_clinic": "Clinique laser",
+    "beauty_salon": "Salon de beauté",
+    "spa": "Spa",
+    "gym": "Salle de sport",
+    "barber": "Coiffeur",
+    "car_service": "Entretien automobile",
+    "training_center": "Centre de formation",
+    "consultant": "Consultant",
+    "other": "Autre"
+  },
+  "languages": {
+    "en": "Anglais",
+    "ar": "Arabe"
+  },
+  "dashboard": {
+    "loading": "Chargement du tableau de bord…",
+    "heroTitle": "Transformez plus de clients en clients fidèles",
+    "heroSubtitle": "SmartManager identifie les clients qui nécessitent de l'attention et recommande la prochaine meilleure action.",
+    "kpi": {
+      "revenueRecovered": "Revenus récupérés",
+      "customersReactivated": "Clients réactivés",
+      "customersRecovered": "Clients récupérés",
+      "retentionRate": "Taux de fidélisation",
+      "totalCustomers": "Total des clients",
+      "bookingsToday": "Réservations aujourd'hui",
+      "membershipsAttention": "Abonnements nécessitant attention",
+      "active": "Actifs",
+      "new": "Nouveaux",
+      "dueForReturn": "Retour attendu",
+      "inactive": "Inactifs",
+      "vipCustomers": "Clients VIP",
+      "rewardsRedeemed": "Récompenses échangées"
+    },
+    "priorityActions": {
+      "title": "Actions prioritaires du jour",
+      "reactivation": "clients prêts pour la réactivation",
+      "recovery": "prospects nécessitent un suivi de récupération",
+      "due": "clients dont le retour est attendu",
+      "viewCustomers": "Voir les clients",
+      "viewLeads": "Voir les prospects",
+      "allCaughtUp": "Tout est à jour — rien ne nécessite votre attention pour l'instant."
+    },
+    "opportunity": {
+      "title": "Opportunité de revenus",
+      "subtitle": "Basé sur les dépenses historiques de ces clients — pas une garantie, mais là où la valeur est concentrée.",
+      "reactivation": "Réactivation",
+      "recovery": "Récupération",
+      "retention": "Fidélisation"
+    },
+    "health": {
+      "title": "Santé de la clientèle"
+    },
+    "chart": {
+      "title": "Revenus récupérés",
+      "empty": "Aucun événement de revenu enregistré pour l'instant — récupérez un prospect ou réactivez un client pour voir ce graphique se remplir.",
+      "reactivation": "Réactivation",
+      "recovery": "Récupération"
+    },
+    "periods": {
+      "7d": "7 jours",
+      "30d": "30 jours",
+      "3m": "3 mois",
+      "6m": "6 mois",
+      "12m": "12 mois"
+    },
+    "empty": {
+      "title": "Aucun client pour l'instant",
+      "subtitle": "Importez votre liste de clients pour voir apparaître ici les segments, les opportunités de récupération et les actions recommandées.",
+      "cta": "Aller aux clients"
+    }
+  },
+  "analytics": {
+    "loading": "Chargement des analyses…",
+    "stat": {
+      "revenueRecovered": "Revenus récupérés",
+      "revenueFromOffers": "Revenus des offres",
+      "vipRevenue": "Revenus VIP",
+      "rewardsRedeemed": "Récompenses échangées",
+      "openRecoveryOpportunities": "Opportunités de récupération (ouvertes)",
+      "leadsContacted": "Prospects contactés",
+      "leadsConverted": "Prospects convertis",
+      "reactivationRate": "Taux de réactivation",
+      "reactivationRateSub": "Réactivés ÷ (inactifs+perdus + réactivés)",
+      "repeatCustomerRate": "Taux de clients récurrents",
+      "retentionRate": "Taux de fidélisation",
+      "retentionRateSub": "(total − perdus) ÷ total",
+      "avgLifetimeValue": "Valeur vie client moyenne",
+      "totalCustomers": "Total des clients"
+    },
+    "monthlyChart": {
+      "title": "Revenus récupérés par mois",
+      "empty": "Aucun événement de revenu enregistré pour l'instant — récupérez un prospect ou réactivez un client pour voir ce graphique se remplir."
+    },
+    "funnel": {
+      "title": "Entonnoir de récupération",
+      "statuses": {
+        "New": "Nouveau",
+        "Contacted": "Contacté",
+        "Interested": "Intéressé",
+        "Follow-up Required": "Suivi requis",
+        "Converted": "Converti",
+        "Lost": "Perdu"
+      }
+    }
+  },
+  "segments": {
+    "new": "Nouveau",
+    "active": "Actif",
+    "due": "Dû",
+    "inactive": "Inactif",
+    "lost": "Perdu",
+    "vip": "VIP",
+    "high_value": "Haute valeur",
+    "frequent": "Fréquent",
+    "at_risk": "À risque"
+  },
+  "nextBestAction": {
+    "actions": {
+      "reactivate": "RÉACTIVER",
+      "contactCustomer": "CONTACTER LE CLIENT",
+      "vipCare": "SOIN VIP",
+      "encourageSecondVisit": "ENCOURAGER UNE 2E VISITE",
+      "noActionNeeded": "AUCUNE ACTION REQUISE"
+    },
+    "reasons": {
+      "lostWithCycle": "Le client n'est pas revenu depuis {{days}} jours ; son cycle de retour habituel est de {{cycle}} jours.",
+      "lostNoCycle": "Le client n'est pas revenu depuis {{days}} jours.",
+      "inactiveWithCycle": "Le client n'a pas eu de {{visitLabel}} depuis {{days}} jours, soit {{overdue}} jours après son cycle habituel de {{cycle}} jours.",
+      "inactiveNoCycle": "Le client n'a pas eu de {{visitLabel}} depuis {{days}} jours.",
+      "atRisk": "La fréquence de retour diminue — {{days}} jours depuis la dernière {{visitLabel}}, plus long que son schéma habituel de {{cycle}} jours.",
+      "atRiskUnknownCycle": "?",
+      "due": "Probablement dû pour une autre {{visitLabel}} bientôt — le cycle normal est de {{cycle}} jours, actuellement à {{days}} jours.",
+      "vip": "Client haut de gamme par dépenses/visites — priorisez le service, pas les remises.",
+      "new": "A rejoint récemment — une incitation à une seconde visite convertit les nouveaux clients en clients fidèles.",
+      "default": "Le client est actif et suit un cycle de retour sain."
+    }
+  },
+  "churnRisk": {
+    "overdueWithCycle": "{{pct}} % au-delà de son cycle habituel de {{cycle}} jours",
+    "overdueNoHistory": "Historique de visites insuffisant pour juger du retard",
+    "segmentSeverity": "Sévérité du segment ({{segment}})"
+  },
+  "offerEngine": {
+    "vip": {
+      "text": "un avantage VIP exclusif (réservation prioritaire, pas une remise)",
+      "reason": "Les clients VIP répondent mieux à la reconnaissance qu'aux remises."
+    },
+    "lost": {
+      "text": "une offre de retour de 15 %",
+      "reason": "Les clients absents depuis longtemps ont généralement besoin d'une incitation plus forte pour revenir."
+    },
+    "inactiveAtRisk": {
+      "text": "une offre de retour de 10 %",
+      "reason": "Une légère incitation suffit généralement pour un client récemment inactif."
+    },
+    "new": {
+      "text": "une incitation à une seconde visite",
+      "reason": "Convertir un client de première visite en seconde visite est le moment à plus fort effet de levier."
+    },
+    "frequent": {
+      "text": "une récompense de fidélité",
+      "reason": "Les clients fréquents sont déjà engagés — récompensez le comportement, ne le réduisez pas."
+    }
+  },
+  "vipTierActions": {
+    "VIP": {
+      "action": "Remerciement personnel",
+      "detail": "Un court message personnel reconnaissant leur fidélité."
+    },
+    "Gold": {
+      "action": "Réservation prioritaire",
+      "detail": "Évitez la file d'attente — offrez-leur le premier choix de créneaux."
+    },
+    "Platinum": {
+      "action": "Service exclusif / accès anticipé",
+      "detail": "Donnez-leur un accès anticipé aux nouveaux services ou une mise à niveau gratuite."
+    },
+    "default": {
+      "action": "Récompense spéciale",
+      "detail": "Reconnaissez ce client avec quelque chose au-delà d'une remise."
+    }
+  },
+  "customers": {
+    "list": {
+      "total_one": "{{count}} au total",
+      "total_other": "{{count}} au total",
+      "import": "Importer",
+      "addCustomer": "Ajouter un client",
+      "searchPlaceholder": "Rechercher nom, téléphone, email…",
+      "allSegments": "Tous les segments",
+      "loading": "Chargement…",
+      "emptyTitle": "Aucun client pour l'instant",
+      "emptyTitleFiltered": "Aucun client ne correspond à vos filtres",
+      "emptySubtitle": "Importez un tableur ou ajoutez votre premier client pour commencer.",
+      "importCustomers": "Importer des clients",
+      "columnName": "Nom",
+      "columnSegment": "Segment",
+      "columnLastVisit": "Dernière {{visitLabel}}",
+      "columnVisits": "Visites",
+      "columnTotalSpending": "Dépenses totales"
+    },
+    "addModal": {
+      "title": "Ajouter un client",
+      "nameLabel": "Nom",
+      "phoneLabel": "Téléphone",
+      "emailLabel": "Email",
+      "limitReachedTitle": "Vous avez atteint votre limite de clients",
+      "limitReachedBody": "La limite de clients de votre forfait actuel est atteinte. Mettez à niveau votre forfait pour ajouter plus de clients."
+    },
+    "import": {
+      "title": "Importer des clients",
+      "instructions": "Téléversez un fichier CSV ou Excel. Nous reconnaissons des colonnes comme <b>Nom</b>, <b>Téléphone</b>, <b>Email</b>, <b>Dernière visite</b>, <b>Total des visites</b> et <b>Dépenses totales</b> — les en-têtes sont associés de manière flexible, et toute colonne manquante prend une valeur par défaut sensée.",
+      "importing": "Importation…",
+      "chooseFile": "Cliquez pour choisir un fichier .csv, .xlsx ou .xls",
+      "noValidRows": "Aucune ligne valide trouvée — assurez-vous qu'il y a une colonne Nom.",
+      "summaryTotal": "Votre entreprise compte {{count}} clients.",
+      "summaryInactive": "<b>{{count}}</b> clients ne sont pas revenus depuis 60 jours ou plus.",
+      "summaryHighValueInactive": "<b>{{count}}</b> clients à haute valeur sont inactifs.",
+      "summaryDueSoon": "<b>{{count}}</b> clients sont dus pour un retour.",
+      "summarySkipped": "{{count}} lignes ont été ignorées (nom manquant).",
+      "seeDashboard": "Voir mon tableau de bord",
+      "limitReached": "Cet import dépasserait la limite de clients de votre forfait. Mettez à niveau votre forfait pour importer plus de clients."
+    },
+    "profile": {
+      "backToCustomers": "Retour aux clients",
+      "customerSince": "Client depuis {{date}}",
+      "totalVisits": "Total des visites",
+      "totalSpending": "Dépenses totales",
+      "daysSinceLastVisit": "Jours depuis la dernière visite",
+      "avgReturnCycle": "Cycle de retour moyen (jours)",
+      "logVisit": "Enregistrer une {{visitLabel}}",
+      "timeline": "Chronologie",
+      "noVisitsYet": "Aucune visite enregistrée pour l'instant.",
+      "nextBestAction": "Prochaine meilleure action",
+      "churnRisk": "Risque de départ",
+      "suggestedMessage": "Message suggéré",
+      "addPhoneHint": "Ajoutez un numéro de téléphone à ce client pour activer WhatsApp.",
+      "notFound": "Client introuvable.",
+      "logVisitModal": {
+        "title": "Enregistrer une visite",
+        "dateLabel": "Date",
+        "amountLabel": "Montant",
+        "serviceLabel": "Service"
+      }
+    }
+  },
+  "recovery": {
+    "addLead": "Ajouter un prospect",
+    "editLead": "Modifier le prospect",
+    "loading": "Chargement…",
+    "emptyTitle": "Aucune opportunité de récupération",
+    "emptySubtitle": "Les prospects qui ont demandé un service sans réserver apparaîtront ici.",
+    "followUpNow": "SUIVRE MAINTENANT",
+    "interestedIn": "Intéressé par : {{service}}",
+    "source": "Source : {{source}}",
+    "lastContact": "Dernier contact : {{value}}",
+    "estValue": "Valeur estimée : {{value}}",
+    "allStatuses": "tous",
+    "statuses": {
+      "New": "Nouveau",
+      "Contacted": "Contacté",
+      "Interested": "Intéressé",
+      "Follow-up Required": "Suivi requis",
+      "Converted": "Converti",
+      "Lost": "Perdu"
+    },
+    "form": {
+      "nameLabel": "Nom",
+      "phoneLabel": "Téléphone",
+      "sourceLabel": "Source",
+      "sourcePlaceholder": "ex. DM Instagram",
+      "interestedServiceLabel": "Service intéressé",
+      "inquiryDateLabel": "Date de la demande",
+      "lastContactLabel": "Dernier contact",
+      "estimatedValueLabel": "Valeur estimée",
+      "statusLabel": "Statut",
+      "notesLabel": "Notes"
+    },
+    "convertModal": {
+      "title": "Marquer comme converti",
+      "body": "Enregistrez les revenus générés par ce prospect récupéré — cela alimente la statistique Revenus récupérés du tableau de bord.",
+      "amountLabel": "Montant des revenus"
+    }
+  },
+  "reactivation": {
+    "loading": "Chargement…",
+    "emptyTitle": "Aucun client inactif",
+    "emptySubtitle": "Tout le monde est dans sa fenêtre de retour normale.",
+    "buckets": {
+      "30": "Inactif depuis 30+ jours",
+      "60": "Inactif depuis 60+ jours",
+      "90": "Inactif depuis 90+ jours",
+      "long": "Perdu depuis longtemps (180+ jours)"
+    },
+    "lastVisitInfo": "Dernière {{visitLabel}} : il y a {{days}} jours · Cycle normal : {{cycle}} jours · {{visits}} visites passées · Valeur vie client : {{value}}",
+    "markReactivated": "Marquer comme réactivé",
+    "suggestedOffer": "Offre suggérée : <b>{{text}}</b> ({{reason}})",
+    "markReactivatedModal": {
+      "title": "Marquer {{name}} comme réactivé",
+      "body": "Enregistrez la visite et ses revenus — cela alimente les Revenus récupérés et le retire de la liste de réactivation.",
+      "amountLabel": "Montant de la visite"
+    }
+  },
+  "retention": {
+    "loading": "Chargement…",
+    "dueSoonTab": "Bientôt dus ({{count}})",
+    "atRiskTab": "À risque ({{count}})",
+    "atRiskBadge": "À risque",
+    "riskBadge": "Risque {{score}}",
+    "dueWithinDays": "Probablement dû pour une autre {{visitLabel}} dans {{days}} jours",
+    "sinceLastVisit": "{{days}} jours depuis la dernière {{visitLabel}}",
+    "lifetimeValue": "Valeur vie client : {{value}}",
+    "emptyDueTitle": "Personne n'est bientôt dû",
+    "emptyDueSubtitle": "Personne n'approche actuellement de sa date de retour prévue.",
+    "emptyAtRiskTitle": "Aucun client à risque",
+    "emptyAtRiskSubtitle": "Aucun client ne présente actuellement un schéma de visite en déclin."
+  },
+  "rewards": {
+    "addProgram": "Ajouter un programme",
+    "editProgram": "Modifier le programme",
+    "emptyTitle": "Aucun programme de récompenses pour l'instant",
+    "emptySubtitle": "Créez un programme par points, visites ou dépenses pour commencer à récompenser vos clients fidèles.",
+    "customerRewards": "Récompenses clients",
+    "loading": "Chargement…",
+    "noCustomersYet": "Aucun client pour l'instant.",
+    "columnCustomer": "Client",
+    "columnPointsBalance": "Solde de points",
+    "columnRedeemed": "Échangés",
+    "columnAvailableRewards": "Récompenses disponibles",
+    "redeem": "Échanger {{value}}",
+    "redeemNamed": "Échanger : {{name}}",
+    "pointsSummary": "Chaque {{amount}} = {{points}} pt · {{redeemPoints}} pts = {{redeemValue}}",
+    "visitsSummary": "{{count}} visites = {{reward}}",
+    "spendingSummary": "{{amount}} dépensés = {{reward}}",
+    "types": {
+      "points": "Points",
+      "visits": "Visites",
+      "spending": "Dépenses"
+    },
+    "form": {
+      "programNameLabel": "Nom du programme",
+      "typeLabel": "Type",
+      "spendToEarnLabel": "Dépense pour gagner",
+      "pointsEarnedLabel": "Points gagnés",
+      "pointsToRedeemLabel": "Points à échanger",
+      "rewardValueLabel": "Valeur de la récompense",
+      "visitsRequiredLabel": "Visites requises",
+      "rewardLabel": "Récompense",
+      "spendingThresholdLabel": "Seuil de dépenses"
+    }
+  },
+  "vip": {
+    "addTier": "Ajouter un niveau",
+    "editTier": "Modifier le niveau",
+    "vipCustomers": "Clients VIP",
+    "loading": "Chargement…",
+    "emptyTitle": "Aucun client VIP pour l'instant",
+    "emptySubtitle": "Les clients qui franchissent le seuil de dépenses d'un niveau apparaîtront ici.",
+    "assigned": "Attribué",
+    "confirmTier": "Confirmer le niveau",
+    "customerSummary": "{{spending}} au total · {{visits}} visites · dernière visite {{lastVisit}}",
+    "form": {
+      "tierNameLabel": "Nom du niveau",
+      "minSpendingLabel": "Dépenses totales minimales",
+      "sortOrderLabel": "Ordre de tri (plus élevé = meilleur niveau)"
+    }
+  },
+  "offers": {
+    "addOffer": "Ajouter une offre",
+    "editOffer": "Modifier l'offre",
+    "emptyTitle": "Aucune offre pour l'instant",
+    "emptySubtitle": "Créez une offre et choisissez le segment de clients qu'elle cible — les recommandations apparaissent automatiquement ci-dessous.",
+    "triggersFor": "Se déclenche pour : {{segment}} · {{description}}",
+    "recommendedNow": "Recommandé maintenant",
+    "noRecommendations": "Aucun client ne correspond actuellement au segment déclencheur d'une offre active.",
+    "recommendedBecause": "Recommandé car : {{reason}}",
+    "sentSendAgain": "Envoyé — renvoyer",
+    "markConverted": "Marquer converti",
+    "converted": "Converti",
+    "loading": "Chargement…",
+    "form": {
+      "offerNameLabel": "Nom de l'offre",
+      "triggersForSegmentLabel": "Se déclenche pour le segment",
+      "offerTypeLabel": "Type d'offre",
+      "offerTypePlaceholder": "ex. remise, avantage_exclusif, mise_a_niveau_gratuite",
+      "descriptionLabel": "Description (ce que reçoit le client)"
+    },
+    "convertModal": {
+      "title": "Marquer l'offre comme convertie",
+      "body": "Enregistrez les revenus de cette offre — cela compte dans les Revenus générés par les offres des Analyses.",
+      "amountLabel": "Montant des revenus"
+    }
+  },
+  "admin": {
+    "common": {
+      "platformAdmin": "Admin plateforme",
+      "exitToApp": "Quitter vers l'application",
+      "accessDeniedTitle": "Accès refusé",
+      "accessDeniedBody": "Votre compte n'a pas d'accès administrateur de plateforme.",
+      "backToApp": "Retour à l'application",
+      "loading": "Chargement…",
+      "statuses": {
+        "trialing": "Essai",
+        "active": "Actif",
+        "past_due": "En retard",
+        "canceled": "Annulé",
+        "expired": "Expiré",
+        "suspended": "Suspendu"
+      }
+    },
+    "nav": {
+      "overview": "Aperçu",
+      "businesses": "Entreprises",
+      "subscriptions": "Abonnements",
+      "plans": "Forfaits",
+      "payments": "Paiements",
+      "trials": "Essais",
+      "settings": "Paramètres"
+    },
+    "login": {
+      "title": "Admin plateforme",
+      "subtitle": "Connectez-vous avec votre compte administrateur.",
+      "backToApp": "Retour à SmartManager Loyalty"
+    },
+    "overview": {
+      "title": "Aperçu",
+      "subtitle": "Santé globale de la plateforme pour chaque entreprise sur SmartManager Loyalty.",
+      "kpi": {
+        "totalBusinesses": "Total des entreprises",
+        "trialing": "En essai",
+        "active": "Abonnements actifs",
+        "pastDue": "En retard",
+        "canceled": "Annulés",
+        "signups30d": "Nouvelles entreprises (30j)",
+        "mrr": "Revenu mensuel récurrent",
+        "arr": "Revenu annuel récurrent",
+        "conversion": "Conversion essai → payant"
+      },
+      "trialsEndingSoon": "Essais se terminant bientôt",
+      "noTrialsEndingSoon": "Aucun essai ne se termine dans les 7 prochains jours.",
+      "viewAll": "Tout voir",
+      "revenueByPlan": "Revenus par forfait",
+      "subscribers_one": "{{count}} abonné",
+      "subscribers_other": "{{count}} abonnés"
+    },
+    "businesses": {
+      "title": "Entreprises",
+      "subtitle": "Toutes les entreprises utilisant la plateforme.",
+      "searchPlaceholder": "Rechercher par entreprise ou email du propriétaire…",
+      "columnName": "Entreprise",
+      "columnOwner": "Propriétaire",
+      "columnPlan": "Forfait",
+      "columnStatus": "Statut",
+      "columnMembers": "Équipe",
+      "columnCustomers": "Clients",
+      "columnCreated": "Créée",
+      "empty": "Aucune entreprise ne correspond à votre recherche.",
+      "detail": {
+        "back": "Retour aux entreprises",
+        "ownerLabel": "Propriétaire",
+        "membersLabel": "Membres de l'équipe",
+        "customersLabel": "Clients",
+        "totalRevenueLabel": "Revenu total enregistré",
+        "planLabel": "Forfait",
+        "statusLabel": "Statut de l'abonnement",
+        "trialEndsLabel": "Fin de l'essai",
+        "extendTrial": "Prolonger de 14 jours",
+        "saveChanges": "Enregistrer les modifications",
+        "saved": "Enregistré"
+      }
+    },
+    "subscriptions": {
+      "title": "Abonnements",
+      "subtitle": "Forfait et statut de facturation pour chaque entreprise.",
+      "filterAllStatuses": "Tous les statuts",
+      "filterAllPlans": "Tous les forfaits",
+      "columnBusiness": "Entreprise",
+      "columnPlan": "Forfait",
+      "columnStatus": "Statut",
+      "columnMrr": "Valeur mensuelle",
+      "empty": "Aucune entreprise ne correspond à vos filtres."
+    },
+    "plans": {
+      "title": "Forfaits",
+      "subtitle": "Ce que voient et choisissent les entreprises sur la page Facturation.",
+      "addPlan": "Ajouter un forfait",
+      "editPlan": "Modifier le forfait",
+      "columnPlan": "Forfait",
+      "columnMonthly": "Mensuel",
+      "columnYearly": "Annuel",
+      "columnMaxCustomers": "Limite de clients",
+      "columnActive": "Actif",
+      "custom": "Personnalisé",
+      "unlimited": "Illimité",
+      "perMonth": "/mois",
+      "form": {
+        "nameLabel": "Nom du forfait",
+        "priceMonthlyLabel": "Prix mensuel (laisser vide pour un prix personnalisé)",
+        "priceYearlyLabel": "Prix annuel",
+        "currencyLabel": "Devise",
+        "maxCustomersLabel": "Limite de clients (laisser vide pour illimité)",
+        "featuresLabel": "Fonctionnalités (une par ligne)",
+        "activeLabel": "Actif — visible pour les entreprises"
+      },
+      "editor": {
+        "badgeLabel": "Texte du badge",
+        "badgePlaceholder": "ex. Le plus populaire",
+        "basicInfo": "Informations de base",
+        "customPricePlaceholder": "Laisser vide pour un prix personnalisé",
+        "descriptionLabel": "Description",
+        "duplicate": "Dupliquer",
+        "featuredLabel": "Mis en avant (surligné sur la page des tarifs)",
+        "features": "Fonctionnalités",
+        "keyLabel": "Clé",
+        "limits": "Limites",
+        "livePreview": "Aperçu en direct",
+        "locationLimitLabel": "Limite de sites",
+        "more": "de plus",
+        "pricing": "Tarification",
+        "saveFirstForFeatures": "Enregistrez d'abord les informations de base du forfait pour gérer ses fonctionnalités.",
+        "shortDescriptionLabel": "Description courte",
+        "sortOrderLabel": "Ordre d'affichage",
+        "subscribers": "Abonnés",
+        "trialDaysLabel": "Jours d'essai (remplacement)",
+        "trialDaysPlaceholder": "Utilise la valeur par défaut globale",
+        "untitled": "Forfait sans titre",
+        "userLimitLabel": "Limite d'utilisateurs",
+        "categories": {
+          "core": "Essentiel",
+          "analytics": "Analyses",
+          "growth_tools": "Outils de croissance",
+          "team_support": "Équipe et support"
+        }
+      }
+    },
+    "payments": {
+      "title": "Paiements",
+      "subtitle": "Un registre manuel — aucun processeur de paiement n'est encore connecté.",
+      "recordPayment": "Enregistrer un paiement",
+      "columnBusiness": "Entreprise",
+      "columnAmount": "Montant",
+      "columnPlan": "Forfait",
+      "columnPeriod": "Période",
+      "columnStatus": "Statut",
+      "columnRecordedBy": "Enregistré par",
+      "columnDate": "Date",
+      "empty": "Aucun paiement enregistré pour l'instant.",
+      "statuses": {
+        "recorded": "Enregistré",
+        "refunded": "Remboursé",
+        "failed": "Échoué"
+      },
+      "form": {
+        "title": "Enregistrer un paiement",
+        "businessLabel": "Entreprise",
+        "amountLabel": "Montant",
+        "currencyLabel": "Devise",
+        "planLabel": "Forfait (facultatif)",
+        "periodStartLabel": "Début de période",
+        "periodEndLabel": "Fin de période",
+        "notesLabel": "Notes",
+        "save": "Enregistrer le paiement"
+      }
+    },
+    "trials": {
+      "title": "Essais",
+      "subtitle": "Entreprises actuellement en essai, les plus proches de l'expiration en premier.",
+      "columnBusiness": "Entreprise",
+      "columnOwner": "Propriétaire",
+      "columnDaysLeft": "Jours restants",
+      "extendTrial": "Prolonger de 14 jours",
+      "convertToPaid": "Convertir en Starter",
+      "empty": "Aucune entreprise n'est actuellement en essai.",
+      "expired": "Expiré",
+      "daysLeft_one": "{{count}} jour restant",
+      "daysLeft_other": "{{count}} jours restants"
+    },
+    "subscriptionSettings": {
+      "title": "Paramètres d'abonnement",
+      "subtitle": "Contrôlez l'essai gratuit offert à chaque nouvelle inscription.",
+      "freeTrialEnabled": "Essai gratuit activé",
+      "freeTrialDays": "Durée de l'essai gratuit (jours)",
+      "freeTrialDaysHint": "S'applique à toutes les nouvelles inscriptions, sauf si un forfait définit son propre remplacement.",
+      "saved": "Enregistré"
+    }
+  },
+  "settings": {
+    "segmentation": {
+      "intro": "Ces seuils transparents et modifiables déterminent qui est Nouveau, Actif, Dû, Inactif, Perdu, VIP, à Haute valeur, Fréquent ou à Risque.",
+      "saveChanges": "Enregistrer les modifications",
+      "loading": "Chargement…",
+      "fields": {
+        "new": {
+          "title": "Nouveau",
+          "desc": "Client créé au cours des N derniers jours.",
+          "days": "Jours depuis l'inscription"
+        },
+        "active": {
+          "title": "Actif",
+          "desc": "Client ayant visité dans les N jours.",
+          "days": "Jours depuis la dernière visite"
+        },
+        "due": {
+          "title": "Dû",
+          "desc": "Le client approche de sa date de retour prévue.",
+          "days_before": "Jours avant le retour prévu pour marquer comme Dû"
+        },
+        "inactive": {
+          "title": "Inactif",
+          "desc": "Le client a dépassé sa période de retour prévue.",
+          "days": "Jours depuis la dernière visite"
+        },
+        "lost": {
+          "title": "Perdu",
+          "desc": "Le client est inactif depuis plus longtemps que cela.",
+          "days": "Jours depuis la dernière visite"
+        },
+        "vip": {
+          "title": "VIP",
+          "desc": "Le client atteint les seuils de dépenses ou de visites.",
+          "min_spending": "Dépenses totales minimales",
+          "min_visits": "Visites minimales"
+        },
+        "high_value": {
+          "title": "Haute valeur",
+          "desc": "La valeur vie client dépasse ce seuil.",
+          "min_lifetime_value": "Valeur vie client minimale"
+        },
+        "frequent": {
+          "title": "Fréquent",
+          "desc": "Le client visite plus souvent que cela, par 90 jours.",
+          "min_visits_per_90d": "Visites minimales par 90 jours"
+        },
+        "at_risk": {
+          "title": "À risque",
+          "desc": "Le client a dépassé son cycle de retour normal d'autant de fois.",
+          "overdue_ratio": "Ratio de retard (ex. 1,3 = 30 % de retard)"
+        }
+      }
+    },
+    "team": {
+      "whoHasAccess": "Qui a accès à {{business}}.",
+      "inviteTeammate": "Inviter un collègue",
+      "loading": "Chargement…",
+      "columnEmail": "Email",
+      "columnRole": "Rôle",
+      "pendingInvites": "Invitations en attente",
+      "removeConfirmLabel": "{{email}} de l'équipe",
+      "inviteModal": {
+        "title": "Inviter un collègue",
+        "emailLabel": "Email",
+        "roleLabel": "Rôle",
+        "hint": "S'ils n'ont pas encore de compte, ils rejoindront automatiquement dès qu'ils s'inscriront avec cet email.",
+        "inviting": "Invitation…",
+        "sendInvite": "Envoyer l'invitation"
+      }
+    },
+    "services": {
+      "intro": "Les services ou produits que vous vendez — une liste de référence que votre équipe peut utiliser pour enregistrer les achats des clients.",
+      "addService": "Ajouter un service",
+      "editService": "Modifier le service",
+      "loading": "Chargement…",
+      "emptyTitle": "Aucun service pour l'instant",
+      "emptySubtitle": "Ajoutez les services ou produits que vous vendez pour créer votre catalogue.",
+      "columnName": "Nom",
+      "columnPrice": "Prix",
+      "columnStatus": "Statut",
+      "form": {
+        "nameLabel": "Nom du service",
+        "priceLabel": "Prix (facultatif)",
+        "durationLabel": "Durée par défaut (minutes)",
+        "descriptionLabel": "Description (facultatif)",
+        "activeLabel": "Actif — disponible à la sélection"
+      }
+    },
+    "staff": {
+      "intro": "Les membres du personnel qui prennent les réservations — utilisés pour construire le calendrier et éviter les doubles réservations.",
+      "addStaff": "Ajouter un membre du personnel",
+      "editStaff": "Modifier le membre du personnel",
+      "loading": "Chargement…",
+      "emptyTitle": "Aucun personnel pour l'instant",
+      "emptySubtitle": "Ajoutez votre équipe pour pouvoir lui assigner et planifier des réservations.",
+      "columnName": "Nom",
+      "columnRole": "Rôle",
+      "columnStatus": "Statut",
+      "form": {
+        "nameLabel": "Nom",
+        "roleLabel": "Rôle (facultatif)",
+        "activeLabel": "Actif — disponible pour réservation"
+      }
+    },
+    "membershipPlans": {
+      "intro": "Les forfaits de séances et abonnements que vous vendez — les clients en achètent un, et chaque réservation terminée l'utilise automatiquement.",
+      "addPlan": "Ajouter un forfait",
+      "editPlan": "Modifier le forfait",
+      "loading": "Chargement…",
+      "emptyTitle": "Aucun forfait d'abonnement pour l'instant",
+      "emptySubtitle": "Ajoutez un forfait — comme un pack de 10 séances ou un abonnement mensuel illimité — afin de pouvoir le vendre à vos clients.",
+      "columnName": "Nom",
+      "columnPrice": "Prix",
+      "columnSessions": "Séances",
+      "columnValidity": "Validité",
+      "columnStatus": "Statut",
+      "unlimited": "Illimité",
+      "noExpiry": "Sans expiration",
+      "daysValue_one": "{{count}} jour",
+      "daysValue_other": "{{count}} jours",
+      "form": {
+        "nameLabel": "Nom du forfait",
+        "priceLabel": "Prix",
+        "sessionsLabel": "Total des séances",
+        "unlimitedPlaceholder": "Illimité",
+        "validityLabel": "Validité (jours)",
+        "noExpiryPlaceholder": "N'expire jamais",
+        "serviceLabel": "Service",
+        "anyService": "Tout service",
+        "descriptionLabel": "Description (facultatif)",
+        "activeLabel": "Actif — disponible à la vente"
+      }
+    },
+    "business": {
+      "newBusiness": "Nouvelle entreprise",
+      "nameLabel": "Nom de l'entreprise",
+      "typeLabel": "Type d'entreprise",
+      "visitLabelLabel": "Comment appelez-vous une visite ?",
+      "defaultLanguageLabel": "Langue par défaut",
+      "currencyLabel": "Devise",
+      "saveChanges": "Enregistrer les modifications",
+      "readOnlyHint": "Seuls les propriétaires et administrateurs peuvent modifier les paramètres de l'entreprise.",
+      "newBusinessModal": {
+        "title": "Créer une autre entreprise",
+        "creating": "Création…",
+        "createBusiness": "Créer l'entreprise"
+      },
+      "workingHoursLabel": "Heures d'ouverture",
+      "opensAtLabel": "Ouvre à",
+      "closesAtLabel": "Ferme à",
+      "workingHoursHint": "Définit la plage horaire visible sur le calendrier des réservations."
+    },
+    "billing": {
+      "currentPlan": "Forfait actuel",
+      "trial": "Essai",
+      "trialDaysLeft_one": "{{count}} jour restant dans votre essai.",
+      "trialDaysLeft_other": "{{count}} jours restants dans votre essai.",
+      "trialEnded": "Votre essai est terminé.",
+      "noPaymentRequired": "Aucun moyen de paiement n'est requis pour l'instant — rien ne sera facturé automatiquement.",
+      "notConnected": "Le traitement des paiements n'est pas encore connecté — cette page suit votre forfait, pas de vrais frais.",
+      "readyToGoLive": "Quand vous serez prêt à passer en production, contactez-nous et nous configurerons la facturation.",
+      "askOwnerAdmin": "Demandez à un propriétaire ou administrateur de gérer la facturation.",
+      "contactUpgrade": "Contactez-nous pour une mise à niveau",
+      "plans": {
+        "trial": "Essai",
+        "starter": "Starter",
+        "growth": "Growth",
+        "professional": "Professional",
+        "enterprise": "Enterprise"
+      },
+      "billingInterval": "Cycle de facturation",
+      "trialDaysRemaining": "Jours d'essai restants",
+      "activeSince": "Actif depuis",
+      "upgradeSubject": "Mettre à niveau mon forfait",
+      "changeBillingSubject": "Changer mon cycle de facturation",
+      "changeBillingInterval": "Changer le cycle de facturation",
+      "cancelSubject": "Annuler mon abonnement",
+      "cancelSubscription": "Annuler l'abonnement",
+      "switchTo": "Passer à {{plan}}"
+    }
+  },
+  "bookings": {
+    "today": "Aujourd'hui",
+    "newBooking": "Nouvelle réservation",
+    "unassignedColumn": "Non assigné",
+    "views": {
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois"
+    },
+    "filters": {
+      "allStaff": "Tout le personnel",
+      "allServices": "Tous les services",
+      "allStatuses": "Tous les statuts"
+    },
+    "status": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "no_show": "Absence"
+    },
+    "emptyTitle": "Aucune réservation pour l'instant",
+    "emptySubtitle": "Créez votre première réservation pour commencer à remplir votre calendrier.",
+    "day": {
+      "noStaffTitle": "Aucun personnel pour l'instant",
+      "noStaffSubtitle": "Ajoutez des membres du personnel dans les Paramètres pour organiser votre vue journalière autour d'eux."
+    },
+    "week": {
+      "empty": "Aucune réservation"
+    },
+    "emptySlots": {
+      "title": "Créneaux disponibles aujourd'hui",
+      "noGaps": "Aucun créneau disponible aujourd'hui — complet.",
+      "summary": "{{count}} créneau(x) disponible(s), environ {{hours}} h libres",
+      "minutesShort": "{{count}} min",
+      "candidatesTitle": "Bons clients pour les remplir",
+      "noCandidates": "Aucun client dû, inactif ou perdu à contacter pour le moment."
+    },
+    "modal": {
+      "newTitle": "Nouvelle réservation",
+      "editTitle": "Modifier la réservation",
+      "customerLabel": "Client",
+      "searchCustomer": "Rechercher des clients…",
+      "newCustomer": "Nouveau client",
+      "newCustomerName": "Nom du client",
+      "newCustomerPhone": "Téléphone (facultatif)",
+      "chooseExisting": "Choisir un client existant à la place",
+      "serviceLabel": "Service",
+      "noService": "Aucun service",
+      "staffLabel": "Personnel",
+      "unassigned": "Non assigné",
+      "membershipLabel": "Utiliser un abonnement (facultatif)",
+      "noMembership": "Ne pas utiliser d'abonnement",
+      "membershipOptionSessions": "{{plan}} ({{count}} restantes)",
+      "membershipOptionUnlimited": "{{plan}} (illimité)",
+      "dateLabel": "Date",
+      "timeLabel": "Heure",
+      "durationLabel": "Durée (min)",
+      "notesLabel": "Notes (facultatif)",
+      "statusLabel": "Statut",
+      "completeSection": "Marquez cette réservation comme terminée pour enregistrer une visite et mettre à jour le segment du client.",
+      "completeUsesSession": "Terminer cette réservation utilisera une séance de l'abonnement sélectionné.",
+      "amountLabel": "Montant",
+      "markCompleted": "Marquer comme terminé",
+      "cancelBooking": "Annuler la réservation",
+      "errors": {
+        "customerRequired": "Choisissez ou ajoutez d'abord un client.",
+        "overlap": "Cet horaire chevauche une autre réservation pour ce membre du personnel."
+      }
+    }
+  },
+  "memberships": {
+    "intro": "Forfaits de séances et abonnements achetés par vos clients — terminer une réservation associée en utilise automatiquement une séance.",
+    "addMembership": "Ajouter un abonnement",
+    "noPlansHint": "Ajoutez un forfait d'abonnement dans les Paramètres avant de pouvoir en attribuer un à un client.",
+    "tabs": {
+      "active_one": "Actif ({{count}})",
+      "active_other": "Actifs ({{count}})",
+      "expiringSoon_one": "Expire bientôt ({{count}})",
+      "expiringSoon_other": "Expirent bientôt ({{count}})",
+      "unused_one": "Inutilisé ({{count}})",
+      "unused_other": "Inutilisés ({{count}})",
+      "expiredCompleted_one": "Expiré / Terminé ({{count}})",
+      "expiredCompleted_other": "Expirés / Terminés ({{count}})",
+      "cancelled_one": "Annulé ({{count}})",
+      "cancelled_other": "Annulés ({{count}})"
+    },
+    "empty": {
+      "activeTitle": "Aucun abonnement actif",
+      "activeSubtitle": "Attribuez un forfait à un client pour commencer.",
+      "expiringSoonTitle": "Rien n'expire bientôt",
+      "expiringSoonSubtitle": "Les abonnements expirant dans les 7 jours apparaîtront ici.",
+      "unusedTitle": "Aucun abonnement inutilisé",
+      "unusedSubtitle": "Les abonnements achetés il y a 14 jours ou plus sans aucune séance utilisée apparaîtront ici.",
+      "expiredCompletedTitle": "Rien d'expiré ou de terminé",
+      "expiredCompletedSubtitle": "Les abonnements dont les séances sont épuisées ou dont la date d'expiration est dépassée apparaîtront ici.",
+      "cancelledTitle": "Aucun abonnement annulé",
+      "cancelledSubtitle": "Les abonnements que vous annulez apparaîtront ici."
+    },
+    "status": {
+      "active": "Actif",
+      "expiringSoon": "Expire bientôt",
+      "expired": "Expiré",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "sessionsLeft": "{{used}} sur {{total}} séances utilisées",
+    "unlimitedSessions": "Séances illimitées",
+    "expiresOn": "expire {{date}}",
+    "cancelMembership": "Annuler",
+    "renewMembership": "Renouveler",
+    "modal": {
+      "title": "Ajouter un abonnement",
+      "customerLabel": "Client",
+      "planLabel": "Forfait",
+      "planSessionsSummary_one": "{{count}} séance",
+      "planSessionsSummary_other": "{{count}} séances",
+      "planUnlimitedSummary": "Séances illimitées",
+      "planValiditySummary_one": "valide {{count}} jour à partir de l'achat",
+      "planValiditySummary_other": "valide {{count}} jours à partir de l'achat",
+      "planNoExpirySummary": "n'expire jamais",
+      "startsAtLabel": "Débute le",
+      "pricePaidLabel": "Prix payé",
+      "expiresOn": "Expire le {{date}}",
+      "notesLabel": "Notes (facultatif)",
+      "errors": {
+        "customerRequired": "Choisissez ou ajoutez d'abord un client.",
+        "planRequired": "Choisissez d'abord un forfait."
+      }
+    }
+  },
+  "planFeatures": {
+    "vip": "VIP",
+    "smart_offers": "Offres intelligentes",
+    "memberships": "Abonnements"
+  },
+  "pricing": {
+    "seoTitle": "Tarifs SmartManager Loyalty",
+    "seoDescription": "Un logiciel de fidélisation et de rétention client simple et puissant pour les entreprises en croissance.",
+    "heroTitle": "Choisissez le forfait adapté à votre entreprise",
+    "heroSubtitle": "Transformez plus de clients en clients fidèles, récupérez des revenus perdus et bâtissez des relations clients plus solides.",
+    "trialBanner_one": "Démarrez votre essai gratuit de {{count}} jour — aucune carte bancaire requise.",
+    "trialBanner_other": "Démarrez votre essai gratuit de {{count}} jours — aucune carte bancaire requise.",
+    "billing": {
+      "monthly": "Mensuel",
+      "annual": "Annuel"
+    },
+    "twoMonthsFree": "2 mois offerts",
+    "custom": "Personnalisé",
+    "perMonth": "/mois",
+    "perYear": "/an",
+    "saveAmount": "Économisez {{amount}}/an",
+    "monthsFree_one": "{{count}} mois offert",
+    "monthsFree_other": "{{count}} mois offerts",
+    "upToCustomers_one": "Jusqu'à {{count}} client",
+    "upToCustomers_other": "Jusqu'à {{count}} clients",
+    "unlimitedCustomers": "Clients illimités",
+    "upToLocations_one": "Jusqu'à {{count}} site",
+    "upToLocations_other": "Jusqu'à {{count}} sites",
+    "unlimitedLocations": "Sites illimités",
+    "startFreeTrial": "Démarrer l'essai gratuit",
+    "contactSales": "Contacter les ventes",
+    "goToDashboard": "Aller au tableau de bord",
+    "unavailableTitle": "Les forfaits sont actuellement indisponibles",
+    "unavailableBody": "Veuillez nous contacter et nous vous aiderons à démarrer.",
+    "trialDays_one": "{{count}} jour",
+    "trialDays_other": "{{count}} jours"
+  },
+  "upgradePrompt": {
+    "title": "{{feature}} n'est pas inclus dans votre forfait",
+    "body": "Mettez à niveau votre forfait pour débloquer {{feature}} et plus encore.",
+    "cta": "Mettre à niveau"
+  }
+}

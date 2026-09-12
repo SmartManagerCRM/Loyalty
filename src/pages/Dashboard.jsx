@@ -183,12 +183,12 @@ export default function Dashboard() {
     const inactive = stats.inactive + stats.lost;
     const known = stats.active + stats.due + stats.atRisk + inactive;
     return [
-      { label: "Active", count: stats.active, color: C.green },
-      { label: "Due", count: stats.due, color: C.amber },
-      { label: "At Risk", count: stats.atRisk, color: "#C77D14" },
-      { label: "Inactive", count: inactive, color: C.red },
+      { label: t("segments.active"), count: stats.active, color: C.green },
+      { label: t("segments.due"), count: stats.due, color: C.amber },
+      { label: t("segments.at_risk"), count: stats.atRisk, color: "#C77D14" },
+      { label: t("segments.inactive"), count: inactive, color: C.red },
     ].map((b) => ({ ...b, pct: known > 0 ? (b.count / known) * 100 : 0 }));
-  }, [stats]);
+  }, [stats, t]);
 
   const chartData = useMemo(() => bucketRevenue(revenueEvents, period), [revenueEvents, period]);
 

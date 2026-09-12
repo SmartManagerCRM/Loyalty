@@ -62,7 +62,7 @@ export default function ResetPassword() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <Field label={t("auth.resetPassword.newPasswordLabel")}>
               <div className="relative">
-                <TextInput type={showPassword ? "text" : "password"} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" />
+                <TextInput type={showPassword ? "text" : "password"} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("auth.passwordMinLength")} />
                 <button type="button" onClick={() => setShowPassword((s) => !s)} className="absolute end-2 top-1/2 -translate-y-1/2" style={{ color: C.slateLight }}>
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>

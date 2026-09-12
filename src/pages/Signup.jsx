@@ -102,7 +102,7 @@ export default function Signup() {
             <TextInput type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@business.com" />
           </Field>
           <Field label={t("auth.login.passwordLabel")}>
-            <TextInput type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" />
+            <TextInput type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("auth.passwordMinLength")} />
           </Field>
 
           {error && <p className="text-xs" style={{ color: C.red }}>{error}</p>}

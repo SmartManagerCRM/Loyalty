@@ -2,6 +2,7 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import en from "./locales/en.json";
 import ar from "./locales/ar.json";
+import fr from "./locales/fr.json";
 
 const LANG_KEY = "smartmanager-loyalty:ui-language";
 const RTL_LANGUAGES = new Set(["ar"]);
@@ -20,13 +21,10 @@ const initialLanguage = storedLanguage();
 document.documentElement.dir = RTL_LANGUAGES.has(initialLanguage) ? "rtl" : "ltr";
 document.documentElement.lang = initialLanguage;
 
-// French is architecturally supported (add fr.json + register it here,
-// then remove the `comingSoon` flag in LanguageSelector.jsx) but not
-// translated yet.
 i18next
   .use(initReactI18next)
   .init({
-    resources: { en: { translation: en }, ar: { translation: ar } },
+    resources: { en: { translation: en }, ar: { translation: ar }, fr: { translation: fr } },
     lng: initialLanguage,
     fallbackLng: "en",
     interpolation: { escapeValue: false }, // React already escapes
