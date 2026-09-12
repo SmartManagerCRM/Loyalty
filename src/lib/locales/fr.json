@@ -28,7 +28,8 @@
     "daysAgo_other": "il y a {{count}} jours",
     "days": "jours",
     "customer_one": "{{count}} client",
-    "customer_other": "{{count}} clients"
+    "customer_other": "{{count}} clients",
+    "noPhoneOnFile": "Aucun numéro de téléphone enregistré pour cette entreprise."
   },
   "pageMeta": {
     "dashboard": {
@@ -302,7 +303,8 @@
   },
   "languages": {
     "en": "Anglais",
-    "ar": "Arabe"
+    "ar": "Arabe",
+    "fr": "Français"
   },
   "dashboard": {
     "loading": "Chargement du tableau de bord…",
@@ -759,7 +761,8 @@
         "extendTrial": "Prolonger de 14 jours",
         "saveChanges": "Enregistrer les modifications",
         "saved": "Enregistré"
-      }
+      },
+      "whatsappMessage": "Bonjour, c'est l'équipe SmartManager. Nous voulions prendre des nouvelles de votre compte {{businessName}} — n'hésitez pas si vous avez des questions !"
     },
     "subscriptions": {
       "title": "Abonnements",
@@ -865,7 +868,8 @@
       "empty": "Aucune entreprise n'est actuellement en essai.",
       "expired": "Expiré",
       "daysLeft_one": "{{count}} jour restant",
-      "daysLeft_other": "{{count}} jours restants"
+      "daysLeft_other": "{{count}} jours restants",
+      "whatsappMessage": "Bonjour, c'est l'équipe SmartManager. Votre essai gratuit pour {{businessName}} se termine bientôt ({{daysLeft}}) — souhaitez-vous passer à un abonnement pour garder votre compte actif ?"
     },
     "subscriptionSettings": {
       "title": "Paramètres d'abonnement",
@@ -1017,6 +1021,8 @@
       "visitLabelLabel": "Comment appelez-vous une visite ?",
       "defaultLanguageLabel": "Langue par défaut",
       "currencyLabel": "Devise",
+      "phoneLabel": "Téléphone de l'entreprise",
+      "phoneHint": "Visible par l'équipe SmartManager sur votre dossier d'abonnement afin de pouvoir vous contacter si besoin.",
       "saveChanges": "Enregistrer les modifications",
       "readOnlyHint": "Seuls les propriétaires et administrateurs peuvent modifier les paramètres de l'entreprise.",
       "newBusinessModal": {

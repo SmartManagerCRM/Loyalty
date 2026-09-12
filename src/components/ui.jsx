@@ -26,13 +26,14 @@ export function Btn({ children, onClick, variant = "primary", icon: Icon, classN
   );
 }
 
-export function IconButton({ onClick, title, children, danger }) {
+export function IconButton({ onClick, title, children, danger, disabled }) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
       title={title}
-      className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-black/5 transition-colors"
+      className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${disabled ? "cursor-not-allowed opacity-40" : "hover:bg-black/5"}`}
       style={{ color: danger ? C.red : C.slate }}
     >
       {children}

@@ -22,6 +22,16 @@ const TEMPLATES = {
     "ENCOURAGE SECOND VISIT": ({ customerName, businessName, offer }) =>
       `مرحباً ${customerName}، شكراً لزيارتك ${businessName}!${offer ? ` إليك ${offer} في زيارتك القادمة.` : ""} نتطلع لرؤيتك مرة أخرى قريباً.`,
   },
+  fr: {
+    REACTIVATE: ({ customerName, businessName, days, offer }) =>
+      `Bonjour ${customerName} 🌷, c'est ${businessName}. Nous avons remarqué que cela fait un moment (${days} jours) depuis votre dernière visite et voulions prendre de vos nouvelles.${offer ? ` Pour votre retour, nous aimerions vous offrir ${offer}.` : ""} Souhaitez-vous reprendre rendez-vous bientôt ?`,
+    "CONTACT CUSTOMER": ({ customerName, businessName }) =>
+      `Bonjour ${customerName}, c'est ${businessName}. Vous êtes généralement dû pour une visite vers cette période — souhaitez-vous réserver votre prochain rendez-vous ?`,
+    "VIP CARE": ({ customerName, businessName }) =>
+      `Bonjour ${customerName}, c'est ${businessName}. Nous tenions à vous remercier personnellement d'être l'un de nos clients privilégiés — n'hésitez pas à nous dire si nous pouvons faire quelque chose pour vous.`,
+    "ENCOURAGE SECOND VISIT": ({ customerName, businessName, offer }) =>
+      `Bonjour ${customerName}, merci d'avoir visité ${businessName} !${offer ? ` Voici ${offer} pour votre prochaine visite.` : ""} Nous serions ravis de vous revoir bientôt.`,
+  },
 };
 
 export function generateMessage({ action, customerName, businessName, days, offer, language = "en" }) {
@@ -35,6 +45,8 @@ const RECOVERY_TEMPLATES = {
     `Hi ${leadName}, this is ${businessName}. Just following up on your interest in ${interestedService || "our services"} — happy to answer any questions or help you book. Would you like to go ahead?`,
   ar: ({ leadName, businessName, interestedService }) =>
     `مرحباً ${leadName}، معك ${businessName}. أتابع معك بخصوص اهتمامك بـ${interestedService || "خدماتنا"} — يسعدني أجاوب على أي استفسار أو أساعدك تحجز. تحب نكمل؟`,
+  fr: ({ leadName, businessName, interestedService }) =>
+    `Bonjour ${leadName}, c'est ${businessName}. Je fais suite à votre intérêt pour ${interestedService || "nos services"} — je serais ravi(e) de répondre à vos questions ou de vous aider à réserver. Souhaitez-vous continuer ?`,
 };
 
 export function generateRecoveryMessage({ leadName, businessName, interestedService, language = "en" }) {
@@ -54,6 +66,12 @@ const MEMBERSHIP_TEMPLATES = {
       `مرحباً ${customerName}، معك ${businessName}. عضويتك "${planName}" على وشك الانتهاء${sessionsRemaining != null ? ` ولا يزال لديك ${sessionsRemaining} جلسة` : ""} — تحب تحجز قبل انتهائها أو تجدد؟`,
     UNUSED_SESSIONS: ({ customerName, businessName, planName, sessionsRemaining }) =>
       `مرحباً ${customerName}، معك ${businessName}. لا يزال لديك ${sessionsRemaining != null ? `${sessionsRemaining} جلسة` : "جلسات"} لم تُستخدم بعد من عضوية "${planName}" — تحب نحجزلك موعد؟`,
+  },
+  fr: {
+    EXPIRING_SOON: ({ customerName, businessName, planName, sessionsRemaining }) =>
+      `Bonjour ${customerName}, c'est ${businessName}. Votre abonnement ${planName} expire bientôt${sessionsRemaining != null ? ` avec encore ${sessionsRemaining} séance(s) restante(s)` : ""} — souhaitez-vous réserver avant qu'il n'expire, ou le renouveler ?`,
+    UNUSED_SESSIONS: ({ customerName, businessName, planName, sessionsRemaining }) =>
+      `Bonjour ${customerName}, c'est ${businessName}. Il vous reste ${sessionsRemaining != null ? `${sessionsRemaining} séance(s)` : "des séances"} non utilisées sur votre abonnement ${planName} — souhaitez-vous en réserver une ?`,
   },
 };
 

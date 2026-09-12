@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { C } from "../../components/theme";
 import { Select } from "../../components/ui";
@@ -12,11 +12,12 @@ const STATUS_KEYS = ["trialing", "active", "past_due", "canceled"];
 export default function Subscriptions() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [rows, setRows] = useState([]);
   const [plansByKey, setPlansByKey] = useState({});
   const [ready, setReady] = useState(false);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [planFilter, setPlanFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState(() => searchParams.get("status") || "all");
+  const [planFilter, setPlanFilter] = useState(() => searchParams.get("plan") || "all");
 
   async function load() {
     const [b, p] = await Promise.all([fetchBusinesses(), fetchPlans({ includeInactive: true })]);

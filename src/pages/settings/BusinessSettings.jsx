@@ -28,7 +28,7 @@ const END_HOUR_OPTIONS = Array.from({ length: 24 }, (_, h) => ({ value: h + 1, l
 function NewBusinessModal({ onClose }) {
   const { t } = useTranslation();
   const BUSINESS_TYPES = BUSINESS_TYPE_KEYS.map((value) => ({ value, label: t(`businessTypes.${value}`) }));
-  const LANGUAGES = [{ value: "en", label: t("languages.en") }, { value: "ar", label: t("languages.ar") }];
+  const LANGUAGES = [{ value: "en", label: t("languages.en") }, { value: "ar", label: t("languages.ar") }, { value: "fr", label: t("languages.fr") }];
   const CURRENCY_OPTIONS = CURRENCIES.map((c) => ({ value: c.code, label: `${c.code} — ${c.name}` }));
   const { createBusiness } = useAuth();
   const [form, setForm] = useState({ name: "", businessType: "clinic", visitLabel: "Visit", language: "en", currency: "SAR" });
@@ -70,12 +70,12 @@ function NewBusinessModal({ onClose }) {
 export default function BusinessSettings() {
   const { t } = useTranslation();
   const BUSINESS_TYPES = BUSINESS_TYPE_KEYS.map((value) => ({ value, label: t(`businessTypes.${value}`) }));
-  const LANGUAGES = [{ value: "en", label: t("languages.en") }, { value: "ar", label: t("languages.ar") }];
+  const LANGUAGES = [{ value: "en", label: t("languages.en") }, { value: "ar", label: t("languages.ar") }, { value: "fr", label: t("languages.fr") }];
   const CURRENCY_OPTIONS = CURRENCIES.map((c) => ({ value: c.code, label: `${c.code} — ${c.name}` }));
   const { business, role, refreshBusiness } = useAuth();
   const [form, setForm] = useState({
     name: business?.name || "", business_type: business?.business_type || "other", visit_label: business?.visit_label || "Visit",
-    default_language: business?.default_language || "en", currency: business?.currency || "SAR",
+    default_language: business?.default_language || "en", currency: business?.currency || "SAR", phone: business?.phone || "",
     business_hours_start: business?.business_hours_start ?? 8, business_hours_end: business?.business_hours_end ?? 20,
   });
   const [saving, setSaving] = useState(false);
@@ -110,6 +110,10 @@ export default function BusinessSettings() {
         <Field label={t("settings.business.visitLabelLabel")}><Select options={VISIT_LABELS} disabled={!canEdit} value={form.visit_label} onChange={set("visit_label")} /></Field>
         <Field label={t("settings.business.defaultLanguageLabel")}><Select options={LANGUAGES} disabled={!canEdit} value={form.default_language} onChange={set("default_language")} /></Field>
         <Field label={t("settings.business.currencyLabel")}><Select options={CURRENCY_OPTIONS} disabled={!canEdit} value={form.currency} onChange={set("currency")} /></Field>
+        <Field label={t("settings.business.phoneLabel")}>
+          <TextInput type="tel" disabled={!canEdit} value={form.phone} onChange={set("phone")} placeholder="+966501234567" />
+        </Field>
+        <p className="-mt-2 text-xs" style={{ color: C.slateLight }}>{t("settings.business.phoneHint")}</p>
 
         <div>
           <span className="mb-1 block text-xs font-semibold" style={{ color: C.slate }}>{t("settings.business.workingHoursLabel")}</span>

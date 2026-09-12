@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Building2, Hourglass, CheckCircle2, AlertTriangle, XCircle, UserPlus, DollarSign, ChevronRight, TrendingUp, PieChart } from "lucide-react";
 import { C } from "../../components/theme";
@@ -39,21 +39,21 @@ export default function Overview() {
       <p className="max-w-2xl text-sm" style={{ color: C.slateLight }}>{t("admin.overview.subtitle")}</p>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label={t("admin.overview.kpi.totalBusinesses")} value={stats.total_businesses} icon={Building2} />
-        <StatCard label={t("admin.overview.kpi.active")} value={stats.active_count} icon={CheckCircle2} accent={C.green} />
-        <StatCard label={t("admin.overview.kpi.trialing")} value={stats.trialing_count} icon={Hourglass} accent={C.amber} />
-        <StatCard label={t("admin.overview.kpi.mrr")} value={formatMoney(stats.mrr, "USD")} icon={DollarSign} accent={C.green} />
+        <StatCard label={t("admin.overview.kpi.totalBusinesses")} value={stats.total_businesses} icon={Building2} to="/admin/businesses" />
+        <StatCard label={t("admin.overview.kpi.active")} value={stats.active_count} icon={CheckCircle2} accent={C.green} to="/admin/subscriptions?status=active" />
+        <StatCard label={t("admin.overview.kpi.trialing")} value={stats.trialing_count} icon={Hourglass} accent={C.amber} to="/admin/trials" />
+        <StatCard label={t("admin.overview.kpi.mrr")} value={formatMoney(stats.mrr, "USD")} icon={DollarSign} accent={C.green} to="/admin/subscriptions?status=active" />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard label={t("admin.overview.kpi.pastDue")} value={stats.past_due_count} icon={AlertTriangle} accent={C.red} />
-        <StatCard label={t("admin.overview.kpi.canceled")} value={stats.canceled_count} icon={XCircle} accent={C.slateLight} />
-        <StatCard label={t("admin.overview.kpi.signups30d")} value={stats.signups_last_30d} icon={UserPlus} accent={C.teal} />
+        <StatCard label={t("admin.overview.kpi.pastDue")} value={stats.past_due_count} icon={AlertTriangle} accent={C.red} to="/admin/subscriptions?status=past_due" />
+        <StatCard label={t("admin.overview.kpi.canceled")} value={stats.canceled_count} icon={XCircle} accent={C.slateLight} to="/admin/subscriptions?status=canceled" />
+        <StatCard label={t("admin.overview.kpi.signups30d")} value={stats.signups_last_30d} icon={UserPlus} accent={C.teal} to="/admin/businesses" />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <StatCard label={t("admin.overview.kpi.arr")} value={formatMoney(stats.arr, "USD")} icon={TrendingUp} accent={C.green} />
-        <StatCard label={t("admin.overview.kpi.conversion")} value={`${stats.trial_to_paid_conversion_pct ?? 0}%`} icon={PieChart} accent={C.teal} />
+        <StatCard label={t("admin.overview.kpi.arr")} value={formatMoney(stats.arr, "USD")} icon={TrendingUp} accent={C.green} to="/admin/subscriptions?status=active" />
+        <StatCard label={t("admin.overview.kpi.conversion")} value={`${stats.trial_to_paid_conversion_pct ?? 0}%`} icon={PieChart} accent={C.teal} to="/admin/trials" />
       </div>
 
       {(stats.revenue_by_plan || []).length > 0 && (
@@ -61,13 +61,18 @@ export default function Overview() {
           <h2 className="text-sm font-bold" style={{ color: C.ink }}>{t("admin.overview.revenueByPlan")}</h2>
           <div className="mt-3 space-y-2">
             {stats.revenue_by_plan.map((row) => (
-              <div key={row.plan} className="flex items-center justify-between rounded-xl px-3 py-2.5" style={{ backgroundColor: C.bg }}>
+              <Link
+                key={row.plan}
+                to={`/admin/subscriptions?plan=${row.plan}`}
+                className="flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-black/[0.03]"
+                style={{ backgroundColor: C.bg }}
+              >
                 <div className="text-sm font-semibold capitalize" style={{ color: C.ink }}>{row.plan}</div>
                 <div className="flex items-center gap-4 text-xs" style={{ color: C.slateLight }}>
                   <span>{t("admin.overview.subscribers", { count: row.subscribers })}</span>
                   <span className="font-bold" style={{ color: C.ink }}>{formatMoney(row.mrr, "USD")}{t("admin.plans.perMonth")}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

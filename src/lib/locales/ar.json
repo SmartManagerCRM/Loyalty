@@ -34,7 +34,8 @@
     "customer_two": "عميلان",
     "customer_few": "{{count}} عملاء",
     "customer_many": "{{count}} عميلاً",
-    "customer_other": "{{count}} عميل"
+    "customer_other": "{{count}} عميل",
+    "noPhoneOnFile": "لا يوجد رقم هاتف مسجل لهذا النشاط التجاري."
   },
   "pageMeta": {
     "dashboard": {
@@ -311,7 +312,8 @@
   },
   "languages": {
     "en": "الإنجليزية",
-    "ar": "العربية"
+    "ar": "العربية",
+    "fr": "الفرنسية"
   },
   "dashboard": {
     "loading": "جارٍ تحميل لوحة التحكم…",
@@ -774,7 +776,8 @@
         "extendTrial": "تمديد 14 يوماً",
         "saveChanges": "حفظ التغييرات",
         "saved": "تم الحفظ"
-      }
+      },
+      "whatsappMessage": "مرحباً، معك فريق SmartManager. أردنا الاطمئنان بخصوص حساب {{businessName}} — أخبرنا إذا كان لديك أي استفسار!"
     },
     "subscriptions": {
       "title": "الاشتراكات",
@@ -883,7 +886,8 @@
       "daysLeft_two": "يومان متبقيان",
       "daysLeft_few": "{{count}} أيام متبقية",
       "daysLeft_many": "{{count}} يوماً متبقياً",
-      "daysLeft_other": "{{count}} يوم متبقٍ"
+      "daysLeft_other": "{{count}} يوم متبقٍ",
+      "whatsappMessage": "مرحباً، معك فريق SmartManager. تجربتك المجانية لـ {{businessName}} ستنتهي قريباً ({{daysLeft}}) — هل تود الترقية للحفاظ على تفعيل حسابك؟"
     },
     "subscriptionSettings": {
       "title": "إعدادات الاشتراك",
@@ -1039,6 +1043,8 @@
       "visitLabelLabel": "ماذا تسمّون الزيارة؟",
       "defaultLanguageLabel": "اللغة الافتراضية",
       "currencyLabel": "العملة",
+      "phoneLabel": "هاتف النشاط التجاري",
+      "phoneHint": "يظهر لفريق SmartManager في سجل اشتراكك حتى نتمكن من التواصل معك عليه عند الحاجة.",
       "saveChanges": "حفظ التغييرات",
       "readOnlyHint": "يمكن فقط للمالكين والمسؤولين تغيير إعدادات النشاط التجاري.",
       "newBusinessModal": {

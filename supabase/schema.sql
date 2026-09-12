@@ -797,7 +797,7 @@ create or replace function admin_list_businesses()
 returns table (
   id uuid, name text, business_type text, subscription_plan text, subscription_status text,
   trial_ends_at timestamptz, currency text, created_at timestamptz,
-  owner_email text, member_count bigint, total_customers bigint
+  owner_email text, phone text, default_language text, member_count bigint, total_customers bigint
 )
 language sql stable security definer set search_path = public as $$
   select
@@ -805,6 +805,7 @@ language sql stable security definer set search_path = public as $$
     b.trial_ends_at, b.currency, b.created_at,
     (select u.email from business_users bu join auth.users u on u.id = bu.user_id
      where bu.business_id = b.id and bu.role = 'owner' order by bu.created_at asc limit 1) as owner_email,
+    b.phone, b.default_language,
     (select count(*) from business_users bu where bu.business_id = b.id) as member_count,
     (select count(*) from customers c where c.business_id = b.id) as total_customers
   from businesses b
@@ -817,7 +818,7 @@ returns table (
   id uuid, name text, business_type text, visit_label text, default_language text,
   subscription_plan text, subscription_status text, trial_ends_at timestamptz,
   currency text, timezone text, created_at timestamptz,
-  owner_email text, member_count bigint, total_customers bigint, total_revenue_events numeric
+  owner_email text, phone text, member_count bigint, total_customers bigint, total_revenue_events numeric
 )
 language sql stable security definer set search_path = public as $$
   select
@@ -826,6 +827,7 @@ language sql stable security definer set search_path = public as $$
     b.currency, b.timezone, b.created_at,
     (select u.email from business_users bu join auth.users u on u.id = bu.user_id
      where bu.business_id = b.id and bu.role = 'owner' order by bu.created_at asc limit 1) as owner_email,
+    b.phone,
     (select count(*) from business_users bu where bu.business_id = b.id) as member_count,
     (select count(*) from customers c where c.business_id = b.id) as total_customers,
     (select coalesce(sum(amount), 0) from revenue_events re where re.business_id = b.id) as total_revenue_events
@@ -1755,3 +1757,15 @@ alter table businesses
 
 alter table businesses drop constraint if exists businesses_hours_order_check;
 alter table businesses add constraint businesses_hours_order_check check (business_hours_end > business_hours_start);
+
+-- ── French language + a contact number for the business itself ─────────
+-- Widen default_language to allow French (WhatsApp templates now cover
+-- en/ar/fr — see src/lib/messageTemplates.js). `phone` is settable by the
+-- owner/admin in Settings -> Business, so the platform admin has
+-- something to WhatsApp them on regarding their subscription — see
+-- admin_list_businesses()/admin_get_business() above, which return it.
+alter table businesses drop constraint if exists businesses_default_language_check;
+alter table businesses add constraint businesses_default_language_check
+  check (default_language in ('en','ar','fr'));
+
+alter table businesses add column if not exists phone text;

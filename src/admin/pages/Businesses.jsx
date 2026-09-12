@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Search } from "lucide-react";
+import { Search, MessageCircle } from "lucide-react";
 import { C } from "../../components/theme";
-import { TextInput, Pill } from "../../components/ui";
+import { TextInput, Pill, IconButton } from "../../components/ui";
 import { fetchBusinesses } from "../../lib/adminApi";
+import { openWhatsApp } from "../../lib/whatsapp";
 
 const STATUS_COLOR = { trialing: C.amber, active: C.green, past_due: C.red, canceled: C.slateLight };
 
@@ -47,6 +48,7 @@ export default function Businesses() {
                 <th className="px-4 py-3">{t("admin.businesses.columnStatus")}</th>
                 <th className="px-4 py-3">{t("admin.businesses.columnMembers")}</th>
                 <th className="px-4 py-3">{t("admin.businesses.columnCustomers")}</th>
+                <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody>
@@ -63,6 +65,15 @@ export default function Businesses() {
                   <td className="px-4 py-3"><Pill color={STATUS_COLOR[b.subscription_status]} bg={`${STATUS_COLOR[b.subscription_status]}1a`}>{t(`admin.common.statuses.${b.subscription_status}`)}</Pill></td>
                   <td className="px-4 py-3" style={{ color: C.slate }}>{b.member_count}</td>
                   <td className="px-4 py-3" style={{ color: C.slate }}>{b.total_customers}</td>
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <IconButton
+                      title={b.phone ? t("common.openWhatsApp") : t("common.noPhoneOnFile")}
+                      disabled={!b.phone}
+                      onClick={() => openWhatsApp(b.phone, t("admin.businesses.whatsappMessage", { businessName: b.name }))}
+                    >
+                      <MessageCircle size={15} />
+                    </IconButton>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { MessageCircle } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, EmptyState } from "../../components/ui";
 import { fetchBusinesses, updateBusiness } from "../../lib/adminApi";
+import { openWhatsApp } from "../../lib/whatsapp";
 
 function daysLeft(dateStr) {
   return Math.ceil((new Date(dateStr) - Date.now()) / 86400000);
@@ -60,6 +62,17 @@ export default function Trials() {
                   <span className="text-sm font-bold" style={{ color: dl <= 2 ? C.red : dl <= 5 ? C.amber : C.slate }}>
                     {dl <= 0 ? t("admin.trials.expired") : t("admin.trials.daysLeft", { count: dl })}
                   </span>
+                  <Btn
+                    variant="secondary"
+                    icon={MessageCircle}
+                    disabled={!b.phone}
+                    onClick={() => openWhatsApp(b.phone, t("admin.trials.whatsappMessage", {
+                      businessName: b.name,
+                      daysLeft: dl <= 0 ? t("admin.trials.expired") : t("admin.trials.daysLeft", { count: dl }),
+                    }))}
+                  >
+                    {t("common.openWhatsApp")}
+                  </Btn>
                   <Btn variant="secondary" onClick={() => extend(b.id, b.trial_ends_at)}>{t("admin.trials.extendTrial")}</Btn>
                   <Btn onClick={() => convert(b.id)}>{t("admin.trials.convertToPaid")}</Btn>
                 </div>

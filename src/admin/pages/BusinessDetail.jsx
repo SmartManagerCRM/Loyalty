@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, MessageCircle } from "lucide-react";
 import { C } from "../../components/theme";
 import { Btn, Select, Field, Pill } from "../../components/ui";
 import { fetchBusiness, fetchBusinessMembers, updateBusiness } from "../../lib/adminApi";
 import { formatMoney } from "../../lib/currencies";
+import { openWhatsApp } from "../../lib/whatsapp";
 
 const PLAN_KEYS = ["trial", "starter", "growth", "professional", "enterprise"];
 const STATUS_KEYS = ["trialing", "active", "past_due", "canceled"];
@@ -81,6 +82,17 @@ export default function BusinessDetail() {
               <div>{t("admin.businesses.detail.customersLabel")}: {business.total_customers}</div>
               <div>{t("admin.businesses.detail.totalRevenueLabel")}: {formatMoney(business.total_revenue_events, business.currency)}</div>
             </div>
+
+            <Btn
+              variant="secondary"
+              icon={MessageCircle}
+              disabled={!business.phone}
+              onClick={() => openWhatsApp(business.phone, t("admin.businesses.whatsappMessage", { businessName: business.name }))}
+              className="mt-4 w-full justify-center"
+            >
+              {t("common.openWhatsApp")}
+            </Btn>
+            {!business.phone && <p className="mt-2 text-xs" style={{ color: C.slateLight }}>{t("common.noPhoneOnFile")}</p>}
 
             <h2 className="mb-2 mt-5 text-xs font-bold uppercase tracking-wide" style={{ color: C.slateLight }}>{t("nav.team")}</h2>
             <ul className="space-y-1.5">
