@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { AlertCircle } from "lucide-react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import AdminGate from "./admin/AdminGate";
-import { LoadingScreen } from "./components/ui";
+import { LoadingScreen, Btn } from "./components/ui";
 import { C } from "./components/theme";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -41,6 +43,34 @@ function SetupNotice() {
   );
 }
 
+// Shown when we're signed in but failed to load your business membership
+// (a network error, not "you have no business yet") — without this, Gate()
+// would fall through to <Onboarding/>, which risks creating a duplicate
+// business for an account that already has one.
+function AccountLoadError({ message }) {
+  const { t } = useTranslation();
+  const { refreshBusiness, signOut } = useAuth();
+  const [retrying, setRetrying] = useState(false);
+
+  async function handleRetry() {
+    setRetrying(true);
+    await refreshBusiness();
+    setRetrying(false);
+  }
+
+  return (
+    <div className="flex h-screen w-full flex-col items-center justify-center gap-3 px-4 text-center" style={{ backgroundColor: C.bg }}>
+      <AlertCircle size={36} style={{ color: C.red }} />
+      <h1 className="text-lg font-bold" style={{ color: C.ink }}>{t("auth.loadError.title")}</h1>
+      <p className="max-w-sm text-sm" style={{ color: C.slateLight }}>{message || t("auth.loadError.body")}</p>
+      <div className="mt-2 flex gap-2">
+        <Btn onClick={handleRetry} disabled={retrying}>{retrying ? t("common.loading") : t("auth.loadError.retry")}</Btn>
+        <Btn variant="ghost" onClick={signOut}>{t("common.signOut")}</Btn>
+      </div>
+    </div>
+  );
+}
+
 function AppShell({ children }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -56,7 +86,7 @@ function AppShell({ children }) {
 }
 
 function Gate() {
-  const { supabaseConfigured, ready, session, business } = useAuth();
+  const { supabaseConfigured, ready, session, business, membershipsLoaded, error } = useAuth();
 
   if (!supabaseConfigured) return <SetupNotice />;
   if (!ready) return <LoadingScreen />;
@@ -70,6 +100,12 @@ function Gate() {
     );
   }
 
+  // Distinct from "no business yet": membershipsLoaded only turns true once
+  // the check has actually completed (success or failure), so a network
+  // error here can't be mistaken for a genuinely new account and silently
+  // fall through to the onboarding wizard.
+  if (!membershipsLoaded) return <LoadingScreen />;
+  if (error && !business) return <AccountLoadError message={error} />;
   if (!business) return <Onboarding />;
 
   return (

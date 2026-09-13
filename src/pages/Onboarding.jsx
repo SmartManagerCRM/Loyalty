@@ -9,6 +9,7 @@ import { supabase } from "../lib/supabaseClient";
 import { CURRENCIES } from "../lib/currencies";
 import { COUNTRIES } from "../lib/countries";
 import { parseSpreadsheetFile, rowsToCustomers } from "../lib/csvImport";
+import { withTimeout } from "../lib/withTimeout";
 
 const BUSINESS_TYPE_KEYS = [
   "clinic", "dental", "physiotherapy", "dermatology", "aesthetic_clinic", "laser_clinic",
@@ -351,14 +352,14 @@ export default function Onboarding() {
       } catch (e) { /* ignore */ }
 
       if (form.importCustomers.length > 0) {
-        const { error: insertError } = await supabase
+        const { error: insertError } = await withTimeout(supabase
           .from("customers")
-          .insert(form.importCustomers.map((c) => ({ ...c, business_id: businessId })));
+          .insert(form.importCustomers.map((c) => ({ ...c, business_id: businessId }))));
         if (insertError) throw insertError;
       }
 
       const ruleRows = RULE_ORDER.map((key) => ({ business_id: businessId, segment_key: key, rule_config: form.rules[key] }));
-      const { error: rulesError } = await supabase.from("segmentation_rules").upsert(ruleRows, { onConflict: "business_id,segment_key" });
+      const { error: rulesError } = await withTimeout(supabase.from("segmentation_rules").upsert(ruleRows, { onConflict: "business_id,segment_key" }));
       if (rulesError) throw rulesError;
       // No navigation needed: createBusiness() already switched the active
       // business, so Gate() in App.jsx re-renders straight into the app.

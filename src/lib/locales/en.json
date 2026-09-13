@@ -256,7 +256,12 @@
       "continueToApp": "Continue to SmartManager",
       "expired": "This reset link is invalid or has expired. Please request a new one."
     },
-    "passwordMinLength": "At least 6 characters"
+    "passwordMinLength": "At least 6 characters",
+    "loadError": {
+      "title": "Couldn't load your account",
+      "body": "Something went wrong checking your business. This is usually a temporary connection issue — try again.",
+      "retry": "Try again"
+    }
   },
   "countries": {
     "SA": "Saudi Arabia",

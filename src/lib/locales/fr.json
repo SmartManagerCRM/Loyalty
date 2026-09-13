@@ -256,7 +256,12 @@
       "continueToApp": "Continuer vers SmartManager",
       "expired": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau."
     },
-    "passwordMinLength": "Au moins 6 caractères"
+    "passwordMinLength": "Au moins 6 caractères",
+    "loadError": {
+      "title": "Impossible de charger votre compte",
+      "body": "Une erreur s'est produite lors de la vérification de votre entreprise. Il s'agit généralement d'un problème de connexion temporaire — réessayez.",
+      "retry": "Réessayer"
+    }
   },
   "countries": {
     "SA": "Arabie Saoudite",
