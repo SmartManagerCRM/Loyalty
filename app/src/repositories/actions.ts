@@ -152,7 +152,7 @@ export class ActionsService {
   }
 
   /** Recent outreach for one customer (for the profile). */
-  async historyFor(customerId: string): Promise<{ actionId: string; name: string; type: ActionType; status: string; at: string }[]> {
+  async history(customerId: string): Promise<{ actionId: string; name: string; type: ActionType; status: string; at: string }[]> {
     const rows = await this.ctx.db.all<Record<string, unknown>>(
       `SELECT s.smart_action_id, a.name, a.type, s.status, s.updated_at FROM customer_action_status s JOIN smart_actions a ON a.id = s.smart_action_id WHERE s.customer_id = ? ORDER BY s.updated_at DESC LIMIT 50`, [customerId]);
     return rows.map((r) => ({ actionId: r.smart_action_id as string, name: r.name as string, type: r.type as ActionType, status: r.status as string, at: r.updated_at as string }));
@@ -173,6 +173,13 @@ export class ActionsService {
   async setFollowUpStatus(id: string, status: "done" | "dismissed" | "open"): Promise<void> {
     this.ctx.assertWritable();
     const r = await this.ctx.db.run("UPDATE follow_ups SET status=?, completed_at=? WHERE id=?", [status, status === "open" ? null : this.ctx.now().toISOString(), id]);
+    if (!r.changes) throw new DomainError("not_found");
+  }
+
+  async rescheduleFollowUp(id: string, dueOn: string): Promise<void> {
+    this.ctx.assertWritable();
+    if (!isValidYmd(dueOn)) throw new DomainError("date_invalid");
+    const r = await this.ctx.db.run("UPDATE follow_ups SET due_on = ?, status = 'open', completed_at = NULL WHERE id = ?", [dueOn, id]);
     if (!r.changes) throw new DomainError("not_found");
   }
 

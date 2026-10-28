@@ -76,7 +76,7 @@ export class LoyaltyService {
     return ok.sort((a, b) => b.sortOrder - a.sortOrder || b.minSpendMinor - a.minSpendMinor)[0] ?? null;
   }
 
-  async saveTier(input: Omit<VipTier, "id" | "sortOrder" | "active"> & { id?: string; sortOrder?: number; active?: boolean }): Promise<string> {
+  async saveTier(input: Omit<VipTier, "id" | "sortOrder" | "active" | "benefits"> & { benefits?: string | null; id?: string; sortOrder?: number; active?: boolean }): Promise<string> {
     this.ctx.assertWritable();
     const name = requireText(sanitizeText(input.name, 60), "name_required", 60);
     requireInt(input.minSpendMinor, "invalid_number");
@@ -373,6 +373,21 @@ export class LoyaltyService {
       await this.requireCustomer(tx, customerId);
       await this.redeemOfferInTx(tx, offerId, customerId, null, segmentOk);
     });
+  }
+
+  /** Live offers this customer can use right now (dates, audience and usage limits all satisfied). */
+  async eligibleOffers(customerId: string): Promise<Offer[]> {
+    const out: Offer[] = [];
+    for (const o of await this.offers()) {
+      if (LoyaltyService.offerState(o, localDate(this.ctx.now())) !== "live") continue;
+      try {
+        await this.checkOfferForCustomer(o.id, customerId, await this.segmentAudienceOk(o.id, customerId));
+        out.push(o);
+      } catch {
+        /* not eligible */
+      }
+    }
+    return out;
   }
 
   async offerRedemptionCounts(): Promise<Map<string, number>> {
