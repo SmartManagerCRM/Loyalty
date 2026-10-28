@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, readFileSync, writeFileSync, existsSync } from "no
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
-  createActivationRequest, activationRequestToCompact, deriveFingerprint, evaluateValidity, parseActivationRequest, serializeActivationRequest, verifyLicense, TrustedKey,
+  createActivationRequest, activationRequestToCompact, deriveFingerprint, evaluateValidity, parseActivationRequest, serializeActivationRequest, verifyLicense, TrustedKey, LicensePayload,
 } from "@smloyalty/license-core";
 import { KeyStore, KEY_FILE } from "../src/core/keystore";
 import { HistoryStore } from "../src/core/history";
@@ -101,7 +101,7 @@ describe("issuing licenses", () => {
     const { issuer, trusted } = setup();
     const a = issuer.issue({ requestText: request(fpA), customerReference: "A", licenseType: "custom_duration", durationMonths: 12 });
     const pa = (verifyLicense(a.fileText, { trustedKeys: trusted() }) as { ok: true; payload: { expiresAt: string; validFrom: string } }).payload;
-    expect(evaluateValidity({ ...(pa as never), expiresAt: pa.expiresAt, licenseType: "custom_duration" }, now, null).state).toBe("active");
+    expect(evaluateValidity(pa as unknown as LicensePayload, now, null).state).toBe("active");
     expect(Date.parse(pa.expiresAt)).toBeGreaterThan(now + 360 * 86_400_000);
     const b = issuer.issue({ requestText: request(fpB), customerReference: "B", licenseType: "custom_duration", expiresOn: "2026-04-15" });
     const pb = (verifyLicense(b.fileText, { trustedKeys: trusted() }) as { ok: true; payload: { expiresAt: string } }).payload;

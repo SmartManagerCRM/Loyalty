@@ -95,7 +95,7 @@ export class CustomersRepo {
     if (phone && !phoneNorm) throw new DomainError("phone_invalid");
     const email = input.email ? sanitizeText(input.email, 160) : null;
     if (email && !isValidEmail(email)) throw new DomainError("email_invalid");
-    let birthday = input.birthday ? sanitizeText(input.birthday, 12) : null;
+    const birthday = input.birthday ? sanitizeText(input.birthday, 12) : null;
     if (birthday) {
       if (/^--\d{2}-\d{2}$/.test(birthday)) {
         if (!isValidYmd(`2000-${birthday.slice(2)}`)) throw new DomainError("birthday_invalid");

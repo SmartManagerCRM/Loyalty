@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
-import { Bell, Cake, Crown, Gift, HeartHandshake, Plus, ShieldAlert, Upload, UserPlus, UserRoundX, Sparkles, Save } from "lucide-react";
+import { Bell, Cake, Crown, Gift, Heart, HeartHandshake, Plus, RefreshCw, ShieldAlert, Target, Upload, UserPlus, UserRoundX, Users, Sparkles, Save } from "lucide-react";
 import { useState } from "react";
 import { useApp, useData } from "../../app/AppContext";
 import { Page } from "../../components/Page";
-import { Banner, Button, Card, Empty, LinkButton, Spinner, Stat, Chevron } from "../../components/ui";
+import { Banner, BarChart, Button, Card, Empty, LinkButton, Spinner, Stat, Chevron } from "../../components/ui";
+import { LogoMark } from "../../components/Logo";
 import type { Recommendation } from "../../repositories/dashboard";
 import { CustomerPicker, PurchaseSheet } from "../customers/sheets";
-import { localDate } from "../../domain/dates";
+import { addDays, localDate } from "../../domain/dates";
 
 const ICONS: Record<string, typeof Bell> = {
   followUpsDue: Bell, retain_vip: Crown, win_back: UserRoundX, prevent_churn: ShieldAlert, points_reminder: Gift, new_customer: HeartHandshake,
@@ -40,63 +41,69 @@ function RecCard({ r }: { r: Recommendation }) {
 
 export function TodayPage() {
   const { svc, settings, t, money, num, canWrite } = useApp();
-  const { data, loading, error } = useData(() => svc.dashboard.load(), []);
+  const { data, loading, error } = useData(async () => {
+    const today = localDate(new Date());
+    const [dash, rep] = await Promise.all([svc.dashboard.load(), svc.reports.build({ from: addDays(today, -29), to: today })]);
+    return { dash, rep };
+  }, []);
   const [picker, setPicker] = useState(false);
   const [buyFor, setBuyFor] = useState<string | null>(null);
-  const today = new Date().toLocaleDateString(settings.locale.language === "ar" ? "ar-u-nu-latn" : "en-GB", { weekday: "long", day: "numeric", month: "long" });
+  const d = data?.dash;
+  const attention = d ? d.totals.atRisk + d.totals.winBack + d.followUpsDue + d.rewardsReady : 0;
 
   return (
-    <Page title={settings.business.name || t("app.name")} root actions={<Button sm variant="primary" write onClick={() => setPicker(true)}><Plus />{t("today.recordPurchase")}</Button>}>
+    <Page title="" root actions={<Button sm variant="primary" write onClick={() => setPicker(true)}><Plus />{t("today.recordPurchase")}</Button>}>
       <div className="stack-lg">
-        <p className="muted small">{today}</p>
+        <div className="brandbar"><LogoMark /><div><b>{settings.business.name || t("app.name")}</b><small>LOYALTY</small></div></div>
+        <div className="greet"><h2>{t("today.greeting")}</h2><p className="muted small">{t("today.greetingSub")}</p></div>
         {loading ? <Spinner /> : null}
         {error ? <Banner tone="danger">{t("err.unexpected")}</Banner> : null}
-        {data ? (
+        {d ? (
           <>
-            {data.totals.customers === 0 ? (
+            {d.totals.customers === 0 ? (
               <Card><Empty icon={<UserPlus />} title={t("today.emptyTitle")} text={t("today.emptyText")} action={<div className="row wrap" style={{ justifyContent: "center" }}><LinkButton to="/customers/new" variant="primary">{t("customers.add")}</LinkButton><LinkButton to="/customers/import"><Upload />{t("customers.import")}</LinkButton></div>} /></Card>
             ) : (
-              <div className="grid2 grid-auto">
-                <Stat label={t("today.totalCustomers")} value={num(data.totals.customers)} to="/customers" />
-                <Stat label={t("today.active")} value={num(data.totals.active)} tone="brand" to="/customers?band=active" />
-                <Stat label={t("today.atRisk")} value={num(data.totals.atRisk)} tone="warn" to="/actions/prevent_churn" />
-                <Stat label={t("today.winBack")} value={num(data.totals.winBack)} tone="danger" to="/actions/win_back" />
-                <Stat label={t("today.rewardsReady")} value={num(data.rewardsReady)} tone="gold" to="/actions/points_reminder" />
-                <Stat label={t("today.followUpsDue")} value={num(data.followUpsDue)} tone={data.followUpsDue ? "warn" : ""} to="/actions/followups" />
+              <div className="grid2">
+                <Link to="/customers" className="tile green"><span className="ico"><Users /></span><div><div className="v num">{num(d.totals.customers)}</div><div className="l">{t("today.totalCustomers")}</div><div className="go">{t("today.active")}: {num(d.totals.active)}</div></div></Link>
+                <Link to="/actions/points_reminder" className="tile orange"><span className="ico"><Gift /></span><div><div className="v num">{num(d.rewardsReady)}</div><div className="l">{t("today.rewardsTile")}</div><div className="go">{t("today.viewCustomers")} ›</div></div></Link>
+                <Link to="/actions/prevent_churn" className="tile red"><span className="ico"><Heart /></span><div><div className="v num">{num(d.totals.atRisk)}</div><div className="l">{t("today.atRisk")}</div><div className="go">{t("today.checkNow")} ›</div></div></Link>
+                <Link to="/actions/win_back" className="tile blue"><span className="ico"><RefreshCw /></span><div><div className="v num">{num(d.totals.winBack)}</div><div className="l">{t("today.winBack")}</div><div className="go">{t("today.winThem")} ›</div></div></Link>
               </div>
             )}
 
-            {data.recommendations.length ? (
+            {d.recommendations.length ? (
               <section className="stack" aria-label={t("today.recommended")}>
                 <h2 className="section-title">{t("today.recommended")}</h2>
-                {data.recommendations.map((r) => <RecCard key={r.id} r={r} />)}
+                {d.recommendations.map((r) => <RecCard key={r.id} r={r} />)}
               </section>
-            ) : data.totals.customers > 0 ? (
-              <Banner tone="ok">{t("today.allClear")}</Banner>
-            ) : null}
+            ) : d.totals.customers > 0 ? <Banner tone="ok">{t("today.allClear")}</Banner> : null}
 
-            {data.totals.customers > 0 ? (
+            {d.totals.customers > 0 && data ? (
               <>
-                <section className="stack">
-                  <h2 className="section-title">{t("today.recent", { days: data.recent.days })}</h2>
-                  <div className="grid3">
-                    <Stat label={t("today.purchases")} value={num(data.recent.purchases)} />
-                    <Stat label={t("today.revenue")} value={<span style={{ fontSize: "1.05rem" }}>{money(data.recent.revenueMinor)}</span>} />
-                    <Stat label={t("today.newCustomers")} value={num(data.recent.newCustomers)} />
+                <Card>
+                  <div className="stack">
+                    <div className="row between"><h3>{t("today.salesVisits")}</h3><span className="badge">{t("today.thisMonth")}</span></div>
+                    <div className="metric3">
+                      <div><div className="v num" style={{ fontSize: "1.05rem" }}>{money(data.rep.purchases.revenueMinor)}</div><div className="small muted">{t("today.revenue")}</div></div>
+                      <div><div className="v num">{num(data.rep.purchases.count)}</div><div className="small muted">{t("today.visits")}</div></div>
+                      <div><div className="v num">{num(data.rep.repeat.repeatCustomers)}</div><div className="small muted">{t("today.repeat")}</div></div>
+                    </div>
+                    <BarChart ariaLabel={t("reports.chartLabel")} data={data.rep.purchases.buckets.map((b) => ({ label: b.key.slice(8), value: b.purchases }))} labelEvery={5} />
                   </div>
-                </section>
-                <section className="stack">
-                  <h2 className="section-title">{t("today.loyaltyActivity")}</h2>
-                  <div className="grid3">
-                    <Stat label={t("today.pointsEarned")} value={num(data.loyalty.earned30)} sub={t("today.last30")} />
-                    <Stat label={t("today.pointsRedeemed")} value={num(data.loyalty.redeemed30)} sub={t("today.last30")} />
-                    <Stat label={t("today.pointsOutstanding")} value={num(data.loyalty.outstanding)} to="/loyalty" />
-                  </div>
-                </section>
+                </Card>
+                <div className="grid3">
+                  <Stat label={t("today.pointsEarned")} value={num(d.loyalty.earned30)} sub={t("today.last30")} />
+                  <Stat label={t("today.pointsRedeemed")} value={num(d.loyalty.redeemed30)} sub={t("today.last30")} />
+                  <Stat label={t("today.followUpsDue")} value={num(d.followUpsDue)} tone={d.followUpsDue ? "warn" : ""} to="/actions/followups" />
+                </div>
+                <Link to="/actions" className="banner-cta">
+                  <span className="ico"><Target /></span>
+                  <div className="grow"><div className="strong" style={{ fontSize: "1.1rem" }}>{t("nav.actions")}</div><div className="small" style={{ opacity: .85 }}>{attention ? t("today.smartBanner", { count: attention }) : t("today.noAttention")}</div></div>
+                  <Chevron />
+                </Link>
               </>
             ) : null}
             {!canWrite ? <p className="muted small">{t("license.readOnlyNote")}</p> : null}
-            <p className="tiny muted" style={{ textAlign: "center" }}>{t("today.asOf", { date: localDate(new Date()) })}</p>
           </>
         ) : null}
       </div>
@@ -105,4 +112,3 @@ export function TodayPage() {
     </Page>
   );
 }
-

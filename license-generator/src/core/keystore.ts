@@ -77,7 +77,7 @@ export class KeyStore {
     const salt = randomBytes(16);
     const iv = randomBytes(12);
     const header = {
-      format: FORMAT, version: 1 as const, keyId: keyIdFor(publicKey), publicKey: base64urlEncode(publicKey), createdAt,
+      format: FORMAT as typeof FORMAT, version: 1 as const, keyId: keyIdFor(publicKey), publicKey: base64urlEncode(publicKey), createdAt,
       kdf: { name: "scrypt" as const, N: SCRYPT.N, r: SCRYPT.r, p: SCRYPT.p, salt: base64urlEncode(salt) },
     };
     const cipher = createCipheriv("aes-256-gcm", deriveKey(passphrase, salt), iv);

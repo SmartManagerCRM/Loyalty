@@ -1,0 +1,63 @@
+name: Build Android app
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths: ["app/**", "packages/**", "package*.json", ".github/workflows/android.yml"]
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+
+      # Public verification keys only. Set the repository variable LICENSE_TRUSTED_KEYS to the JSON saved by the
+      # License Generator ("Save public key file"), or commit it as app/trusted-keys.json.
+      - name: Use trusted public keys from repository variable
+        if: ${{ vars.LICENSE_TRUSTED_KEYS != '' }}
+        run: printf '%s' "$KEYS" > app/trusted-keys.json
+        env: { KEYS: "${{ vars.LICENSE_TRUSTED_KEYS }}" }
+
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build -w app
+      - run: npx cap sync android
+        working-directory: app
+      - run: node scripts/check-no-private-key.mjs
+
+      - name: Decode release keystore (optional)
+        if: ${{ env.KS != '' }}
+        run: echo "$KS" | base64 -d > "$RUNNER_TEMP/release.jks" && echo "SMLOYALTY_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+        env: { KS: "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" }
+
+      - name: Build APK and AAB
+        working-directory: app/android
+        env:
+          SMLOYALTY_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SMLOYALTY_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          SMLOYALTY_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          VERSION_CODE: ${{ github.run_number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug assembleRelease bundleRelease
+
+      - name: Verify the built packages contain no signing keys
+        run: |
+          for f in app/android/app/build/outputs/apk/*/*.apk app/android/app/build/outputs/bundle/release/*.aab; do node scripts/check-no-private-key.mjs "$f"; done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: smartmanager-loyalty-android
+          path: |
+            app/android/app/build/outputs/apk/debug/*.apk
+            app/android/app/build/outputs/apk/release/*.apk
+            app/android/app/build/outputs/bundle/release/*.aab

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Crown, Gift, Pencil, Plus, Tag } from "lucide-react";
+import { Coins, Crown, Gift, Pencil, Plus, Tag } from "lucide-react";
 import { useApp, useData } from "../../app/AppContext";
 import { Page } from "../../components/Page";
-import { Badge, Banner, Button, Card, Check, Empty, Initials, ListRow, SelectField, Sheet, Spinner, Stat, Tabs, TextArea, TextField } from "../../components/ui";
+import { Badge, Banner, BarChart, Button, Card, Check, Empty, Initials, ListRow, SelectField, Sheet, Spinner, Tabs, TextArea, TextField } from "../../components/ui";
 import { LoyaltyService } from "../../repositories/loyalty";
 import { DomainError } from "../../database/db";
 import { minorToDecimalString, parseMoney } from "../../domain/money";
-import { localDate } from "../../domain/dates";
+import { addDays, localDate, startOfLocalDayIso } from "../../domain/dates";
 import type { AudienceType, Offer, Reward, VipTier } from "../../domain/types";
 import { CustomerPicker } from "../customers/sheets";
 
@@ -21,7 +21,7 @@ export function LoyaltyPage() {
     <Page title={t("nav.loyalty")} root>
       <div className="stack-lg">
         <Tabs value={tab} onChange={(v) => setQs({ tab: v }, { replace: true })} options={[
-          { value: "points", label: t("loyalty.tab.points") }, { value: "rewards", label: t("loyalty.tab.rewards") },
+          { value: "points", label: t("loyalty.overview") }, { value: "rewards", label: t("loyalty.tab.rewards") },
           { value: "vip", label: t("loyalty.tab.vip") }, { value: "offers", label: t("loyalty.tab.offers") }]} />
         {tab === "points" ? <PointsTab /> : tab === "rewards" ? <RewardsTab /> : tab === "vip" ? <VipTab /> : <OffersTab />}
       </div>
@@ -35,31 +35,56 @@ function PointsTab() {
   const [edit, setEdit] = useState(false);
   const { data, loading } = useData(async () => {
     const insights = await svc.insights.loadAll();
-    const d = await svc.dashboard.load();
-    return { top: [...insights].sort((a, b) => b.pointsBalance - a.pointsBalance).filter((i) => i.pointsBalance > 0).slice(0, 5), d, ready: insights.filter((i) => i.rewardReady).length };
+    const today = localDate(new Date());
+    const since = addDays(today, -29);
+    const rows = await svc.ctx.db.all<{ kind: string; delta: number; created_at: string }>("SELECT kind, delta, created_at FROM points_ledger WHERE created_at >= ? AND kind IN ('earn','redeem')", [startOfLocalDayIso(since)]);
+    const days = Array.from({ length: 30 }, (_, i) => addDays(since, i));
+    const earned = new Map<string, number>(); const redeemed = new Map<string, number>();
+    for (const r of rows) { const d = localDate(r.created_at); const m = r.kind === "earn" ? earned : redeemed; m.set(d, (m.get(d) ?? 0) + Math.abs(r.delta)); }
+    const top = await svc.ctx.db.all<{ reward_name: string; points_cost: number; n: number }>("SELECT reward_name, MAX(points_cost) AS points_cost, COUNT(*) AS n FROM reward_redemptions WHERE status='redeemed' GROUP BY reward_name ORDER BY n DESC LIMIT 3");
+    const outstanding = insights.reduce((a, i) => a + i.pointsBalance, 0);
+    const redeemedTotal = Number((await svc.ctx.db.get<{ n: number }>("SELECT COUNT(*) AS n FROM reward_redemptions WHERE status='redeemed'"))!.n);
+    return { insights, days, earned, redeemed, top, outstanding, redeemedTotal, earnedMonth: days.reduce((a, d) => a + (earned.get(d) ?? 0), 0) };
   }, []);
   const r = settings.earnRule;
   return (
     <>
+      {loading ? <Spinner /> : null}
+      {data ? (
+        <>
+          <div className="forest stack">
+            <div className="row"><span className="avatar" style={{ background: "rgba(255,255,255,.14)", color: "#fff", width: 56, height: 56 }}><Coins /></span>
+              <div><div className="small muted">{t("loyalty.totalPoints")}</div><div className="bigpoints num">{num(data.outstanding)}</div></div>
+              {data.earnedMonth ? <span className="badge brand" style={{ marginInlineStart: "auto" }}>+{num(data.earnedMonth)}</span> : null}</div>
+            <div className="metric3">
+              <div><div className="v num">{num(data.insights.filter((i) => i.pointsBalance > 0).length)}</div><div className="small muted">{t("loyalty.customersEarning")}</div></div>
+              <div><div className="v num">{num(data.redeemedTotal)}</div><div className="small muted">{t("loyalty.rewardsRedeemed")}</div></div>
+              <div><div className="v num">{num(data.insights.filter((i) => i.rewardReady).length)}</div><div className="small muted">{t("loyalty.readyToRedeem")}</div></div>
+            </div>
+          </div>
+          <Card><div className="stack">
+            <div className="row between"><h3>{t("loyalty.activity")}</h3><span className="badge">{t("today.thisMonth")}</span></div>
+            <div className="row small legend"><span><i style={{ background: "var(--brand)" }} />{t("loyalty.issued")}</span><span><i style={{ background: "#e0b04a" }} />{t("loyalty.redeemedLegend")}</span></div>
+            <BarChart ariaLabel={t("loyalty.activity")} data={data.days.map((d) => ({ label: d.slice(8), value: data.earned.get(d) ?? 0 }))} secondary={data.days.map((d) => data.redeemed.get(d) ?? 0)} labelEvery={5} />
+          </div></Card>
+          <Card><div className="stack">
+            <div className="row between"><h3>{t("loyalty.topRewards")}</h3></div>
+            {data.top.length === 0 ? <p className="muted small">{t("reports.noRedemptions")}</p> : data.top.map((x) => (
+              <div key={x.reward_name} className="row"><span className="avatar gold"><Gift size={20} /></span><div className="grow"><div className="strong">{x.reward_name}</div><div className="small muted">{t("redeem.cost", { points: num(Number(x.points_cost)) })}</div></div><Badge tone="brand">{num(Number(x.n))} {t("loyalty.redeemedCount")}</Badge></div>
+            ))}
+          </div></Card>
+        </>
+      ) : null}
       <Card>
         <div className="stack">
           <div className="row between"><h3>{t("loyalty.earnRule")}</h3><Button sm write onClick={() => setEdit(true)}><Pencil />{t("common.edit")}</Button></div>
           <p>{t("loyalty.earnRuleText", { points: r.points, amount: money(r.perAmountMinor) })}{r.perVisitBonus ? ` ${t("loyalty.visitBonusText", { points: r.perVisitBonus })}` : ""}{r.minPurchaseMinor ? ` ${t("loyalty.minPurchaseText", { amount: money(r.minPurchaseMinor) })}` : ""}</p>
         </div>
       </Card>
-      {loading ? <Spinner /> : null}
-      {data ? (
+      {data && data.insights.some((i) => i.pointsBalance > 0) ? (
         <>
-          <div className="grid3">
-            <Stat label={t("today.pointsOutstanding")} value={num(data.d.loyalty.outstanding)} tone="brand" />
-            <Stat label={t("today.pointsEarned")} value={num(data.d.loyalty.earned30)} sub={t("today.last30")} />
-            <Stat label={t("today.pointsRedeemed")} value={num(data.d.loyalty.redeemed30)} sub={t("today.last30")} />
-          </div>
-          <Link to="/actions/points_reminder" className="card link"><div className="row"><Gift color="var(--brand-deep)" /><div className="grow strong">{t("loyalty.readyCount", { count: data.ready })}</div></div></Link>
           <h2 className="section-title">{t("loyalty.topBalances")}</h2>
-          {data.top.length === 0 ? <p className="muted small">{t("loyalty.noPoints")}</p> : (
-            <div className="card flush list">{data.top.map((i) => <ListRow key={i.id} to={`/customers/${i.id}`} leading={<Initials name={i.name} gold={i.isVip} />} title={i.name} trailing={<strong className="num">{num(i.pointsBalance)}</strong>} />)}</div>
-          )}
+          <div className="card flush list">{[...data.insights].sort((a, b) => b.pointsBalance - a.pointsBalance).filter((i) => i.pointsBalance > 0).slice(0, 5).map((i) => <ListRow key={i.id} to={`/customers/${i.id}`} leading={<Initials name={i.name} gold={i.isVip} />} title={i.name} trailing={<strong className="num">{num(i.pointsBalance)}</strong>} />)}</div>
         </>
       ) : null}
       <IntegrityCheck />

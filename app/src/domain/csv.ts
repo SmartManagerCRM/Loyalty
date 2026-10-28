@@ -7,7 +7,7 @@ export interface ParsedCsv {
 }
 
 export function parseCsv(text: string): ParsedCsv {
-  const clean = text.replace(/^﻿/, "");
+  const clean = text.replace(/^\uFEFF/, "");
   const res = Papa.parse<string[]>(clean, { skipEmptyLines: "greedy" });
   const all = (res.data as string[][]).map((r) => r.map((c) => String(c ?? "")));
   const headers = (all[0] ?? []).map((h) => sanitizeText(h, 80));

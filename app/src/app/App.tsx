@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { Home, Users, Sparkles, Gift } from "lucide-react";
+import { Home, Users, Zap, Gift, Menu } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { useApp } from "./AppContext";
 import { Banner, LinkButton, Toasts } from "../components/ui";
@@ -60,8 +60,9 @@ function Shell() {
   const items = [
     { to: "/today", icon: Home, label: t("nav.today") },
     { to: "/customers", icon: Users, label: t("nav.customers") },
-    { to: "/actions", icon: Sparkles, label: t("nav.actions") },
+    { to: "/actions", icon: Zap, label: t("nav.actionsShort") },
     { to: "/loyalty", icon: Gift, label: t("nav.loyaltyShort") },
+    { to: "/more", icon: Menu, label: t("nav.more") },
   ];
   return (
     <div className="app" key={lang}>
