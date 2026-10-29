@@ -5,6 +5,14 @@ on:
     branches: [main, "claude/**"]
     paths: ["app/**", "packages/**", "package*.json", ".github/workflows/android.yml"]
   workflow_dispatch:
+    inputs:
+      trusted_keys_json:
+        description: "Public key file exported from the License Manager (paste its content). Leave empty to use app/trusted-keys.json"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
 
 jobs:
   android:
@@ -26,6 +34,11 @@ jobs:
 
       # Public verification keys only. Set the repository variable LICENSE_TRUSTED_KEYS to the JSON saved by the
       # License Generator ("Save public key file"), or commit it as app/trusted-keys.json.
+      - name: Use trusted public keys from workflow input
+        if: ${{ github.event.inputs.trusted_keys_json != '' }}
+        run: printf '%s' "$KEYS" > app/trusted-keys.json
+        env: { KEYS: "${{ github.event.inputs.trusted_keys_json }}" }
+
       - name: Use trusted public keys from repository variable
         if: ${{ vars.LICENSE_TRUSTED_KEYS != '' }}
         run: printf '%s' "$KEYS" > app/trusted-keys.json
@@ -66,3 +79,24 @@ jobs:
             app/android/app/build/outputs/apk/debug/*.apk
             app/android/app/build/outputs/apk/release/*.apk
             app/android/app/build/outputs/bundle/release/*.aab
+
+      - name: Assemble the package (app + license manager + docs)
+        run: |
+          P=SmartManager-Loyalty-Package
+          mkdir -p $P/License-Manager $P/docs
+          cp app/android/app/build/outputs/apk/debug/app-debug.apk $P/SmartManagerLoyalty.apk
+          cp license-manager/index.html $P/License-Manager/index.html
+          cp package/START_HERE.txt $P/START_HERE.txt
+          cp docs/LICENSE_GENERATOR_GUIDE.md docs/LICENSING.md docs/BACKUP_RESTORE.md docs/BUILD_ANDROID.md docs/BUILD_IOS.md $P/docs/
+          KEYS=$(node -p "require('./app/trusted-keys.json').map(k=>k.keyId).join(', ') || 'NONE - the app cannot be activated'")
+          { echo "Built from commit $GITHUB_SHA (run $GITHUB_RUN_NUMBER)"; echo "Trusted license key ids: $KEYS"; echo "APK sha256: $(sha256sum $P/SmartManagerLoyalty.apk | cut -d' ' -f1)"; } > $P/BUILD_INFO.txt
+          node scripts/check-no-private-key.mjs $P/SmartManagerLoyalty.apk
+          zip -r $P.zip $P
+      - uses: actions/upload-artifact@v4
+        with: { name: SmartManager-Loyalty-Package, path: SmartManager-Loyalty-Package.zip }
+      - name: Publish as a GitHub Release (easy download)
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          gh release create "build-${GITHUB_RUN_NUMBER}" SmartManager-Loyalty-Package.zip --target "$GITHUB_SHA" --prerelease \
+            --title "SmartManager Loyalty package (build ${GITHUB_RUN_NUMBER})" \
+            --notes "App APK + License Manager + docs. Read START_HERE.txt inside the zip. $(cat SmartManager-Loyalty-Package/BUILD_INFO.txt | tr '\n' ' ')"

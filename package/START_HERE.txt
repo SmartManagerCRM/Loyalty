@@ -1,0 +1,34 @@
+SMARTMANAGER LOYALTY - PACKAGE
+==============================
+
+This zip contains:
+  SmartManagerLoyalty.apk          the Android app (install on the customer's phone)
+  License-Manager/index.html       your license tool (double-click; works offline in Chrome/Edge/Firefox)
+  docs/                            guides (license manager, backup, Android/iOS build)
+
+HOW IT FITS TOGETHER
+  1. The customer installs the APK and opens it. The activation screen shows a Device ID and a
+     "Share request / Copy request text" button.
+  2. The customer sends you that request code (WhatsApp, email...).
+  3. You open License-Manager/index.html -> tab 2 "Issue license": paste the code, type the customer
+     name, choose Lifetime or Subscription (days), press "Issue license".
+  4. Send the license code (or the downloaded .smloyaltylicense file) back. The customer pastes/imports it
+     in the app. Done - everything works offline.
+
+FIRST-TIME SETUP (once, before the first customer)
+  A. Open License-Manager/index.html -> tab 1 "Keys": choose a passphrase, press "Create new signing key".
+     A backup file (.smlkey) downloads - keep TWO copies offline and the passphrase separately.
+  B. Press "Export public key for the app (.json)". This file tells the app which licenses to trust.
+  C. Build the app with that public key: in GitHub -> Actions -> "Build Android app" -> "Run workflow",
+     paste the content of the exported file into "trusted_keys_json". Download the new package from
+     Releases. (Or save the file as app/trusted-keys.json in the repository and push.)
+  IMPORTANT: an APK built WITHOUT your public key installs fine but cannot be activated. This package's
+  APK is built with whatever key was provided at build time - see BUILD_INFO.txt.
+
+NOTES
+  * The APK in this package is signed with a debug certificate: fine for installing and testing. For
+    Google Play / long-term updates add your own release keystore (docs/BUILD_ANDROID.md).
+  * iPhone: needs a separate iOS build (docs/BUILD_IOS.md). An APK does not run on iPhone.
+  * The license key and register live in the browser you open the License Manager with. Keep the .smlkey
+    backup; use "Download register backup" regularly.
+  * Customer data lives only on the customer's phone: tell them to use More -> Backup & restore.
