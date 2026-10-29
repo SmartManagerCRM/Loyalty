@@ -124,7 +124,7 @@ describe("scoring", () => {
   const facts = (over: Partial<CustomerFacts> & { visitsDaysAgo?: number[] }): CustomerFacts => ({
     id: "c1", name: "Test", createdAt: "2025-01-01T00:00:00Z", birthday: null, consent: "granted", hasPhone: true, tags: [],
     purchaseAts: (over.visitsDaysAgo ?? []).map((d) => new Date(now.getTime() - d * 86_400_000).toISOString()),
-    spendMinor: 10000, pointsBalance: 0, tierId: null, tierName: null, lastContactAt: null, nextFollowUpOn: null, affordableRewards: [], ...over,
+    spendMinor: 10000, pointsBalance: 0, tierId: null, tierName: null, lastContactAt: null, nextFollowUpOn: null, affordableRewards: [], returnIntervalDays: null, ...over,
   });
 
   it("learns the usual interval and flags lapsing customers with an explanation", () => {
@@ -168,6 +168,19 @@ describe("scoring", () => {
     expect(evaluateEligibility("birthday", b, cfg)!.reasons[0]).toEqual({ key: "birthdaySoon", params: { days: 2 } });
     const r = computeInsight(facts({ visitsDaysAgo: [10, 30], pointsBalance: 150, affordableRewards: [{ id: "r", name: "Free coffee", cost: 100 }] }), cfg, now);
     expect(evaluateEligibility("points_reminder", r, cfg)).not.toBeNull();
+  });
+  it("uses a per-customer return period instead of history, without the minimum-day floors", () => {
+    const i = computeInsight(facts({ visitsDaysAgo: [12, 40, 80], returnIntervalDays: 7 }), cfg, now);
+    expect(i.intervalCustom).toBe(true);
+    expect(i.effectiveIntervalDays).toBe(7);
+    expect(i.atRiskAfterDays).toBe(11);
+    expect(i.band).toBe("at_risk");
+    expect(evaluateEligibility("prevent_churn", i, cfg)!.reasons[0]).toEqual({ key: "noPurchaseCustom", params: { days: 12, interval: 7 } });
+    const auto = computeInsight(facts({ visitsDaysAgo: [12, 40, 80] }), cfg, now);
+    expect(auto.intervalCustom).toBe(false);
+    expect(auto.band).toBe("active");
+    const slow = computeInsight(facts({ visitsDaysAgo: [60], returnIntervalDays: 90 }), cfg, now);
+    expect(slow.band).toBe("active");
   });
   it("never labels anyone 'lost' - bands are at_risk/inactive", () => {
     const i = computeInsight(facts({ visitsDaysAgo: [900] }), cfg, now);

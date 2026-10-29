@@ -48,6 +48,36 @@ describe("customers", () => {
   });
 });
 
+describe("customer return period", () => {
+  it("is saved from the form fields, validated, and drives the insight", async () => {
+    const env = await makeEnv(new Date("2026-06-01T10:00:00Z"));
+    const { svc } = env;
+    const c = await svc.customers.create({ name: "Weekly Wendy", returnIntervalDays: 7 });
+    expect(c.returnIntervalDays).toBe(7);
+    await expectCode(svc.customers.create({ name: "Bad", returnIntervalDays: 0 }), "return_interval_invalid");
+    await expectCode(svc.customers.create({ name: "Bad", returnIntervalDays: 731 }), "return_interval_invalid");
+    expect((await svc.customers.create({ name: "Auto" })).returnIntervalDays).toBeNull();
+    await svc.loyalty.recordPurchase({ customerId: c.id, amountMinor: 1000, occurredAt: daysAgo(env, 13) });
+    await svc.loyalty.recordPurchase({ customerId: c.id, amountMinor: 1000, occurredAt: daysAgo(env, 40) });
+    const i = (await svc.insights.loadOne(c.id))!;
+    expect(i.intervalCustom).toBe(true);
+    expect(i.band).toBe("at_risk");
+    const u = await svc.customers.update(c.id, { name: "Weekly Wendy", returnIntervalDays: null });
+    expect(u.returnIntervalDays).toBeNull();
+    expect((await svc.insights.loadOne(c.id))!.intervalCustom).toBe(false);
+  });
+  it("can be imported from CSV and is part of backups (schema v2)", async () => {
+    const { svc } = await makeEnv();
+    const prev = await svc.io.preview(svc.io.parse("Name,Return days\nA,14\nB,abc"), { name: 0, return_days: 1 });
+    expect(prev.rows[1]!.errors).toContain("return_interval_invalid");
+    await svc.io.commit(prev);
+    expect((await svc.customers.list())[0]!.returnIntervalDays).toBe(14);
+    const b = await svc.backup.create();
+    expect(b.schemaVersion).toBe(2);
+    expect(b.data.customers![0]).toHaveProperty("return_interval_days", 14);
+  });
+});
+
 describe("transactions, ledger, redemption", () => {
   it("earns points from purchases and keeps the ledger as source of truth", async () => {
     const { svc } = await makeEnv();

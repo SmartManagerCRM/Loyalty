@@ -1,6 +1,6 @@
 import type { CurrencyConfig } from "./money";
 
-export type Language = "en" | "ar";
+export type Language = "en" | "ar" | "fr";
 export type DateFormat = "DMY" | "MDY" | "YMD";
 
 export interface BusinessSettings {

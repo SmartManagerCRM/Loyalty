@@ -6,6 +6,7 @@ import { Banner, Button, Card, Chips, SelectField, TextField } from "../../compo
 import { CURRENCIES, minorToDecimalString, parseMoney } from "../../domain/money";
 import { BUSINESS_TYPES, DateFormat, Language } from "../../domain/settings";
 import { LANGUAGES } from "../../i18n";
+import { LogoFull } from "../../components/Logo";
 
 async function toLogo(file: File): Promise<string | null> {
   try {
@@ -70,6 +71,7 @@ export function SetupWizard() {
     <div className="app" dir={LANGUAGES.find((l) => l.code === lang)?.dir}>
       <main className="content no-nav">
         <div className="stack-lg">
+          <LogoFull width={200} />
           <div className="hero"><h2 style={{ fontSize: "1.4rem" }}>{t("setup.title")}</h2><p className="muted" style={{ marginTop: 6 }}>{t("setup.intro")}</p></div>
 
           <Card>

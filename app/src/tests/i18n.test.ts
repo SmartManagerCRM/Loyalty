@@ -3,6 +3,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { en } from "../i18n/en";
 import { ar } from "../i18n/ar";
+import { fr } from "../i18n/fr";
 import { ACTION_TYPES, BUILT_IN_STATUSES } from "../domain/types";
 
 function walk(dir: string): string[] {
@@ -16,6 +17,11 @@ const src = walk(join(__dirname, "..")).map((f) => readFileSync(f, "utf8")).join
 describe("translations", () => {
   it("Arabic has exactly the same keys as English", () => {
     expect(Object.keys(ar).sort()).toEqual(Object.keys(en).sort());
+  });
+  it("French has exactly the same keys and placeholders as English", () => {
+    expect(Object.keys(fr).sort()).toEqual(Object.keys(en).sort());
+    const ph = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(",");
+    for (const k of Object.keys(en)) expect(ph(fr[k]!), k).toBe(ph(en[k]!));
   });
   it("has no empty strings except intentionally blank banner keys", () => {
     for (const [k, v] of Object.entries(en)) if (!v && !k.startsWith("licenseBanner.active")) throw new Error(`empty en: ${k}`);

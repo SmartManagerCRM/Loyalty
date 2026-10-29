@@ -236,4 +236,7 @@ export const en: Record<string, string> = {
   "err.license_bad_signature": "The license is not genuine or was modified.", "err.license_non_canonical": "The license file is malformed.", "err.license_missing_field": "The license is incomplete.", "err.license_wrong_product": "This license is for a different product.",
   "err.license_wrong_device": "This license was issued for a different device.", "err.license_expired_on_import": "This license has already expired.", "err.license_clock_anomaly": "Your device date looks wrong. Correct it and try again.",
   "err.license_older_than_installed": "A newer license is already installed.", "err.clock_reviews_exhausted": "You can no longer confirm the date. Correct the device clock or request a new license.", "err.file_too_large": "The file is too large.",
+  "reason.noPurchaseCustom": "No purchase in {days} days; this customer's return period is set to {interval} days.",
+  "customers.returnDays": "Return period (days)", "customers.returnDaysHint": "How often this customer usually comes back. Leave empty to learn it automatically from purchases.",
+  "profile.intervalCustom": "{days} days (set by you)", "err.return_interval_invalid": "Enter a whole number of days between 1 and 730.", "import.field.return_days": "Return period (days)",
 };

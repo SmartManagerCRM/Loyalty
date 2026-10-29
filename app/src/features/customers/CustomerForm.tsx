@@ -13,7 +13,7 @@ export function CustomerFormPage() {
   const nav = useNavigate();
   const { data: existing, loading } = useData(async () => (id ? svc.customers.get(id) : null), [id]);
   const { data: allTags } = useData(() => svc.customers.allTags(), []);
-  const [f, setF] = useState({ name: "", phone: "", email: "", birthday: "", noYear: false, notes: "", channel: "whatsapp" as Channel, consent: "unknown" as Consent, tags: "", custom: {} as Record<string, string> });
+  const [f, setF] = useState({ name: "", phone: "", email: "", birthday: "", noYear: false, notes: "", channel: "whatsapp" as Channel, consent: "unknown" as Consent, tags: "", returnDays: "", custom: {} as Record<string, string> });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dups, setDups] = useState<DuplicateMatch[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -21,7 +21,7 @@ export function CustomerFormPage() {
   useEffect(() => {
     if (!existing) return;
     const c: Customer = existing;
-    setF({ name: c.name, phone: c.phone ?? "", email: c.email ?? "", birthday: c.birthday?.startsWith("--") ? `2000-${c.birthday.slice(2)}` : c.birthday ?? "", noYear: !!c.birthday?.startsWith("--"), notes: c.notes ?? "", channel: c.preferredChannel, consent: c.consent, tags: c.tags.join(", "), custom: c.customFields });
+    setF({ name: c.name, phone: c.phone ?? "", email: c.email ?? "", birthday: c.birthday?.startsWith("--") ? `2000-${c.birthday.slice(2)}` : c.birthday ?? "", noYear: !!c.birthday?.startsWith("--"), notes: c.notes ?? "", channel: c.preferredChannel, consent: c.consent, tags: c.tags.join(", "), returnDays: c.returnIntervalDays ? String(c.returnIntervalDays) : "", custom: c.customFields });
   }, [existing]);
 
   const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((x) => ({ ...x, [k]: v }));
@@ -30,6 +30,7 @@ export function CustomerFormPage() {
     name: f.name, phone: f.phone || null, email: f.email || null, notes: f.notes || null, preferredChannel: f.channel, consent: f.consent,
     birthday: f.birthday ? (f.noYear ? `--${f.birthday.slice(5)}` : f.birthday) : null,
     tags: f.tags.split(/[,،;]/).map((s) => s.trim()).filter(Boolean), customFields: f.custom,
+    returnIntervalDays: f.returnDays.trim() === "" ? null : Number(f.returnDays),
   });
 
   const save = async (skipDupCheck = false) => {
@@ -46,7 +47,7 @@ export function CustomerFormPage() {
       bump();
       nav(`/customers/${saved.id}`, { replace: true });
     } catch (e) {
-      if (e instanceof DomainError && ["name_required", "phone_invalid", "email_invalid", "birthday_invalid"].includes(e.code)) {
+      if (e instanceof DomainError && ["name_required", "phone_invalid", "email_invalid", "birthday_invalid", "return_interval_invalid"].includes(e.code)) {
         setErrors({ [e.code.split("_")[0]!]: t(`err.${e.code}`) });
       } else fail(e);
     } finally { setBusy(false); }
@@ -73,6 +74,7 @@ export function CustomerFormPage() {
             </SelectField>
           </div>
           <p className="hint">{t("customers.consentHint")}</p>
+          <TextField label={`${t("customers.returnDays")} (${t("common.optional")})`} hint={t("customers.returnDaysHint")} inputMode="numeric" value={f.returnDays} onChange={(e) => set("returnDays", e.target.value.replace(/\D/g, "").slice(0, 3))} error={errors.return} dir="ltr" />
           <TextField label={t("customers.tags")} hint={allTags?.length ? `${t("customers.tagsHint")} ${allTags.slice(0, 6).join(", ")}` : t("customers.tagsHint")} value={f.tags} onChange={(e) => set("tags", e.target.value)} />
           {settings.customFields.map((cf) => (
             <TextField key={cf.key} label={cf.label} value={f.custom[cf.key] ?? ""} onChange={(e) => set("custom", { ...f.custom, [cf.key]: e.target.value })} maxLength={200} />

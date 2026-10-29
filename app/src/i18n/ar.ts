@@ -217,4 +217,7 @@ export const ar: Record<string, string> = {
   "err.license_bad_signature": "الترخيص غير أصلي أو تم تعديله.", "err.license_non_canonical": "ملف الترخيص مشوّه.", "err.license_missing_field": "الترخيص ناقص.", "err.license_wrong_product": "هذا الترخيص لمنتج آخر.",
   "err.license_wrong_device": "أُصدر هذا الترخيص لجهاز آخر.", "err.license_expired_on_import": "انتهى هذا الترخيص بالفعل.", "err.license_clock_anomaly": "تاريخ جهازك يبدو خاطئاً. صحّحه وحاول مجدداً.",
   "err.license_older_than_installed": "يوجد ترخيص أحدث مثبّت بالفعل.", "err.clock_reviews_exhausted": "لم يعد بإمكانك تأكيد التاريخ. صحّح ساعة الجهاز أو اطلب ترخيصاً جديداً.", "err.file_too_large": "الملف كبير جداً.",
+  "reason.noPurchaseCustom": "لا مشتريات منذ {days} يوماً؛ وفترة عودة هذا العميل محددة بـ {interval} يوماً.",
+  "customers.returnDays": "فترة العودة (أيام)", "customers.returnDaysHint": "كم يوماً يعود العميل عادةً. اتركه فارغاً ليُحسب تلقائياً من مشترياته.",
+  "profile.intervalCustom": "{days} يوم (حددتها أنت)", "err.return_interval_invalid": "أدخل عدداً صحيحاً من الأيام بين 1 و730.", "import.field.return_days": "فترة العودة (أيام)",
 };

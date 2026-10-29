@@ -15,8 +15,8 @@ export class InsightsService {
     const idFilter = opts.onlyId ? " AND c.id = ?" : "";
     const p = opts.onlyId ? [opts.onlyId] : [];
     const archivedFilter = opts.includeArchived || opts.onlyId ? "1=1" : "c.archived_at IS NULL";
-    const customers = await db.all<{ id: string; name: string; created_at: string; birthday: string | null; consent_status: string; phone_norm: string | null; email: string | null }>(
-      `SELECT c.id, c.name, c.created_at, c.birthday, c.consent_status, c.phone_norm, c.email FROM customers c WHERE ${archivedFilter}${idFilter}`, p);
+    const customers = await db.all<{ id: string; name: string; created_at: string; birthday: string | null; consent_status: string; phone_norm: string | null; email: string | null; return_interval_days: number | null }>(
+      `SELECT c.id, c.name, c.created_at, c.birthday, c.consent_status, c.phone_norm, c.email, c.return_interval_days FROM customers c WHERE ${archivedFilter}${idFilter}`, p);
     if (!customers.length) return [];
     const scope = opts.onlyId ? " AND customer_id = ?" : "";
     const purchases = await db.all<{ customer_id: string; occurred_at: string; amount_minor: number }>(
@@ -51,6 +51,7 @@ export class InsightsService {
         hasPhone: !!c.phone_norm, tags: (tagsByC.get(c.id) ?? []).map((t) => t.name),
         purchaseAts: ps.map((r) => r.occurred_at), spendMinor: spend, pointsBalance: balance,
         tierId: tier?.id ?? null, tierName: tier?.name ?? null, lastContactAt: contactBy.get(c.id) ?? null, nextFollowUpOn: followBy.get(c.id) ?? null,
+        returnIntervalDays: c.return_interval_days ?? null,
         affordableRewards: redeemable.filter((r) => r.pointsCost <= balance).map((r) => ({ id: r.id, name: r.name, cost: r.pointsCost })),
       };
       return computeInsight(facts, scoring, now);

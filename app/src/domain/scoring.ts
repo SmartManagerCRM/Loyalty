@@ -23,6 +23,8 @@ export interface CustomerFacts {
   nextFollowUpOn: string | null;
   /** unredeemed rewards the customer can afford now (id, name, cost), cheapest first */
   affordableRewards: { id: string; name: string; cost: number }[];
+  /** owner-set return period (days) for this customer, or null */
+  returnIntervalDays: number | null;
 }
 
 export interface CustomerInsight extends CustomerFacts {
@@ -34,6 +36,7 @@ export interface CustomerInsight extends CustomerFacts {
   usualIntervalDays: number | null;
   effectiveIntervalDays: number;
   intervalFromHistory: boolean;
+  intervalCustom: boolean;
   atRiskAfterDays: number;
   winBackAfterDays: number;
   recent90: number;
@@ -69,9 +72,11 @@ export function computeInsight(f: CustomerFacts, cfg: ScoringSettings, now: Date
     for (let i = Math.max(1, visitDays.length - 6); i < visitDays.length; i++) gaps.push(dayDiff(visitDays[i - 1]!, visitDays[i]!));
     usual = Math.max(1, Math.round(median(gaps)));
   }
-  const effective = usual ?? cfg.defaultIntervalDays;
-  const atRiskAfter = Math.max(Math.round((effective * cfg.atRiskPct) / 100), cfg.atRiskMinDays);
-  const winBackAfter = Math.max(Math.round((effective * cfg.winBackPct) / 100), cfg.winBackMinDays, atRiskAfter + 1);
+  const custom = f.returnIntervalDays ?? null;
+  const effective = custom ?? usual ?? cfg.defaultIntervalDays;
+  // With an owner-set return period the minimum-days safety floors do not apply: the owner knows this customer's rhythm.
+  const atRiskAfter = custom !== null ? Math.max(Math.round((effective * cfg.atRiskPct) / 100), effective + 1) : Math.max(Math.round((effective * cfg.atRiskPct) / 100), cfg.atRiskMinDays);
+  const winBackAfter = custom !== null ? Math.max(Math.round((effective * cfg.winBackPct) / 100), atRiskAfter + 1) : Math.max(Math.round((effective * cfg.winBackPct) / 100), cfg.winBackMinDays, atRiskAfter + 1);
 
   const d90 = addDays(today, -90);
   const d180 = addDays(today, -180);
@@ -103,7 +108,8 @@ export function computeInsight(f: CustomerFacts, cfg: ScoringSettings, now: Date
     daysSinceFirst,
     usualIntervalDays: usual,
     effectiveIntervalDays: effective,
-    intervalFromHistory: usual !== null,
+    intervalFromHistory: usual !== null && custom === null,
+    intervalCustom: custom !== null,
     atRiskAfterDays: atRiskAfter,
     winBackAfterDays: winBackAfter,
     recent90,
@@ -129,6 +135,7 @@ export interface Candidate {
 }
 
 function silenceReason(i: CustomerInsight): Reason {
+  if (i.intervalCustom) return { key: "noPurchaseCustom", params: { days: i.daysSinceLast ?? 0, interval: i.effectiveIntervalDays } };
   return i.intervalFromHistory
     ? { key: "noPurchaseUsual", params: { days: i.daysSinceLast ?? 0, interval: i.effectiveIntervalDays } }
     : { key: "noPurchaseDefault", params: { days: i.daysSinceLast ?? 0, interval: i.effectiveIntervalDays } };

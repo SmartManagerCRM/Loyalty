@@ -1,13 +1,15 @@
 import { en } from "./en";
 import { ar } from "./ar";
+import { fr } from "./fr";
 import type { Language, DateFormat } from "../domain/settings";
 
 export type Dict = Record<string, string>;
-export const DICTIONARIES: Record<string, Dict> = { en, ar };
-/** To add French: create fr.ts exporting a Dict and register it here and in LANGUAGES. Missing keys fall back to English. */
+export const DICTIONARIES: Record<string, Dict> = { en, ar, fr };
+/** To add another language: create xx.ts exporting a Dict, register it here and in LANGUAGES / the Language type. Missing keys fall back to English. */
 export const LANGUAGES: { code: Language; label: string; dir: "ltr" | "rtl" }[] = [
   { code: "en", label: "English", dir: "ltr" },
   { code: "ar", label: "العربية", dir: "rtl" },
+  { code: "fr", label: "Français", dir: "ltr" },
 ];
 
 export function translate(lang: string, key: string, params?: Record<string, string | number>): string {

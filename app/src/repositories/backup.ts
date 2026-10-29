@@ -10,7 +10,7 @@ import { decryptBackup, encryptBackup, EncryptedBackupFile } from "../domain/bac
 
 export const BACKUP_FORMAT = "smloyalty-backup";
 export const BACKUP_FORMAT_VERSION = 1;
-export const APP_VERSION = "1.0.0";
+export const APP_VERSION = "1.0.1";
 
 /** Business-data tables in parent-before-child order. license_state and schema_migrations are deliberately excluded. */
 export const BACKUP_TABLES = [

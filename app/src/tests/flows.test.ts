@@ -408,3 +408,19 @@ describe("licensing in the app", () => {
     expect(parseActivationRequest(JSON.stringify(req)).ok).toBe(true);
   });
 });
+
+describe("older backups", () => {
+  it("restores a schema v1 backup (before return periods existed) into the current schema", async () => {
+    const { svc } = await makeEnv();
+    await svc.customers.create({ name: "Old Olga" });
+    const b = JSON.parse(JSON.stringify(await svc.backup.create()));
+    for (const r of b.data.customers) delete r.return_interval_days;
+    b.schemaVersion = 1;
+    const old = await forge(b);
+    const { db: db2 } = await openSqlJsDb();
+    const svc2 = await createServices(db2);
+    await svc2.backup.restore(old);
+    const [c] = await svc2.customers.list();
+    expect(c).toMatchObject({ name: "Old Olga", returnIntervalDays: null });
+  });
+});

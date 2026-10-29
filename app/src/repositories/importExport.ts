@@ -22,6 +22,7 @@ export interface PreviewRow {
   lastVisitOn: string | null;
   totalSpentMinor: number;
   code?: string;
+  returnDays: number | null;
 }
 export interface ImportPreview {
   headers: string[];
@@ -84,16 +85,23 @@ export class ImportExportService {
         if (!/^\d{1,9}$/.test(opRaw.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x660)))) errors.push("points_invalid");
         else openingPoints = Number(opRaw.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x660)));
       }
+      const rdRaw = get(raw, "return_days");
+      let returnDays: number | null = null;
+      if (rdRaw) {
+        const n = Number(rdRaw.replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x660)));
+        if (!Number.isInteger(n) || n < 1 || n > 730) errors.push("return_interval_invalid");
+        else returnDays = n;
+      }
       const code = get(raw, "code");
       if (code && codes.has(code)) errors.push("code_exists");
       if (totalSpentMinor > 0 && !lastVisitOn) errors.push("spend_needs_date");
 
-      const row: PreviewRow = { line, raw, status: "ok", errors, openingPoints, lastVisitOn, totalSpentMinor, code: code || undefined };
+      const row: PreviewRow = { line, raw, status: "ok", errors, openingPoints, lastVisitOn, totalSpentMinor, code: code || undefined, returnDays };
       if (errors.length) { row.status = "error"; return row; }
 
       row.input = {
         name, phone: phoneRaw || null, email: emailRaw || null, birthday, notes: get(raw, "notes") || null,
-        tags: get(raw, "tags").split(/[;|,]/).map((t) => t.trim()).filter(Boolean),
+        tags: get(raw, "tags").split(/[;|,]/).map((t) => t.trim()).filter(Boolean), returnIntervalDays: returnDays,
       };
       const emailNorm = normalizeEmail(emailRaw);
       const dupName = (phoneNorm && byPhone.get(phoneNorm)) || (emailNorm && byEmail.get(emailNorm));

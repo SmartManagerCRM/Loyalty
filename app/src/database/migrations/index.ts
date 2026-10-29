@@ -1,5 +1,6 @@
 import type { Db } from "../db";
 import { m001 } from "./001_initial";
+import { m002 } from "./002_return_interval";
 
 export interface Migration {
   version: number;
@@ -7,7 +8,7 @@ export interface Migration {
   sql: string;
 }
 
-export const MIGRATIONS: Migration[] = [m001];
+export const MIGRATIONS: Migration[] = [m001, m002];
 export const LATEST_SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1]!.version;
 
 function statements(sql: string): string[] {

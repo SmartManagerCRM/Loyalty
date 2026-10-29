@@ -4,6 +4,7 @@ import { useApp } from "../../app/AppContext";
 import { Banner, Button, Card, TextArea, TextField } from "../../components/ui";
 import { copyText, pickTextFile, saveAndShare } from "../../services/files";
 import { LANGUAGES } from "../../i18n";
+import { LogoFull } from "../../components/Logo";
 import { DomainError } from "../../database/db";
 import type { Language } from "../../domain/settings";
 
@@ -43,15 +44,16 @@ export function ActivationScreen() {
     <div className="app">
       <main className="content no-nav">
         <div className="stack-lg">
-          <div className="row between">
+          <div className="row between wrap">
             <div className="row"><KeyRound color="var(--brand)" /><strong>SmartManager Loyalty</strong></div>
-            <div className="row" role="group" aria-label={t("settings.language")}>
+            <div className="row wrap" role="group" aria-label={t("settings.language")}>
               {LANGUAGES.map((l) => (
                 <button key={l.code} type="button" className={`chip ${settings.locale.language === l.code ? "on" : ""}`} onClick={() => void setLang(l.code)}>{l.label}</button>
               ))}
             </div>
           </div>
 
+          <LogoFull />
           <div className="hero">
             <h2 style={{ fontSize: "1.4rem" }}>{t("activation.title")}</h2>
             <p className="muted" style={{ marginTop: 6 }}>{t("activation.intro")}</p>

@@ -14,7 +14,7 @@ export function parseCsv(text: string): ParsedCsv {
   return { headers, rows: all.slice(1) };
 }
 
-export const IMPORT_FIELDS = ["name", "phone", "email", "birthday", "code", "notes", "tags", "opening_points", "last_visit_date", "total_spent"] as const;
+export const IMPORT_FIELDS = ["name", "phone", "email", "birthday", "code", "notes", "tags", "opening_points", "last_visit_date", "total_spent", "return_days"] as const;
 export type ImportField = (typeof IMPORT_FIELDS)[number];
 export type ColumnMapping = Partial<Record<ImportField, number>>;
 
@@ -29,6 +29,7 @@ const SYNONYMS: Record<ImportField, string[]> = {
   opening_points: ["points", "opening points", "points balance", "loyalty points", "النقاط", "رصيد النقاط"],
   last_visit_date: ["last visit", "last visit date", "last purchase", "last purchase date", "آخر زيارة", "تاريخ آخر زيارة"],
   total_spent: ["total spent", "total spend", "lifetime spend", "spent", "إجمالي المشتريات", "إجمالي الإنفاق"],
+  return_days: ["return days", "return period", "visit interval", "frequency days", "فترة العودة", "période de retour"],
 };
 
 export function guessMapping(headers: string[]): ColumnMapping {

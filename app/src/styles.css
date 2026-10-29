@@ -206,7 +206,6 @@ textarea.input { min-height: 96px; resize: vertical; }
 
 /* ── design refresh: tinted tiles, forest hero, action cards ── */
 .brandbar { display: flex; align-items: center; gap: 10px; }
-.brandbar svg { width: 34px; height: 34px; flex: none; }
 .brandbar b { font-size: 1.1rem; line-height: 1; display: block; } .brandbar small { letter-spacing: .22em; font-size: .62rem; color: var(--muted); font-weight: 700; }
 .greet { position: relative; padding: 4px 2px 2px; }
 .greet small { color: var(--muted); } .greet h2 { font-size: 1.75rem; line-height: 1.1; margin: 2px 0 6px; max-width: 82%; }

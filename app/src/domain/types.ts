@@ -13,6 +13,8 @@ export interface Customer {
   preferredChannel: Channel;
   consent: Consent;
   customFields: Record<string, string>;
+  /** Owner-set usual days between visits for this customer; null = learn it from purchase history */
+  returnIntervalDays: number | null;
   tags: string[];
   archivedAt: string | null;
   createdAt: string;
@@ -28,6 +30,7 @@ export interface CustomerInput {
   preferredChannel?: Channel;
   consent?: Consent;
   customFields?: Record<string, string>;
+  returnIntervalDays?: number | null;
   tags?: string[];
 }
 

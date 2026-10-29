@@ -9,10 +9,10 @@ import type { SettingsRepo } from "./settings";
 interface Row {
   id: string; code: string; name: string; phone: string | null; phone_norm: string | null; email: string | null; birthday: string | null;
   notes: string | null; preferred_channel: Channel; consent_status: Consent; custom_fields: string; archived_at: string | null;
-  created_at: string; updated_at: string;
+  created_at: string; updated_at: string; return_interval_days: number | null;
 }
 
-const COLS = "id, code, name, phone, phone_norm, email, birthday, notes, preferred_channel, consent_status, custom_fields, archived_at, created_at, updated_at";
+const COLS = "id, code, name, phone, phone_norm, email, birthday, notes, preferred_channel, consent_status, custom_fields, archived_at, created_at, updated_at, return_interval_days";
 
 export interface DuplicateMatch {
   customer: Customer;
@@ -31,7 +31,7 @@ export class CustomersRepo {
     for (const t of tagRows) (byCustomer.get(t.customer_id) ?? byCustomer.set(t.customer_id, []).get(t.customer_id)!).push(t.name);
     return rows.map((r) => ({
       id: r.id, code: r.code, name: r.name, phone: r.phone, phoneNorm: r.phone_norm, email: r.email, birthday: r.birthday, notes: r.notes,
-      preferredChannel: r.preferred_channel, consent: r.consent_status, customFields: safeJson(r.custom_fields),
+      preferredChannel: r.preferred_channel, consent: r.consent_status, customFields: safeJson(r.custom_fields), returnIntervalDays: r.return_interval_days ?? null,
       tags: byCustomer.get(r.id) ?? [], archivedAt: r.archived_at, createdAt: r.created_at, updatedAt: r.updated_at,
     }));
   }
@@ -47,7 +47,7 @@ export class CustomersRepo {
   private async hydrateOne(r: Row): Promise<Customer> {
     return {
       id: r.id, code: r.code, name: r.name, phone: r.phone, phoneNorm: r.phone_norm, email: r.email, birthday: r.birthday, notes: r.notes,
-      preferredChannel: r.preferred_channel, consent: r.consent_status, customFields: safeJson(r.custom_fields), tags: [],
+      preferredChannel: r.preferred_channel, consent: r.consent_status, customFields: safeJson(r.custom_fields), returnIntervalDays: r.return_interval_days ?? null, tags: [],
       archivedAt: r.archived_at, createdAt: r.created_at, updatedAt: r.updated_at,
     };
   }
@@ -101,6 +101,11 @@ export class CustomersRepo {
         if (!isValidYmd(`2000-${birthday.slice(2)}`)) throw new DomainError("birthday_invalid");
       } else if (!isValidYmd(birthday)) throw new DomainError("birthday_invalid");
     }
+    let returnIntervalDays: number | null = null;
+    if (input.returnIntervalDays !== undefined && input.returnIntervalDays !== null) {
+      if (!Number.isInteger(input.returnIntervalDays) || input.returnIntervalDays < 1 || input.returnIntervalDays > 730) throw new DomainError("return_interval_invalid");
+      returnIntervalDays = input.returnIntervalDays;
+    }
     const customFields: Record<string, string> = {};
     for (const [k, v] of Object.entries(input.customFields ?? {})) {
       const val = sanitizeText(v, 200);
@@ -108,7 +113,7 @@ export class CustomersRepo {
     }
     return {
       name, phone, phoneNorm, email, emailNorm: normalizeEmail(email), birthday, notes: input.notes ? sanitizeText(input.notes, 2000) : null,
-      channel: input.preferredChannel ?? "whatsapp", consent: input.consent ?? "unknown", customFields,
+      channel: input.preferredChannel ?? "whatsapp", consent: input.consent ?? "unknown", customFields, returnIntervalDays,
       tags: [...new Set((input.tags ?? []).map((t) => sanitizeText(t, 40)).filter(Boolean))],
     };
   }
@@ -178,9 +183,9 @@ export class CustomersRepo {
     const run = async (tx: Db) => {
       const code = await this.nextCode(tx);
       await tx.run(
-        `INSERT INTO customers (id, code, name, phone, phone_norm, email, email_norm, birthday, notes, preferred_channel, consent_status, custom_fields, created_at, updated_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [id, code, v.name, v.phone, v.phoneNorm, v.email, v.emailNorm, v.birthday, v.notes, v.channel, v.consent, JSON.stringify(v.customFields), now, now],
+        `INSERT INTO customers (id, code, name, phone, phone_norm, email, email_norm, birthday, notes, preferred_channel, consent_status, custom_fields, created_at, updated_at, return_interval_days)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [id, code, v.name, v.phone, v.phoneNorm, v.email, v.emailNorm, v.birthday, v.notes, v.channel, v.consent, JSON.stringify(v.customFields), now, now, v.returnIntervalDays],
       );
       await this.syncTags(tx, id, v.tags);
       await audit(tx, this.ctx, "customer", id, "create", { code });
@@ -196,8 +201,8 @@ export class CustomersRepo {
     return this.ctx.db.transaction(async (tx) => {
       if (!(await this.get(id, tx))) throw new DomainError("not_found");
       await tx.run(
-        `UPDATE customers SET name=?, phone=?, phone_norm=?, email=?, email_norm=?, birthday=?, notes=?, preferred_channel=?, consent_status=?, custom_fields=?, updated_at=? WHERE id=?`,
-        [v.name, v.phone, v.phoneNorm, v.email, v.emailNorm, v.birthday, v.notes, v.channel, v.consent, JSON.stringify(v.customFields), this.ctx.now().toISOString(), id],
+        `UPDATE customers SET name=?, phone=?, phone_norm=?, email=?, email_norm=?, birthday=?, notes=?, preferred_channel=?, consent_status=?, custom_fields=?, updated_at=?, return_interval_days=? WHERE id=?`,
+        [v.name, v.phone, v.phoneNorm, v.email, v.emailNorm, v.birthday, v.notes, v.channel, v.consent, JSON.stringify(v.customFields), this.ctx.now().toISOString(), v.returnIntervalDays, id],
       );
       await this.syncTags(tx, id, v.tags);
       await audit(tx, this.ctx, "customer", id, "update");

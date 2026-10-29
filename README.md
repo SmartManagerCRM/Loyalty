@@ -23,3 +23,6 @@ Android/iOS builds: `docs/BUILD_ANDROID.md`, `docs/BUILD_IOS.md`. Licensing: `do
 1. Open `license-manager/index.html`, create the signing key, back it up, export the public key.
 2. Put the public key in `app/trusted-keys.json`, build the APK (CI or locally).
 3. Customer installs → activation screen → sends request → you issue a license → customer imports it.
+
+## Version
+Current app version: **1.0.1** (Android `versionName 1.0.1`, iOS `MARKETING_VERSION 1.0.1`). Languages: English, Arabic (RTL), French.

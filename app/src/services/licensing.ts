@@ -140,7 +140,7 @@ export class LicenseManager {
   buildActivationRequest(customerReference?: string): { request: ActivationRequest; fileText: string; compactText: string; filename: string } {
     const request = createActivationRequest({
       fingerprint: this.fingerprint, requestId: uuid(), createdAt: new Date(this.now()).toISOString().replace(/\.\d{3}Z$/, "Z"),
-      appVersion: this.opts.appVersion ?? "1.0.0", platform: this.opts.platform ?? "unknown", customerReference,
+      appVersion: this.opts.appVersion ?? "1.0.1", platform: this.opts.platform ?? "unknown", customerReference,
     });
     return { request, fileText: serializeActivationRequest(request), compactText: activationRequestToCompact(request), filename: `activation-request-${this.fingerprint.replace(/-/g, "").slice(0, 8)}.smloyaltyrequest` };
   }

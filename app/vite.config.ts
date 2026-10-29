@@ -22,7 +22,7 @@ function loadTrustedKeys(): unknown[] {
 export default defineConfig({
   plugins: [react()],
   base: "./",
-  define: { __TRUSTED_KEYS__: JSON.stringify(loadTrustedKeys()), __APP_VERSION__: JSON.stringify("1.0.0") },
+  define: { __TRUSTED_KEYS__: JSON.stringify(loadTrustedKeys()), __APP_VERSION__: JSON.stringify("1.0.1") },
   build: { target: "es2020", sourcemap: false, chunkSizeWarningLimit: 1200 },
   server: { host: true },
   test: { include: ["src/tests/**/*.test.ts"], environment: "node", testTimeout: 30000 },

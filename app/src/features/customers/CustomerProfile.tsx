@@ -102,7 +102,7 @@ export function CustomerProfilePage() {
               <div className="kv"><span className="muted">{t("profile.visits")}</span><strong className="num">{num(i.visitCount)}</strong></div>
               <div className="kv"><span className="muted">{t("profile.totalSpent")}</span><strong className="num">{money(i.spendMinor)}</strong></div>
               <div className="kv"><span className="muted">{t("profile.lastPurchase")}</span><strong>{i.lastVisitOn ? `${date(i.lastVisitOn)} · ${t("common.daysAgo", { days: i.daysSinceLast ?? 0 })}` : t("common.never")}</strong></div>
-              <div className="kv"><span className="muted">{t("profile.usualInterval")}</span><strong>{i.intervalFromHistory ? t("common.daysN", { days: i.usualIntervalDays ?? 0 }) : t("profile.intervalAssumed", { days: i.effectiveIntervalDays })}</strong></div>
+              <div className="kv"><span className="muted">{t("profile.usualInterval")}</span><strong>{i.intervalCustom ? t("profile.intervalCustom", { days: i.effectiveIntervalDays }) : i.intervalFromHistory ? t("common.daysN", { days: i.usualIntervalDays ?? 0 }) : t("profile.intervalAssumed", { days: i.effectiveIntervalDays })}</strong></div>
               <div className="kv"><span className="muted">{t("profile.last90")}</span><strong>{t("profile.freq", { recent: i.recent90, prior: i.prior90 })}</strong></div>
               {i.nextFollowUpOn ? <div className="kv"><span className="muted">{t("profile.nextFollowUp")}</span><strong>{date(i.nextFollowUpOn)}</strong></div> : null}
             </Card>

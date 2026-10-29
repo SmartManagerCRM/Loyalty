@@ -5,7 +5,7 @@ SQLite (native via `@capacitor-community/sqlite`; sql.js for tests/browser previ
 | Table | Purpose |
 |---|---|
 | `app_settings` | JSON key/value: business, locale, currency, earn rule, scoring thresholds, custom fields/outcomes |
-| `customers` | profile, normalised phone/email for duplicate detection, consent (`granted/unknown/do_not_contact`), archive flag |
+| `customers` | profile, optional owner-set `return_interval_days` (migration 2; overrides the learned interval and the minimum-day floors), normalised phone/email for duplicate detection, consent (`granted/unknown/do_not_contact`), archive flag |
 | `tags`, `customer_tags` | tags |
 | `transactions` | purchases (`amount_minor`, `points_earned`, `status active/reversed`, `source manual/import`) |
 | `points_ledger` | **source of truth for points**; append-only; `reverses_entry_id` is UNIQUE so an entry can be reversed once |

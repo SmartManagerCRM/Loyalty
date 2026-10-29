@@ -22,7 +22,7 @@ legacy/                 archived Supabase web app (not built)
 * Scoring is deterministic and explainable: each candidate carries structured `Reason`s (`{key, params}`) translated by the UI.
 
 ## Internationalisation
-`i18n/en.ts`, `i18n/ar.ts` flat dictionaries; RTL via `document.dir` and CSS logical properties. A test asserts both files have identical keys/placeholders and that every referenced key exists. **Adding French**: create `i18n/fr.ts` (same keys), register it in `DICTIONARIES` and `LANGUAGES` in `i18n/index.ts` and in the `Language` type; missing keys fall back to English.
+`i18n/en.ts`, `i18n/ar.ts`, `i18n/fr.ts` flat dictionaries; RTL via `document.dir` and CSS logical properties. A test asserts all three files have identical keys/placeholders and that every referenced key exists. **Adding another language**: create `i18n/xx.ts` (same keys), register it in `DICTIONARIES` and `LANGUAGES` in `i18n/index.ts` and in the `Language` type; missing keys fall back to English. French, Arabic and English are included.
 
 ## Offline guarantees
 No analytics, no network calls from app code. The Android manifest declares **no INTERNET permission** and disables cloud/device-transfer backup. External apps (WhatsApp, dialer, SMS, mail) are launched through links; the user sends messages manually.
