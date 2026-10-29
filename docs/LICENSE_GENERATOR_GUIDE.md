@@ -11,6 +11,13 @@ npm run dist -w license-generator # installers into license-generator/release (r
 ```
 CI builds Windows/macOS/Linux packages (`.github/workflows/license-generator.yml`). Installers are unsigned unless you add code-signing certificates.
 
+## Quick use (the normal workflow)
+1. First run only: choose a passphrase → **Create** → save the public key file and key backup (see below).
+2. Customer sends the **request code** (`SMLYREQ1:…`) from the app.
+3. Paste it in **Generate license**, check the customer name, pick *Lifetime* or a number of months, click **Generate license**, enter the passphrase.
+4. **Copy license** (or Save as file) and send it back. The customer pastes it in the app.
+History, key backup and history backup are under the small links at the top.
+
 ## 1. Create the signing key (once)
 Signing key → choose a passphrase (≥12 chars) → tick the two acknowledgements → Create. Then immediately:
 1. **Save public key file…** → `trusted-keys.json`. Put it at `app/trusted-keys.json` (or run `npm run keys:import -w app -- <file>`, or set the GitHub repository variable `LICENSE_TRUSTED_KEYS` to its contents) and **rebuild the app**. Apps built before the key existed cannot activate.

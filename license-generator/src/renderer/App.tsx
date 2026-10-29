@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { api, describeError } from "./api";
 import type { KeyStatus } from "../core/keystore";
-import { Dashboard } from "./pages/Dashboard";
+import { Simple } from "./pages/Simple";
 import { NewLicense } from "./pages/NewLicense";
 import { History, Details } from "./pages/History";
 import { SigningKey } from "./pages/SigningKey";
@@ -72,15 +72,10 @@ export function App() {
   }, [refreshKey, notify]);
 
   const ctx: Ctx = { key, refreshKey, go: setView, ensureUnlocked, notify, fail: (e) => notify(describeError(e), "danger") };
-  const nav: { v: View["name"]; label: string }[] = [
-    { v: "dashboard", label: "Dashboard" }, { v: "new", label: "New license" }, { v: "history", label: "License history" }, { v: "key", label: "Signing key" }, { v: "backup", label: "Backup & restore" },
-  ];
-  const active = view.name === "details" || view.name === "renew" || view.name === "reissue" ? "history" : view.name;
 
   let page: ReactNode;
   switch (view.name) {
-    case "dashboard": page = <Dashboard />; break;
-    case "new": page = <NewLicense mode={{ kind: "new" }} />; break;
+    case "dashboard": case "new": page = <Simple />; break;
     case "renew": page = <NewLicense mode={{ kind: "renew", id: view.id }} />; break;
     case "reissue": page = <NewLicense mode={{ kind: "reissue", id: view.id }} />; break;
     case "history": page = <History />; break;
@@ -91,15 +86,16 @@ export function App() {
 
   return (
     <AppCtx.Provider value={ctx}>
-      <div className="layout">
-        <aside className="side">
-          <div className="brand">SmartManager Loyalty<small>License Generator · offline</small></div>
-          {nav.map((n) => <button key={n.v} className={`nav ${active === n.v ? "on" : ""}`} onClick={() => setView({ name: n.v } as View)}>{n.label}</button>)}
-          <div className="spacer" />
-          <div className="keystate">
-            {!key.exists ? "No signing key yet" : key.unlocked ? <>Key <strong>{key.keyId}</strong> unlocked <button className="btn link" style={{ color: "#fff", minHeight: 0, padding: "0 6px" }} onClick={async () => { await api.keyLock(); await refreshKey(); }}>Lock</button></> : <>Key <strong>{key.keyId}</strong> locked</>}
-          </div>
-        </aside>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+        <header className="row between" style={{ padding: "14px 24px", borderBottom: "1px solid var(--border)" }}>
+          <strong>SmartManager Loyalty · License Generator</strong>
+          <span className="row small">
+            <button className="btn link" onClick={() => setView({ name: "new" })}>Generate</button>
+            <button className="btn link" onClick={() => setView({ name: "history" })}>History</button>
+            <button className="btn link" onClick={() => setView({ name: "key" })}>Key</button>
+            <button className="btn link" onClick={() => setView({ name: "backup" })}>Backup</button>
+          </span>
+        </header>
         <main>{page}</main>
       </div>
       {unlock ? <UnlockModal onDone={unlock} /> : null}
