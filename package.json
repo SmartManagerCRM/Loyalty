@@ -6,16 +6,18 @@
   "workspaces": [
     "packages/license-core",
     "app",
-    "license-generator"
+    "license-manager"
   ],
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "setup": "npm install",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "build:app": "npm run build -w app",
-    "build:generator": "npm run build -w license-generator",
+    "build:generator": "npm run build -w license-manager",
     "check:no-private-key": "node scripts/check-no-private-key.mjs"
   },
   "devDependencies": {

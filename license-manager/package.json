@@ -1,0 +1,14 @@
+{
+  "name": "smartmanager-loyalty-license-manager",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": { "@smloyalty/license-core": "1.0.0" },
+  "devDependencies": { "esbuild": "^0.24.0" }
+}

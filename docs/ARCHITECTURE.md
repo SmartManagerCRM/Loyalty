@@ -3,7 +3,7 @@
 ```
 packages/license-core   shared, dependency-light licensing protocol (Ed25519 via @noble/curves)
 app/                    React + TypeScript UI, Capacitor (Android + iOS), native SQLite
-license-generator/      Electron desktop tool (separate build target), offline signing
+license-manager/        one-page offline License Manager (like SmartManager Installments), offline signing
 legacy/                 archived Supabase web app (not built)
 ```
 

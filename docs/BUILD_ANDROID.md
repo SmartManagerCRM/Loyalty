@@ -7,7 +7,7 @@
 The authoring sandbox could not reach the Android SDK host, so **no APK was built locally**. The project is complete and `.github/workflows/android.yml` builds debug + release APK and AAB on GitHub Actions and uploads them as the `smartmanager-loyalty-android` artifact (Actions → latest run → Artifacts). Whether that run succeeded is reported in the final handover; do not assume it.
 
 ## Before building: trust your license key
-The app only accepts licenses from keys listed in `app/trusted-keys.json`. Create the key in the License Generator, save the public key file, then either `npm run keys:import -w app -- <file>` or set the repository variable `LICENSE_TRUSTED_KEYS`. A build with an empty list can run but nothing can be activated.
+The app only accepts licenses from keys listed in `app/trusted-keys.json`. Create the key in the License Manager, save the public key file, then either `npm run keys:import -w app -- <file>` or set the repository variable `LICENSE_TRUSTED_KEYS`. A build with an empty list can run but nothing can be activated.
 
 ## Local build (JDK 21, Android SDK with platform 36)
 ```bash

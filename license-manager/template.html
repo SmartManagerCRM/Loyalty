@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>SmartManager Loyalty - License Manager</title>
+<style>
+  :root { --navy:#0b2a4a; --green:#2a7d5a; --forest:#1b4d3b; --red:#c43d3d; --orange:#c9821a; --bg:#fbf6ec; --line:#e4d9c4; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--navy); background:var(--bg); }
+  header { background:var(--forest); color:#fff; padding:12px 20px; display:flex; align-items:center; gap:12px; }
+  header h1 { font-size:18px; margin:0; font-weight:700; } header small { opacity:.75; }
+  main { max-width:1020px; margin:0 auto; padding:14px; }
+  nav { display:flex; gap:4px; flex-wrap:wrap; border-bottom:2px solid var(--line); }
+  nav button { border:0; background:transparent; padding:10px 16px; font:inherit; font-weight:600; color:#5a6b5f; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; }
+  nav button.on { color:var(--green); border-bottom-color:var(--green); }
+  section { display:none; background:#fffdf9; border:1px solid var(--line); border-top:0; padding:18px; border-radius:0 0 12px 12px; }
+  section.on { display:block; }
+  .grid { display:grid; grid-template-columns:200px 1fr; gap:10px 14px; align-items:start; }
+  .grid > label { font-weight:700; padding-top:8px; }
+  .hint { color:#6b7a6f; font-size:13px; margin-top:3px; }
+  input[type=text], input[type=password], input[type=number], textarea, select { width:100%; padding:8px 10px; font:inherit; border:1px solid #cdbf9f; border-radius:8px; background:#fff; color:var(--navy); }
+  textarea { resize:vertical; font-family:ui-monospace,Consolas,monospace; font-size:13px; }
+  button.btn { font:inherit; font-weight:600; padding:9px 16px; border-radius:9px; border:1px solid #bfae86; background:#f6efdd; color:var(--navy); cursor:pointer; }
+  button.btn:hover { background:#efe5c9; } button.primary { background:var(--green); border-color:var(--green); color:#fff; } button.primary:hover { background:var(--forest); }
+  button.big { width:100%; padding:12px; font-size:16px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .row > input[type=text], .row > select { flex:1; min-width:180px; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; } th, td { padding:8px 10px; text-align:left; border-bottom:1px solid var(--line); font-size:14px; }
+  th { background:#f6efdd; } tr.sel { outline:2px solid var(--green); outline-offset:-2px; } tbody tr { cursor:pointer; }
+  .ACTIVE { background:#e3f1e8; } .EXPIRED { background:#fbe5e3; } .NOTYET { background:#fdf0db; }
+  #out { background:#fff; border:1px solid var(--line); border-radius:12px; margin-top:12px; padding:10px 14px; white-space:pre-wrap; word-break:break-all; font-family:ui-monospace,Consolas,monospace; font-size:13px; min-height:150px; max-height:340px; overflow:auto; }
+  #out.err { border-color:var(--red); color:#8a1a1d; background:#fff5f5; } #out.ok { border-color:var(--green); }
+  .note { background:#f6efdd; border-radius:10px; padding:10px 12px; font-size:13.5px; margin:10px 0; }
+  .warn { background:#fdf0db; color:#6b3b00; }
+  dialog { border:1px solid var(--line); border-radius:14px; padding:18px; max-width:560px; width:92%; } dialog::backdrop { background:rgba(11,42,74,.35); }
+  dialog h3 { margin:0 0 10px; }
+</style>
+</head>
+<body>
+<header><h1>SmartManager Loyalty - License Manager</h1><small>offline · nothing is uploaded</small></header>
+<main>
+<nav id="tabs">
+  <button data-t="keys">1. Keys</button><button data-t="issue" class="on">2. Issue license</button>
+  <button data-t="register">3. Customers &amp; licenses</button><button data-t="verify">4. Verify license</button>
+</nav>
+
+<section id="keys">
+  <div class="note">The <b>private key</b> signs every license. It is stored in <b>this browser</b>, encrypted with your passphrase, and never leaves this computer.
+  Browsers can lose their data (clearing history, new profile) - so <b>download the key backup</b> and keep two offline copies.</div>
+  <div class="grid">
+    <label>Signing key</label><div id="keyStatus"></div>
+    <label>Passphrase (min. 10)</label><div><input type="password" id="newPass" autocomplete="new-password"><div class="hint">Used when you press "Create new key".</div></div>
+    <label></label>
+    <div class="row">
+      <button class="btn primary" id="btnCreateKey">Create new signing key</button>
+      <button class="btn" id="btnBackupKey">Download key backup (.smlkey)</button>
+      <button class="btn" id="btnRestoreKey">Restore key from backup...</button>
+      <button class="btn" id="btnExportPub">Export public key for the app (.json)</button>
+      <button class="btn" id="btnCopyPub">Copy public key</button>
+    </div>
+    <label>Register backup</label>
+    <div class="row"><button class="btn" id="btnBackupReg">Download register backup (.json)</button><button class="btn" id="btnRestoreReg">Restore register backup...</button></div>
+  </div>
+  <div class="note warn">The app is built with your <b>public key</b>: save it as <code>app/trusted-keys.json</code> (or paste it into the repository variable <code>LICENSE_TRUSTED_KEYS</code>) and rebuild the app.
+  Licenses already issued keep working with that same key. If the key and its backups are lost you cannot issue licenses that shipped apps accept.</div>
+  <input type="file" id="fileKey" hidden><input type="file" id="fileReg" accept=".json" hidden>
+</section>
+
+<section id="issue" class="on">
+  <div class="grid">
+    <label>Passphrase</label><div><input type="password" id="pass" autocomplete="current-password"><div class="hint">The passphrase of your signing key (tab 1).</div></div>
+    <label>Device ID or<br>Request code</label>
+    <div><textarea id="req" rows="4" placeholder="Paste what the customer sends from the app's activation screen"></textarea>
+      <div class="hint">Either the long <code>SMLYREQ1:...</code> text or just the Device ID <code>XXXX-XXXX-XXXX-XXXX-XXXX</code>.</div></div>
+    <label>Customer / note</label><div><input type="text" id="cust"><div class="hint">Required. Kept in your register and inside the license.</div></div>
+    <label>Order reference</label><div><input type="text" id="ref"><div class="hint">Optional: invoice or order number (no personal data).</div></div>
+    <label>Validity</label>
+    <div class="row">
+      <label><input type="radio" name="kind" value="lifetime" checked> Lifetime (never expires)</label>
+      <label><input type="radio" name="kind" value="duration"> Subscription: valid for</label>
+      <input type="number" id="days" value="30" min="1" max="3660" style="width:90px" disabled> days
+    </div>
+    <label>Time zone</label>
+    <div><input type="text" id="tz"><div class="hint">Start = 00:00 today and end = 23:59:59 of the last day, in this zone (IANA name, e.g. Asia/Riyadh).</div></div>
+    <label></label><div><button class="btn primary big" id="btnIssue">Issue license</button></div>
+    <label></label>
+    <div class="row"><button class="btn" id="btnCopyCode">Copy license code</button><button class="btn" id="btnCopySum">Copy summary</button><button class="btn" id="btnSaveAgain">Download license file again</button></div>
+  </div>
+</section>
+
+<section id="register">
+  <div class="row"><span><b>Search:</b></span><input type="text" id="search" placeholder="customer, license id, device, order ref"><button class="btn" id="btnRefresh">Refresh</button></div>
+  <table><thead><tr><th>Order ref</th><th>Customer / note</th><th>License ID</th><th>Status</th><th>Valid to</th><th>Rev</th><th>Device ID</th></tr></thead><tbody id="regBody"></tbody></table>
+  <p id="regCount"><b></b></p>
+  <div class="row">
+    <button class="btn" id="btnRenew">Renew / change validity...</button><button class="btn" id="btnReissue">New phone (replacement)...</button>
+    <button class="btn" id="btnHistory">History</button><button class="btn" id="btnSaveSel">Download license file</button>
+    <button class="btn" id="btnCopySel">Copy license code</button><button class="btn" id="btnCsv">Export CSV</button>
+  </div>
+  <div class="note">A <b>subscription</b> ends by itself on its end date unless you send a <b>renewal code</b>. <b>Renew</b> creates a new code for the <i>same</i> phone (no new request needed).
+  <b>New phone</b> needs the new phone's code and an identity check. An app without internet cannot be switched off remotely: the old code keeps working on the old phone.</div>
+</section>
+
+<section id="verify">
+  <div class="note">Runs the same checks as the app. Paste a license (file content or one-line code) or load a file.</div>
+  <div class="grid">
+    <label>License</label><div><textarea id="vLic" rows="4"></textarea><div class="row" style="margin-top:6px"><button class="btn" id="btnVLoad">Load license file...</button></div></div>
+    <label>Public key (.json)</label><div><textarea id="vPub" rows="4"></textarea><div class="row" style="margin-top:6px"><button class="btn" id="btnVMine">Use my public key</button></div></div>
+    <label>Device ID</label><div><input type="text" id="vDev" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX (optional)"></div>
+    <label></label><div><button class="btn primary" id="btnVerify">Verify</button></div>
+  </div>
+  <input type="file" id="fileV" hidden>
+</section>
+
+<div id="out">Ready. Tab 2: paste the phone's Device ID or request code, choose the validity and press "Issue license".</div>
+</main>
+
+<dialog id="dlgRenew"><h3>Renew / change validity</h3><div id="renewInfo" class="hint"></div>
+  <div class="row" style="margin:10px 0"><label><input type="radio" name="rkind" value="lifetime"> Lifetime</label>
+  <label><input type="radio" name="rkind" value="duration" checked> Subscription: valid for</label><input type="number" id="rdays" value="30" min="1" max="3660" style="width:90px"> days from today</div>
+  <div class="row"><button class="btn primary" id="rGo">Create renewal code</button><button class="btn" id="rCancel">Cancel</button></div></dialog>
+<dialog id="dlgNew"><h3>New phone (replacement)</h3><div id="newInfo" class="hint"></div>
+  <p><b>New Device ID or request code</b><textarea id="nReq" rows="3"></textarea></p>
+  <p><b>Reason</b> (e.g. "phone lost, verified by call")<input type="text" id="nReason"></p>
+  <p><label><input type="checkbox" id="nOk"> I verified the customer's identity and that the old phone is no longer used</label></p>
+  <div class="row"><button class="btn primary" id="nGo">Issue replacement license</button><button class="btn" id="nCancel">Cancel</button></div></dialog>
+
+<script>/*__CORE__*/</script>
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const reg = LM.makeRegister(localStorage);
+const KEY_SLOT = 'smloyalty_key_v1';
+let unlocked = null, last = null, sel = null;
+
+function download(name, text, mime) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: mime || 'application/octet-stream' })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function show(msg, cls) { const o = $('out'); o.textContent = msg; o.className = cls || ''; }
+function fail(e) { show('ERROR: ' + (e && e.message ? e.message : e), 'err'); }
+async function copy(t) { try { await navigator.clipboard.writeText(t); show('Copied to clipboard.', 'ok'); } catch { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); show('Copied to clipboard.', 'ok'); } }
+function pickFile(input) { return new Promise((res) => { input.value = ''; input.onchange = async () => { const f = input.files[0]; res(f ? { name: f.name, text: await f.text() } : null); }; input.click(); }); }
+
+document.querySelectorAll('#tabs button').forEach((b) => b.onclick = () => {
+  document.querySelectorAll('#tabs button').forEach((x) => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section').forEach((s) => s.classList.toggle('on', s.id === b.dataset.t));
+  if (b.dataset.t === 'register') renderReg();
+});
+$('tz').value = LM.localTimeZone();
+document.querySelectorAll('input[name=kind]').forEach((r) => r.onchange = () => { $('days').disabled = document.querySelector('input[name=kind]:checked').value !== 'duration'; });
+
+function keyStatus() {
+  const k = localStorage.getItem(KEY_SLOT);
+  if (!k) { $('keyStatus').innerHTML = '<b style="color:#c43d3d">No signing key yet.</b> Choose a passphrase below and press "Create new signing key".'; return; }
+  const f = JSON.parse(k); $('keyStatus').innerHTML = '<b style="color:#2a7d5a">Key ' + f.keyId + '</b> stored (created ' + f.createdAt.slice(0, 10) + ').';
+}
+async function getSigner() {
+  const k = localStorage.getItem(KEY_SLOT);
+  if (!k) throw new LM.IssueError('Create your signing key first (tab 1).');
+  const p = $('pass').value;
+  if (!p) throw new LM.IssueError('Type your key passphrase.');
+  if (!unlocked || unlocked.pass !== p) unlocked = { pass: p, signer: await LM.unlockKey(k, p) };
+  return unlocked.signer;
+}
+
+$('btnCreateKey').onclick = async () => {
+  try {
+    if (localStorage.getItem(KEY_SLOT) && !confirm('A signing key already exists in this browser. Creating a new one REPLACES it, and licenses you already issued will not be accepted by apps built with the old key. Continue?')) return;
+    show('Creating key... (takes a second)');
+    const r = await LM.createKey($('newPass').value);
+    localStorage.setItem(KEY_SLOT, r.file); unlocked = null; keyStatus(); $('newPass').value = '';
+    download('smartmanager-loyalty-key-' + r.keyId + '.smlkey', r.file);
+    show('Signing key created (key id ' + r.keyId + ').\n\nA backup file was just downloaded - store TWO copies offline and keep the passphrase separately.\nNext: "Export public key for the app (.json)" and save it as app/trusted-keys.json, then rebuild the app.', 'ok');
+  } catch (e) { fail(e); }
+};
+$('btnBackupKey').onclick = () => { const k = localStorage.getItem(KEY_SLOT); if (!k) return fail(new Error('No key to back up.')); download('smartmanager-loyalty-key-' + JSON.parse(k).keyId + '.smlkey', k); show('Encrypted key backup downloaded. Keep two offline copies.', 'ok'); };
+$('btnRestoreKey').onclick = async () => {
+  try { const f = await pickFile($('fileKey')); if (!f) return; const o = LM.readKeyFile(f.text); localStorage.setItem(KEY_SLOT, f.text); unlocked = null; keyStatus(); show('Key restored (key id ' + o.keyId + '). Type its passphrase in tab 2 when you issue.', 'ok'); } catch (e) { fail(e); }
+};
+function myPub() { const k = localStorage.getItem(KEY_SLOT); if (!k) throw new Error('No signing key yet.'); return LM.publicKeyFileText(JSON.parse(k)); }
+$('btnExportPub').onclick = () => { try { const t = myPub(); download('trusted-keys.json', t, 'application/json'); show('Public key downloaded as trusted-keys.json.\nSave it as app/trusted-keys.json (or the LICENSE_TRUSTED_KEYS repository variable) and rebuild the app.\n\n' + t, 'ok'); } catch (e) { fail(e); } };
+$('btnCopyPub').onclick = () => { try { copy(myPub()); } catch (e) { fail(e); } };
+$('btnBackupReg').onclick = () => { download('smartmanager-loyalty-register-' + new Date().toISOString().slice(0, 10) + '.json', reg.exportText(), 'application/json'); show('Register backup downloaded (' + reg.all().length + ' entries).', 'ok'); };
+$('btnRestoreReg').onclick = async () => { try { const f = await pickFile($('fileReg')); if (!f) return; const r = reg.importText(f.text); show('Register restored: ' + r.added + ' added, ' + r.skipped + ' already present.', 'ok'); } catch (e) { fail(e); } };
+
+function kindOf(name) { return document.querySelector('input[name=' + name + ']:checked').value; }
+async function doIssue(opts) {
+  const signer = await getSigner();
+  const res = LM.issue(Object.assign({ signer }, opts));
+  reg.add(res.record); last = res.record;
+  download(res.record.fileName, res.record.licenseText);
+  show('License issued and saved to your register.\nThe file ' + res.record.fileName + ' was downloaded.\n\n' + res.summary + '\n\nLICENSE CODE (send this or the file to the customer):\n' + res.record.code, 'ok');
+  return res.record;
+}
+$('btnIssue').onclick = async () => {
+  try {
+    const dev = LM.parseInput($('req').value);
+    const existing = reg.activeForDevice(dev.fingerprint);
+    let replaces;
+    if (existing) {
+      if (!confirm('This device already has a license (' + existing.customer + ', ' + existing.type + '). Issue a new one that REPLACES it (revision ' + (existing.revision + 1) + ')?')) return;
+      replaces = existing;
+    }
+    await doIssue({ deviceInput: $('req').value, customer: $('cust').value, orderRef: $('ref').value, type: kindOf('kind'), days: Number($('days').value), tz: $('tz').value.trim(), replaces, reason: replaces ? 'reissued from Issue tab' : undefined });
+  } catch (e) { fail(e); }
+};
+$('btnCopyCode').onclick = () => last ? copy(last.code) : fail(new Error('Issue a license first.'));
+$('btnCopySum').onclick = () => last ? copy(LM.summarize(last)) : fail(new Error('Issue a license first.'));
+$('btnSaveAgain').onclick = () => last ? download(last.fileName, last.licenseText) : fail(new Error('Issue a license first.'));
+
+function renderReg() {
+  const rows = reg.search($('search').value); sel = null;
+  $('regBody').innerHTML = '';
+  for (const r of rows) {
+    const st = LM.statusOf(r), tr = document.createElement('tr'); tr.className = st === 'NOT YET VALID' ? 'NOTYET' : st;
+    for (const v of [r.orderRef, r.customer, r.licenseId.slice(0, 8) + '…', st, r.expiresAt ? r.expiresAt.slice(0, 10) : 'Lifetime', r.revision, r.device]) { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); }
+    tr.onclick = () => { sel = r; document.querySelectorAll('#regBody tr').forEach((x) => x.classList.toggle('sel', x === tr)); };
+    $('regBody').appendChild(tr);
+  }
+  $('regCount').innerHTML = '<b>' + rows.length + '</b> license(s)';
+}
+$('search').oninput = renderReg; $('btnRefresh').onclick = renderReg;
+const needSel = () => { if (!sel) { fail(new Error('Select a row first.')); return true; } return false; };
+$('btnSaveSel').onclick = () => { if (!needSel()) download(sel.fileName, sel.licenseText); };
+$('btnCopySel').onclick = () => { if (!needSel()) copy(sel.code); };
+$('btnCsv').onclick = () => { download('issued-licenses.csv', LM.toCsv(reg.all()), 'text/csv'); show(reg.all().length + ' rows exported to issued-licenses.csv', 'ok'); };
+$('btnHistory').onclick = () => { if (needSel()) return; show(reg.history(sel.chainId).map((r) => 'Rev ' + r.revision + '  ' + r.issuedAt + '  ' + r.type + '  until ' + (r.expiresAt || 'no expiry') + '  device ' + r.device + (r.reason ? '  [' + r.reason + ']' : '') + '  ' + r.status).join('\n')); };
+
+$('btnRenew').onclick = () => { if (needSel()) return; $('renewInfo').textContent = sel.customer + ' - device ' + sel.device; $('dlgRenew').showModal(); };
+$('rCancel').onclick = () => $('dlgRenew').close();
+$('rGo').onclick = async () => {
+  try {
+    const kind = kindOf('rkind');
+    await doIssue({ deviceInput: sel.device, customer: sel.customer, orderRef: sel.orderRef, type: kind, days: Number($('rdays').value), tz: sel.tz, replaces: sel, reason: 'renewal' });
+    $('dlgRenew').close(); renderReg();
+  } catch (e) { $('dlgRenew').close(); fail(e); }
+};
+$('btnReissue').onclick = () => { if (needSel()) return; $('newInfo').textContent = sel.customer + ' - old device ' + sel.device; $('nReq').value = ''; $('nReason').value = ''; $('nOk').checked = false; $('dlgNew').showModal(); };
+$('nCancel').onclick = () => $('dlgNew').close();
+$('nGo').onclick = async () => {
+  try {
+    if (!$('nOk').checked) throw new Error('Tick the identity check first.');
+    if ($('nReason').value.trim().length < 5) throw new Error('Enter a reason (at least 5 characters).');
+    const dev = LM.parseInput($('nReq').value);
+    if (dev.fingerprint === sel.device) throw new Error('That is the same phone - use "Renew" instead.');
+    await doIssue({ deviceInput: $('nReq').value, customer: sel.customer, orderRef: sel.orderRef, type: sel.type === 'lifetime' ? 'lifetime' : 'duration', days: sel.days || 30, tz: sel.tz, replaces: sel, reason: $('nReason').value.trim() });
+    $('dlgNew').close(); renderReg();
+  } catch (e) { $('dlgNew').close(); fail(e); }
+};
+
+$('btnVLoad').onclick = async () => { const f = await pickFile($('fileV')); if (f) $('vLic').value = f.text; };
+$('btnVMine').onclick = () => { try { $('vPub').value = myPub(); } catch (e) { fail(e); } };
+$('btnVerify').onclick = () => { const r = LM.verifyText($('vLic').value, $('vPub').value, $('vDev').value); show((r.ok ? 'VALID\n' : 'NOT VALID\n') + r.lines.join('\n'), r.ok ? 'ok' : 'err'); };
+keyStatus();
+</script>
+</body>
+</html>

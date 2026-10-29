@@ -1,6 +1,6 @@
 # Licensing
 
-Offline, one device per license, Ed25519 signatures. Code: `packages/license-core`, `app/src/services/licensing.ts`, `license-generator/src/core`.
+Offline, one device per license, Ed25519 signatures. Code: `packages/license-core`, `app/src/services/licensing.ts`, `license-manager/src/core.ts`.
 
 ## Flow
 1. App creates a random **installation ID** in secure storage (Android Keystore-backed / iOS Keychain via `capacitor-secure-storage-plugin`). The **device fingerprint** = first 100 bits of `SHA-256("smartmanager-loyalty|device-binding|v1|" + installId)`, shown as `XXXX-XXXX-XXXX-XXXX-XXXX`.
@@ -27,9 +27,9 @@ Verification happens at **startup** and on import; the stored license is re-veri
 After expiry/anomaly/unlicensed the app is **read-only**: view, search, export (CSV) and **backup** keep working; add/edit/redeem/import/outreach are blocked in the service layer. **Data is never deleted or modified.**
 
 ## Device replacement / reinstall
-Reinstalling on Android deletes Keystore-backed data → new fingerprint → the old license shows "different device". Use **Replace device (reissue)** in the generator (reason + confirmation required). Offline licenses **cannot be revoked**: the old device keeps working if it still has the license. Use fixed-period licenses when you may need to end access. iOS Keychain items normally survive reinstall on the same device.
+Reinstalling on Android deletes Keystore-backed data → new fingerprint → the old license shows "different device". Use **New phone (replacement)** in the License Manager (reason + identity check required). Offline licenses **cannot be revoked**: the old device keeps working if it still has the license. Use fixed-period licenses when you may need to end access. iOS Keychain items normally survive reinstall on the same device.
 
 ## Keys
-* Private key: only in the generator, encrypted (scrypt N=2^17 + AES-256-GCM, header authenticated). No export of the raw key. See LICENSE_GENERATOR_GUIDE.md.
+* Private key: only in the License Manager, stored encrypted in the browser (PBKDF2-SHA256 600k + AES-256-GCM, header authenticated) with a passphrase-encrypted `.smlkey` backup. No export of the raw key. See LICENSE_GENERATOR_GUIDE.md.
 * App: only `trusted-keys.json` (public keys). `scripts/check-no-private-key.mjs` scans `dist`, native asset folders and built APK/AAB/IPA for key material; it runs in CI. The built bundle does not contain `signLicense`/`generateSigningKey` (tree-shaken).
 * Rotation: add the new public key next to the old one in `trusted-keys.json`; use `notAfter` on the old key to stop accepting licenses issued after a date.
